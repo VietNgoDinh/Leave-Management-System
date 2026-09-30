@@ -2,9 +2,272 @@ meta:
   artifact_type: catalog
   catalog: business-rules
   title: Business Rules
-  status: DRAFT
+  status: APPROVED
   baseline: TO_BE
   origin: AI
   review:
-    GATE-02: NOT_REQUESTED
-items: []
+    GATE-02: APPROVED
+items:
+  - id: BR-001
+    name: Leave date window
+    description: A leave request may cover future dates, or past dates within the current month only.
+      A request outside this window cannot be submitted.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.1; amended by BA decision at GATE-02
+      review, 2026-09-30
+    requirements:
+      - REQ-001
+    related_entities:
+      - ENT-006
+    baseline: TO_BE
+  - id: BR-002
+    name: Exceeding the entitlement is reviewed, not blocked
+    description: A request that exceeds the employee's entitlement is accepted and flagged for manual
+      review by the reviewers. It is the only policy violation that does not block submission.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §3, 4.1; amended by BA decision at GATE-02
+      review, 2026-09-30
+    requirements:
+      - REQ-002
+    related_entities:
+      - ENT-006
+    baseline: TO_BE
+  - id: BR-003
+    name: Seniority-based entitlement
+    description: Entitlement for some leave types, such as Paid Leave, varies by years of service according
+      to government regulations. The system calculates it as base days plus one day per N years of service;
+      both values are set on the leave type. The same rules apply in every country.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.1, 4.4, 4.5; amended by BA decision
+      at GATE-02 review, 2026-09-30
+    requirements:
+      - REQ-006
+      - REQ-007
+    related_entities:
+      - ENT-005
+      - ENT-004
+      - ENT-002
+    baseline: TO_BE
+  - id: BR-004
+    name: Gender-specific leave types
+    description: A leave type can be restricted by gender. Maternity Leave is available to female employees
+      only. An employee cannot submit a request for a leave type they are not eligible for.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.1, 4.5; amended by BA decision at GATE-02
+      review, 2026-09-30
+    requirements:
+      - REQ-007
+    related_entities:
+      - ENT-004
+      - ENT-002
+    baseline: TO_BE
+  - id: BR-005
+    name: Required documentation per leave type
+    description: A leave type may require the employee to upload documents defined in system settings,
+      e.g. a hospital certificate for medical leave. A request without a required document cannot be submitted.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.5; amended by BA decision at GATE-02
+      review, 2026-09-30
+    requirements:
+      - REQ-007
+    related_entities:
+      - ENT-004
+      - ENT-007
+    baseline: TO_BE
+  - id: BR-006
+    name: Two-step review
+    description: A leave request is first confirmed or denied by the Project Manager the employee selected,
+      then approved or rejected by the Line Manager. Only confirmed requests reach the Line Manager.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.2; amended by BA decision at GATE-02
+      review, 2026-09-30
+    requirements:
+      - REQ-003
+    related_entities:
+      - ENT-006
+      - ENT-008
+    baseline: TO_BE
+  - id: BR-007
+    name: Project Manager self-request is auto-confirmed
+    description: When a Project Manager submits a leave request for themselves, the confirmation step
+      is completed automatically.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.2
+    requirements:
+      - REQ-003
+    related_entities:
+      - ENT-006
+      - ENT-008
+    baseline: TO_BE
+  - id: BR-008
+    name: Review deadline and automatic cancellation
+    description: Confirmation and approval must both be completed by the end of the calendar month of
+      the leave start date. A request still not confirmed or approved when that month ends is cancelled
+      automatically.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.2, 6; amended by BA decision at GATE-02
+      review, 2026-09-30
+    requirements:
+      - REQ-003
+    related_entities:
+      - ENT-006
+      - ENT-008
+    baseline: TO_BE
+  - id: BR-009
+    name: Resubmission after denial or rejection
+    description: An employee can modify and resubmit a request that was denied by the Project Manager
+      or rejected by the Line Manager.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.2
+    requirements:
+      - REQ-004
+    related_entities:
+      - ENT-006
+    baseline: TO_BE
+  - id: BR-010
+    name: Off-work day definition
+    description: A working day counts as off work when no check-in time is recorded, or when total presence
+      on that day is less than 4 hours.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.3; amended by BA decisions at and after
+      the GATE-02 review, 2026-09-30 (Q-007)
+    requirements:
+      - REQ-005
+    related_entities:
+      - ENT-009
+    baseline: TO_BE
+  - id: BR-011
+    name: Weekly attendance notification
+    description: Every Friday each employee is notified, for the last week, of the days they were absent
+      without a leave request and the days they were absent with a valid leave request. Any submitted
+      request counts as a valid leave request.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.3; amended by BA decision at GATE-02
+      review, 2026-09-30
+    requirements:
+      - REQ-005
+    related_entities:
+      - ENT-009
+      - ENT-006
+    baseline: TO_BE
+  - id: BR-012
+    name: Annual entitlement refresh
+    description: 'Leave data is refreshed automatically at the start of each year: the system calculates
+      every employee''s entitlements for the new year. No amounts are imported. Requests still pending
+      are then checked against the new entitlements. An entitlement does not change during the year when
+      seniority changes.'
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.1, 4.4; amended by BA decision at GATE-02
+      review, 2026-09-30
+    requirements:
+      - REQ-006
+    related_entities:
+      - ENT-005
+      - ENT-006
+    baseline: TO_BE
+  - id: BR-013
+    name: Reviewer dashboards show actionable requests by default
+    description: Project Manager and Line Manager dashboards show by default only the leave requests that
+      require that user's action.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.7
+    requirements:
+      - REQ-009
+    related_entities:
+      - ENT-006
+    baseline: TO_BE
+  - id: BR-014
+    name: Access by role and organisation
+    description: What a user can see and do depends on their role, and access and reporting can be scoped
+      by country, city or office. A Line Manager sees reports for their own unit only.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.6, 4.8, 5; amended by BA decision at
+      GATE-02 review, 2026-09-30
+    requirements:
+      - REQ-008
+      - REQ-012
+    related_entities:
+      - ENT-002
+      - ENT-001
+    baseline: TO_BE
+  - id: BR-015
+    name: Employee selects the confirming Project Manager
+    description: When submitting, the employee selects which Project Manager confirms the request, among
+      the Project Managers of the projects the employee belongs to.
+    source: BA decision at GATE-02 review, 2026-09-30
+    requirements:
+      - REQ-001
+      - REQ-003
+    related_entities:
+      - ENT-006
+      - ENT-003
+    baseline: TO_BE
+  - id: BR-016
+    name: Cancellation by the employee
+    description: An employee can cancel their leave request as long as the Line Manager has not approved
+      it. An approved request cannot be cancelled.
+    source: BA decision at GATE-02 review, 2026-09-30
+    requirements:
+      - REQ-018
+    related_entities:
+      - ENT-006
+    baseline: TO_BE
+  - id: BR-017
+    name: Half-day leave
+    description: Leave is requested and counted in half days. The options are All day, Morning and Afternoon.
+    source: BA decision at GATE-02 review, 2026-09-30
+    requirements:
+      - REQ-001
+    related_entities:
+      - ENT-006
+      - ENT-005
+    baseline: TO_BE
+  - id: BR-018
+    name: Workflow email notifications
+    description: Submission sends an email to the selected Project Manager. Confirmation sends an email
+      to the Line Manager. Denial, approval and rejection send an email to the employee who submitted
+      the request.
+    source: BA decision at GATE-02 review, 2026-09-30
+    requirements:
+      - REQ-016
+      - REQ-003
+    related_entities:
+      - ENT-006
+      - ENT-008
+    baseline: TO_BE
+  - id: BR-019
+    name: Line Managers do not request leave
+    description: A Line Manager manages a Business Unit, not a project, and is never a Project Manager.
+      A Line Manager does not submit leave requests.
+    source: BA decision at GATE-02 review, 2026-09-30
+    requirements:
+      - REQ-008
+    related_entities:
+      - ENT-002
+      - ENT-001
+    baseline: TO_BE
+  - id: BR-020
+    name: Master data comes from the HR system
+    description: Employees, organisational units, project teams, line-manager assignments, role assignments
+      and public holidays come from the existing HR system and are not maintained in this system.
+    source: BA decision at GATE-02 review, 2026-09-30
+    requirements:
+      - REQ-019
+    related_entities:
+      - ENT-001
+      - ENT-002
+      - ENT-003
+      - ENT-010
+    baseline: TO_BE
+  - id: BR-021
+    name: No confirmation for an employee without a project
+    description: 'A request from an employee who belongs to no project has no confirmation step: the Line
+      Manager is the only approver.'
+    source: BA answer to Q-003, 2026-09-30
+    requirements:
+      - REQ-003
+    related_entities:
+      - ENT-006
+      - ENT-003
+      - ENT-008
+    baseline: TO_BE
+  - id: BR-022
+    name: Working days
+    description: Weekends and public holidays are not working days. Leave is counted on working days only,
+      and only working days can be reported as absences.
+    source: BA answer to Q-007, 2026-09-30
+    requirements:
+      - REQ-001
+      - REQ-005
+    related_entities:
+      - ENT-006
+      - ENT-005
+      - ENT-009
+      - ENT-010
+    baseline: TO_BE

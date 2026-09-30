@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "project": {
-    "name": "Untitled project",
+    "name": "Leave Request Management System",
     "type": "NEW_PRODUCT"
   },
   "active_run": "RUN-001",
@@ -9,22 +9,22 @@
     {
       "run_id": "RUN-001",
       "workflow_type": "MODE_B",
-      "status": "BLOCKED",
-      "current_phase": "OVERVIEW",
-      "current_step": "OVERVIEW",
+      "status": "WAITING_FOR_HUMAN",
+      "current_phase": "SPECIFICATION",
+      "current_step": "PER_USE_CASE",
       "scope": {
         "epic": null,
         "use_cases": []
       },
-      "last_completed_step": "ELICITATION",
-      "next_step": "OVERVIEW",
-      "blocked_reason": "OVERVIEW has no engine in milestone 1 and its outputs are missing: overview/product-overview.md",
+      "last_completed_step": "INFORMATION_ARCHITECTURE",
+      "next_step": "human review: UC-001 GATE-04, UC-002 GATE-03, UC-004 GATE-03, UC-007 GATE-03",
+      "blocked_reason": null,
       "manual_block": false,
       "origin_cr": null,
       "created_at": "2026-09-30T00:00:00Z",
-      "updated_at": "2026-09-30T07:04:20Z"
+      "updated_at": "2026-09-30T09:59:29Z"
     }
   ],
   "coding_authorization": null,
-  "updated_at": "2026-09-30T07:04:20Z"
+  "updated_at": "2026-09-30T09:59:29Z"
 }

@@ -2,9 +2,318 @@ meta:
   artifact_type: catalog
   catalog: entities
   title: Data Model — Entities
-  status: DRAFT
+  status: APPROVED
   baseline: TO_BE
   origin: AI
   review:
-    GATE-02: NOT_REQUESTED
-items: []
+    GATE-02: APPROVED
+items:
+  - id: ENT-001
+    name: Organisational Unit
+    description: 'A node of the company structure: country, city, office, department or unit, taken as
+      it is in the HR system. Used for role-based access and for reporting. A Line Manager manages a Business
+      Unit.'
+    owner: HR System (external). Held read-only in this system.
+    attributes:
+      - name: unit_id
+        type: identifier
+      - name: name
+        type: string
+      - name: level
+        type: enum
+        description: 'Levels named in the URS: company, country, city, office, department, unit'
+      - name: parent_unit
+        type: reference
+        description: Parent Organisational Unit
+      - name: manager
+        type: reference
+        description: Employee who manages this unit. Sets which unit a Line Manager sees in reports.
+    relationships:
+      - to: ENT-001
+        cardinality: N:1
+        description: parent unit
+      - to: ENT-002
+        cardinality: N:1
+        description: managed by
+    baseline: TO_BE
+  - id: ENT-002
+    name: Employee
+    description: A person who uses the system, from the HR system. Carries the data that leave eligibility
+      and the review workflow depend on.
+    owner: HR System (external). Held read-only in this system.
+    attributes:
+      - name: employee_id
+        type: identifier
+      - name: full_name
+        type: string
+      - name: email
+        type: string
+        description: Address for notification emails
+      - name: gender
+        type: enum
+        description: Drives eligibility for gender-specific leave types
+      - name: seniority
+        type: integer
+        description: Years of service. Basis of seniority-based entitlement.
+      - name: roles
+        type: list of enum
+        description: EMPLOYEE, PROJECT_MANAGER, LINE_MANAGER, ADMIN_HR. A Line Manager is never a Project
+          Manager.
+      - name: organisational_unit
+        type: reference
+      - name: line_manager
+        type: reference
+        description: Employee who approves this employee's confirmed requests
+    relationships:
+      - to: ENT-001
+        cardinality: N:1
+        description: belongs to
+      - to: ENT-002
+        cardinality: N:1
+        description: line manager
+    baseline: TO_BE
+  - id: ENT-003
+    name: Project
+    description: A project team, from the HR system. An employee chooses the confirming Project Manager
+      among the managers of the projects they belong to.
+    owner: HR System (external). Held read-only in this system.
+    attributes:
+      - name: project_id
+        type: identifier
+      - name: name
+        type: string
+      - name: project_manager
+        type: reference
+        description: Employee
+      - name: members
+        type: list of reference
+        description: Employees in the project team
+    relationships:
+      - to: ENT-002
+        cardinality: N:1
+        description: project manager
+      - to: ENT-002
+        cardinality: N:M
+        description: team members
+    baseline: TO_BE
+  - id: ENT-004
+    name: Leave Type
+    description: 'A kind of leave with its own eligibility rules and documentation requirements, configured
+      by Admin/HR. Suggested types: Paid, Unpaid, Maternity, Paternity, Sick (with Hospital Certificate),
+      Bereavement, Study, Personal.'
+    owner: Leave Request Management System
+    attributes:
+      - name: leave_type_id
+        type: identifier
+      - name: name
+        type: string
+      - name: gender_eligibility
+        type: enum
+        description: Which genders may use this type, e.g. Maternity Leave is for female employees only
+      - name: base_days
+        type: decimal
+        description: Yearly entitlement before seniority, in days
+      - name: seniority_based
+        type: boolean
+        description: Whether the entitlement grows with years of service, e.g. Paid Leave
+      - name: years_per_extra_day
+        type: integer
+        description: 'N: one extra day for every N years of service. Used when the type is seniority-based.'
+      - name: required_documents
+        type: list
+        description: Documents the employee must upload, e.g. a hospital certificate
+    baseline: TO_BE
+  - id: ENT-005
+    name: Leave Entitlement
+    description: The leave an employee is entitled to for one leave type in one year. Calculated by the
+      system at the annual refresh as base days plus one day per N years of service; not imported. It
+      does not change during the year when seniority changes.
+    owner: Leave Request Management System
+    attributes:
+      - name: entitlement_id
+        type: identifier
+      - name: employee
+        type: reference
+      - name: leave_type
+        type: reference
+      - name: year
+        type: integer
+      - name: entitled_amount
+        type: decimal
+        description: Days, in steps of 0.5
+    relationships:
+      - to: ENT-002
+        cardinality: N:1
+        description: entitlement of
+      - to: ENT-004
+        cardinality: N:1
+        description: for leave type
+    baseline: TO_BE
+  - id: ENT-006
+    name: Leave Request
+    description: An employee's request for leave over a date range. It passes through confirmation by
+      the selected Project Manager, unless the employee belongs to no project, and approval by the Line
+      Manager.
+    owner: Leave Request Management System
+    attributes:
+      - name: request_id
+        type: identifier
+      - name: employee
+        type: reference
+      - name: leave_type
+        type: reference
+      - name: start_date
+        type: date
+      - name: end_date
+        type: date
+      - name: day_part
+        type: enum
+        description: ALL_DAY, MORNING or AFTERNOON. How it applies to a request spanning several days
+          is settled in the use case specification.
+      - name: selected_project_manager
+        type: reference
+        description: Chosen by the employee among the Project Managers of their projects. Empty when the
+          employee belongs to no project.
+      - name: status
+        type: enum
+        description: See lifecycle
+      - name: exceeds_entitlement
+        type: boolean
+        description: Set when the request exceeds the employee's entitlement; such requests are reviewed
+          manually
+      - name: submitted_at
+        type: datetime
+      - name: cancellation_reason
+        type: enum
+        description: BY_EMPLOYEE or REVIEW_DEADLINE_PASSED
+      - name: cancelled_at
+        type: datetime
+    relationships:
+      - to: ENT-002
+        cardinality: N:1
+        description: requested by
+      - to: ENT-004
+        cardinality: N:1
+        description: of leave type
+      - to: ENT-002
+        cardinality: N:1
+        description: confirmed by selected project manager
+    lifecycle:
+      states:
+        - PENDING_CONFIRMATION
+        - PENDING_APPROVAL
+        - DENIED
+        - APPROVED
+        - REJECTED
+        - CANCELLED
+      transitions:
+        - '(new) -> PENDING_CONFIRMATION: Employee submits'
+        - '(new) -> PENDING_APPROVAL: Project Manager submits for themselves (auto-confirmed)'
+        - '(new) -> PENDING_APPROVAL: Employee who belongs to no project submits (no confirmation step)'
+        - 'PENDING_CONFIRMATION -> PENDING_APPROVAL: Project Manager confirms'
+        - 'PENDING_CONFIRMATION -> DENIED: Project Manager denies'
+        - 'PENDING_APPROVAL -> APPROVED: Line Manager approves'
+        - 'PENDING_APPROVAL -> REJECTED: Line Manager rejects'
+        - 'DENIED -> PENDING_CONFIRMATION: Employee modifies and resubmits'
+        - 'REJECTED -> PENDING_CONFIRMATION: Employee modifies and resubmits'
+        - 'REJECTED -> PENDING_APPROVAL: Employee with no confirmation step modifies and resubmits'
+        - 'PENDING_CONFIRMATION -> CANCELLED: Employee cancels'
+        - 'PENDING_APPROVAL -> CANCELLED: Employee cancels'
+        - 'PENDING_CONFIRMATION -> CANCELLED: System, when the month of the leave start date ends'
+        - 'PENDING_APPROVAL -> CANCELLED: System, when the month of the leave start date ends'
+      invalid_transitions:
+        - 'APPROVED -> CANCELLED: an approved request cannot be cancelled'
+    baseline: TO_BE
+  - id: ENT-007
+    name: Supporting Document
+    description: A file uploaded with a leave request when the leave type requires documentation, e.g.
+      a hospital certificate.
+    owner: Leave Request Management System
+    attributes:
+      - name: document_id
+        type: identifier
+      - name: leave_request
+        type: reference
+      - name: document_type
+        type: string
+        description: Which required document this file satisfies
+      - name: file
+        type: file
+      - name: uploaded_at
+        type: datetime
+    relationships:
+      - to: ENT-006
+        cardinality: N:1
+        description: attached to
+    baseline: TO_BE
+  - id: ENT-008
+    name: Review Decision
+    description: 'One review action on a leave request: the Project Manager''s confirmation or denial,
+      or the Line Manager''s approval or rejection.'
+    owner: Leave Request Management System
+    attributes:
+      - name: decision_id
+        type: identifier
+      - name: leave_request
+        type: reference
+      - name: step
+        type: enum
+        description: CONFIRMATION or APPROVAL
+      - name: outcome
+        type: enum
+        description: CONFIRMED, DENIED, APPROVED or REJECTED
+      - name: decided_by
+        type: reference
+        description: Employee; empty when auto-confirmed
+      - name: auto_confirmed
+        type: boolean
+        description: True when a Project Manager's own request was confirmed automatically
+      - name: decided_at
+        type: datetime
+    relationships:
+      - to: ENT-006
+        cardinality: N:1
+        description: decision on
+      - to: ENT-002
+        cardinality: N:1
+        description: decided by
+    baseline: TO_BE
+  - id: ENT-009
+    name: Attendance Record
+    description: Check-in and check-out times of an employee for one day, provided by the card scanner
+      system. Read-only in this system.
+    owner: Card Scanner System (external)
+    attributes:
+      - name: employee
+        type: reference
+      - name: work_date
+        type: date
+      - name: check_in_time
+        type: datetime
+      - name: check_out_time
+        type: datetime
+      - name: total_presence_hours
+        type: decimal
+    relationships:
+      - to: ENT-002
+        cardinality: N:1
+        description: attendance of
+    baseline: TO_BE
+  - id: ENT-010
+    name: Public Holiday
+    description: A public holiday in one country, from the HR system. Weekends and public holidays are
+      not working days, so leave is not counted on them and they are not reported as absences.
+    owner: HR System (external). Held read-only in this system.
+    attributes:
+      - name: holiday_date
+        type: date
+      - name: name
+        type: string
+      - name: country
+        type: reference
+        description: Organisational Unit at country level where the holiday applies
+    relationships:
+      - to: ENT-001
+        cardinality: N:1
+        description: applies in
+    baseline: TO_BE

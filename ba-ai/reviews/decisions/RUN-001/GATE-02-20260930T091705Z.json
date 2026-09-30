@@ -1,0 +1,22 @@
+{
+  "gate": "GATE-02",
+  "gate_name": "OVERVIEW_APPROVAL",
+  "subject": "RUN-001",
+  "decision": "APPROVED",
+  "reviewer": "vietngo",
+  "decided_at": "2026-09-30T09:17:05Z",
+  "comments": null,
+  "request_n": 4,
+  "artifacts": {
+    "overview/product-overview.md": "de53cb82298e3bba",
+    "requirements/requirements.yaml": "27abda8732018e9d",
+    "overview/actors.yaml": "765db0f8e5714622",
+    "overview/applications.yaml": "c30fd11bc125653d",
+    "overview/business-processes.yaml": "0c93e1f7de413b37",
+    "overview/business-rules.yaml": "70d18892b1c0fead",
+    "overview/data-model/entities.yaml": "268610f3a65544ad",
+    "overview/integrations.yaml": "b335056739b6aabf",
+    "overview/use-cases.yaml": "7eb0478c4f2a7a60"
+  },
+  "source": "UserPromptSubmit hook (typed by the user)"
+}

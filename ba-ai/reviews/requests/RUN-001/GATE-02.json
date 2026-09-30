@@ -1,0 +1,70 @@
+{
+  "gate": "GATE-02",
+  "subject": "RUN-001",
+  "requests": [
+    {
+      "n": 1,
+      "requested_at": "2026-09-30T07:29:06Z",
+      "artifacts": {
+        "overview/product-overview.md": "8fd51c9aa8b0190d",
+        "requirements/requirements.yaml": "764d260a9795f96b",
+        "overview/actors.yaml": "1be79d0a5d1add13",
+        "overview/applications.yaml": "c30fd11bc125653d",
+        "overview/business-processes.yaml": "7cd77aaa0a90fbf6",
+        "overview/business-rules.yaml": "1aa5c38facf66387",
+        "overview/data-model/entities.yaml": "f19ccad257181cc9",
+        "overview/integrations.yaml": "0b371fc364b27acc",
+        "overview/use-cases.yaml": "d1c30d6ce314a691"
+      },
+      "summary": null
+    },
+    {
+      "n": 2,
+      "requested_at": "2026-09-30T08:56:28Z",
+      "artifacts": {
+        "overview/product-overview.md": "c98d5c29dc4a704e",
+        "requirements/requirements.yaml": "9099973550769c8f",
+        "overview/actors.yaml": "3eb11df7406f057a",
+        "overview/applications.yaml": "c30fd11bc125653d",
+        "overview/business-processes.yaml": "a5f9da273d5eb6a0",
+        "overview/business-rules.yaml": "4cdbed709011d34a",
+        "overview/data-model/entities.yaml": "fcd82c8988a22321",
+        "overview/integrations.yaml": "ff35af3c7f3f6dcf",
+        "overview/use-cases.yaml": "263ae9c7a931a744"
+      },
+      "summary": null
+    },
+    {
+      "n": 3,
+      "requested_at": "2026-09-30T09:08:18Z",
+      "artifacts": {
+        "overview/product-overview.md": "59998e25908f69a5",
+        "requirements/requirements.yaml": "8a215a361611253c",
+        "overview/actors.yaml": "765db0f8e5714622",
+        "overview/applications.yaml": "c30fd11bc125653d",
+        "overview/business-processes.yaml": "0c93e1f7de413b37",
+        "overview/business-rules.yaml": "805fa7fe04ada4e6",
+        "overview/data-model/entities.yaml": "e6acbaf6097cc5be",
+        "overview/integrations.yaml": "ff35af3c7f3f6dcf",
+        "overview/use-cases.yaml": "7eb0478c4f2a7a60"
+      },
+      "summary": null
+    },
+    {
+      "n": 4,
+      "requested_at": "2026-09-30T09:10:25Z",
+      "artifacts": {
+        "overview/product-overview.md": "de53cb82298e3bba",
+        "requirements/requirements.yaml": "27abda8732018e9d",
+        "overview/actors.yaml": "765db0f8e5714622",
+        "overview/applications.yaml": "c30fd11bc125653d",
+        "overview/business-processes.yaml": "0c93e1f7de413b37",
+        "overview/business-rules.yaml": "70d18892b1c0fead",
+        "overview/data-model/entities.yaml": "268610f3a65544ad",
+        "overview/integrations.yaml": "b335056739b6aabf",
+        "overview/use-cases.yaml": "7eb0478c4f2a7a60"
+      },
+      "summary": null
+    }
+  ]
+}

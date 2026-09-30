@@ -1,4 +1,19 @@
 {
   "schema_version": 1,
-  "counters": {}
+  "counters": {
+    "REQ": 19,
+    "ACT": 6,
+    "APP": 1,
+    "ENT": 10,
+    "INT": 4,
+    "BP": 5,
+    "BR": 22,
+    "UC": 11,
+    "Q": 31,
+    "ASM": 15,
+    "REPO": 2,
+    "SVC": 6,
+    "EPIC": 3,
+    "SCR": 8
+  }
 }

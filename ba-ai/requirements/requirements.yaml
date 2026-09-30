@@ -2,9 +2,154 @@ meta:
   artifact_type: catalog
   catalog: requirements
   title: Business Requirements
-  status: DRAFT
+  status: APPROVED
   baseline: TO_BE
   origin: AI
   review:
-    GATE-02: NOT_REQUESTED
-items: []
+    GATE-02: APPROVED
+items:
+  - id: REQ-001
+    name: Leave request submission
+    description: 'Employees submit leave requests for future dates, or for past dates within the current
+      month only. Leave is requested in half days: All day, Morning or Afternoon. The employee selects
+      the Project Manager who confirms the request. Leave types include Paid Leave, Maternity Leave and
+      others.'
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.1; amended by BA decision at GATE-02
+      review, 2026-09-30
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-002
+    name: Requests exceeding the entitlement allowed with manual review
+    description: A request that exceeds the employee's entitlement can still be submitted; it is flagged
+      for manual review instead of being blocked. Other violations (dates outside the allowed window,
+      a missing required document, an ineligible leave type) block submission.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §3, 4.1; amended by BA decision at GATE-02
+      review, 2026-09-30
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-003
+    name: Two-step review and approval workflow
+    description: 'Step 1: the selected Project Manager confirms or denies the request. Step 2: the Line
+      Manager approves or rejects the confirmed request. An employee who belongs to no project needs no
+      confirmation: the Line Manager is the only approver. Both steps happen by the end of the month of
+      the leave start date; a request still undecided then is cancelled automatically.'
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.2; amended by BA decision at GATE-02
+      review, 2026-09-30
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-004
+    name: Modify and resubmit after denial or rejection
+    description: An employee can modify and resubmit a request after it was denied or rejected.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.2
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-005
+    name: Weekly attendance-based notification
+    description: Every Friday the system notifies employees about days they were absent without a leave
+      request and days they were absent with a valid leave request.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.3
+    priority: MEDIUM
+    baseline: TO_BE
+  - id: REQ-006
+    name: Annual leave entitlement refresh
+    description: 'At the start of each year leave entitlements are refreshed automatically. The system
+      calculates every entitlement from the leave type rules: base days plus one day per N years of service
+      for seniority-based types. The same rules apply in every country. No amounts are imported: the BA
+      replaced the import described in the URS with calculation.'
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.1, 4.4; amended by BA decision at GATE-02
+      review, 2026-09-30
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-007
+    name: Leave type management
+    description: Admins configure leave types, each with its own eligibility rule (gender), entitlement
+      rule (base days, and N years of service per extra day) and documentation requirements.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.5; amended by BA decision at GATE-02
+      review, 2026-09-30
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-008
+    name: Role-based access
+    description: 'Access rights depend on the role: Employee, Project Manager, Line Manager, Admin/HR.'
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.6, 5
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-009
+    name: Role-specific action dashboards
+    description: Project Managers and Line Managers have dedicated dashboards that show by default only
+      the requests requiring their action, with filters for request type, employee name, date and request
+      status.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.7
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-010
+    name: Leave statistics reporting
+    description: HR and Line Managers can view leave statistics, with leave usage summarised by unit,
+      department or the entire company. A Line Manager sees their own unit only.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.7; amended by BA decision at GATE-02
+      review, 2026-09-30
+    priority: MEDIUM
+    baseline: TO_BE
+  - id: REQ-011
+    name: Card scanner integration
+    description: The system fetches check-in and check-out times from the existing card scanner system.
+      Processing logic of scanner data is out of scope.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.8, 6
+    priority: MEDIUM
+    baseline: TO_BE
+  - id: REQ-012
+    name: Multinational organisational structure
+    description: The organisational structure reflects offices in multiple cities across several countries,
+      enabling role-based access and reporting by country, city or office.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.8
+    priority: MEDIUM
+    baseline: TO_BE
+  - id: REQ-013
+    name: Scale and concurrency
+    description: The system supports up to 33,000 users with performance and reliability under heavy usage,
+      and handles concurrent submissions without delay.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §4.8, 5
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-014
+    name: Web-based and mobile-responsive
+    description: The system is web-based and mobile-responsive.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §5
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-015
+    name: Secure login and logout
+    description: Secure login and logout for all user roles, through the company's single sign-on.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §5; amended by BA decision at GATE-02
+      review, 2026-09-30
+    priority: HIGH
+    baseline: TO_BE
+  - id: REQ-016
+    name: Automated, configurable notification emails
+    description: 'Notification emails are automated and configurable. Workflow emails: submission to the
+      selected Project Manager; confirmation to the Line Manager; denial, approval and rejection to the
+      employee who submitted the request.'
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §5; amended by BA decision at GATE-02
+      review, 2026-09-30
+    priority: MEDIUM
+    baseline: TO_BE
+  - id: REQ-017
+    name: Localisation
+    description: English only. No other language is needed.
+    source: URS v1.0 (Leave_Request_User_Requirement_Spec.docx) §6; amended by BA decision at GATE-02
+      review, 2026-09-30
+    priority: LOW
+    baseline: TO_BE
+  - id: REQ-018
+    name: Cancel a leave request
+    description: An employee can cancel a leave request as long as the Line Manager has not approved it.
+    source: BA decision at GATE-02 review, 2026-09-30
+    priority: MEDIUM
+    baseline: TO_BE
+  - id: REQ-019
+    name: HR system as source of employee and organisation data
+    description: Employees, the organisational structure, project teams, line-manager assignments, role
+      assignments and public holidays come from the existing HR system.
+    source: BA decision at GATE-02 review, 2026-09-30
+    priority: HIGH
+    baseline: TO_BE

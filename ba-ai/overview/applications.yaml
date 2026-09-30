@@ -2,9 +2,20 @@ meta:
   artifact_type: catalog
   catalog: applications
   title: Applications
-  status: DRAFT
+  status: APPROVED
   baseline: TO_BE
   origin: AI
   review:
-    GATE-02: NOT_REQUESTED
-items: []
+    GATE-02: APPROVED
+items:
+  - id: APP-001
+    name: Leave Request Management Web Application
+    type: WEB
+    description: Web-based, mobile-responsive application with role-specific screens for employees, project
+      managers, line managers and Admin/HR.
+    actors:
+      - ACT-001
+      - ACT-002
+      - ACT-003
+      - ACT-004
+    baseline: TO_BE

@@ -1,0 +1,14 @@
+{
+  "gate": "GATE-04",
+  "subject": "UC-001",
+  "requests": [
+    {
+      "n": 1,
+      "requested_at": "2026-09-30T09:59:29Z",
+      "artifacts": {
+        "ui/prototypes/UC-001/": "6da14e137ff4fa0a"
+      },
+      "summary": null
+    }
+  ]
+}

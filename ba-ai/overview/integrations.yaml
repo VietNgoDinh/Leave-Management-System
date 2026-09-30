@@ -2,9 +2,49 @@ meta:
   artifact_type: catalog
   catalog: integrations
   title: Integrations
-  status: DRAFT
+  status: APPROVED
   baseline: TO_BE
   origin: AI
   review:
-    GATE-02: NOT_REQUESTED
-items: []
+    GATE-02: APPROVED
+items:
+  - id: INT-001
+    name: Card scanner attendance data
+    direction: INBOUND
+    purpose: Fetch employees' check-in and check-out times to determine off-work days for the weekly notification.
+      Scanner processing logic is out of scope; only the provided data is used.
+    owner: Client — existing card scanner system
+    entities:
+      - ENT-009
+    protocol: Data comes from an external system. Interface not specified yet (Q-012).
+    baseline: TO_BE
+  - id: INT-002
+    name: Notification email delivery
+    direction: OUTBOUND
+    purpose: 'Send automated, configurable notification emails: submission to the selected Project Manager;
+      confirmation to the Line Manager; denial, approval and rejection to the requesting employee; and
+      the weekly attendance notification.'
+    owner: Mail service not defined yet (Q-013)
+    protocol: Not defined yet (Q-013)
+    baseline: TO_BE
+  - id: INT-003
+    name: HR system master data
+    direction: INBOUND
+    purpose: Provide employees, the organisational structure, project teams, line-manager assignments,
+      role assignments and the public holidays of each country. This system does not maintain that data.
+    owner: Client — existing HR system
+    entities:
+      - ENT-001
+      - ENT-002
+      - ENT-003
+      - ENT-010
+    protocol: Not specified yet (Q-015)
+    baseline: TO_BE
+  - id: INT-004
+    name: Company single sign-on
+    direction: BIDIRECTIONAL
+    purpose: Authenticate users. All roles sign in and out through the company's single sign-on; this
+      system manages no passwords.
+    owner: Client — company identity provider
+    protocol: Not specified yet; to be set in the technical baseline
+    baseline: TO_BE

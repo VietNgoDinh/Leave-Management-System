@@ -287,7 +287,7 @@ def cmd_sync(args) -> int:
     c = run_sync()
     print(f"synced: {c['docs']} documents, {c['catalogs']} catalogs updated; backlog "
           f"{'updated' if c['backlog'] else 'unchanged'}; state {'updated' if c['state'] else 'unchanged'}; "
-          f"graph {'rebuilt' if c['graph'] else 'unchanged'}; validation {c['errors']} errors, {c['warnings']} warnings")
+          f"graph {'rebuilt' if c['graph'] else 'unchanged'}; {c['views']} views updated; validation {c['errors']} errors, {c['warnings']} warnings")
     return 0
 
 

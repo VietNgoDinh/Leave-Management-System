@@ -5,4 +5,554 @@ meta:
   status: DRAFT
   baseline: TO_BE
   origin: AI
-items: []
+items:
+  - id: Q-001
+    question: Which policy rules can a request violate and still be submitted (exceeding the entitlement,
+      missing a required document, not eligible for the leave type)? Is the date window (future, or past
+      within the current month) a hard block or also a reviewable violation?
+    reason: The URS allows policy-violating requests but does not say which rules are soft and which are
+      hard.
+    impact_if_unanswered: Validation for submitting a request cannot be specified; blocking and flagging
+      behaviour would be guessed.
+    target_stakeholder: BUSINESS
+    priority: HIGH
+    status: ANSWERED
+    related:
+      - BR-002
+      - BR-001
+      - UC-001
+    baseline: TO_BE
+    answer: Exceeding the entitlement can still be submitted. The date window is a hard block. A missing
+      required document and a leave type the employee is not eligible for also block submission.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-002
+    question: What happens to a request that is not confirmed or approved by the end of the month of the
+      leave start date? May a request for a later month be reviewed before that month starts?
+    reason: The URS sets the deadline but not the consequence of missing it, and 'within the same month'
+      can be read as a window or as a deadline.
+    impact_if_unanswered: Request lifecycle, reviewer dashboards and notifications stay incomplete.
+    target_stakeholder: BUSINESS
+    priority: HIGH
+    status: ANSWERED
+    related:
+      - BR-008
+      - ENT-006
+      - UC-004
+      - UC-005
+    baseline: TO_BE
+    answer: A request that is not confirmed or approved by the end of the month of the leave start date
+      is cancelled. A request for a later month can be reviewed at the end of that month; it does not
+      need to be reviewed before that month starts.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-003
+    question: Who confirms a request from an employee who belongs to no project?
+    reason: The employee selects the confirming Project Manager among those of their own projects; an
+      employee without a project has none to select.
+    impact_if_unanswered: Such an employee could not submit a leave request.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: ANSWERED
+    related:
+      - ENT-003
+      - BR-006
+      - UC-001
+      - UC-004
+      - BR-015
+      - BR-021
+    baseline: TO_BE
+    answer: The employee selects which Project Manager confirms their request, among the Project Managers
+      of the projects they belong to. For an employee who belongs to no project, the Line Manager is the
+      only approver and no confirmation is needed.
+    answer_source: BA (vietngo), 2026-09-30
+  - id: Q-004
+    question: 'Where do employees, the organisational structure, project teams, line-manager assignments
+      and role assignments come from: an existing HR system, an import, or maintenance inside this system?
+      How do country/city/office relate to unit/department?'
+    reason: The URS needs this data but names no source and no use case to maintain it.
+    impact_if_unanswered: The data model ownership is unclear and use cases for maintaining this data
+      may be missing.
+    target_stakeholder: DATA
+    priority: HIGH
+    status: ANSWERED
+    related:
+      - ENT-002
+      - ENT-001
+      - ENT-003
+      - REQ-012
+    baseline: TO_BE
+    answer: All of this data comes from an existing HR system.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-005
+    question: 'How do users sign in: the company''s single sign-on / identity provider, or accounts managed
+      by this system?'
+    reason: The URS only requires secure login and logout.
+    impact_if_unanswered: Security rules and any sign-in use case cannot be defined; it also decides whether
+      account management is in scope.
+    target_stakeholder: SECURITY
+    priority: HIGH
+    status: ANSWERED
+    related:
+      - REQ-015
+    baseline: TO_BE
+    answer: Users sign in with the company's single sign-on.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-006
+    question: 'For the entitlement import: what is the file format, and what does the annual refresh do
+      to unused entitlement and to requests still pending? Does the system calculate seniority-based entitlement,
+      or is it only imported? Do the rules differ per country?'
+    reason: The URS says entitlements are imported yearly and vary by seniority, gender and government
+      regulations, without details.
+    impact_if_unanswered: The import use case and the entitlement check on submission cannot be specified.
+    target_stakeholder: BUSINESS
+    priority: HIGH
+    status: ANSWERED
+    related:
+      - UC-006
+      - BR-012
+      - BR-003
+      - ENT-005
+    baseline: TO_BE
+    answer: 'No entitlement amounts are imported: the system calculates every entitlement from the leave
+      type rules, so the yearly import is not needed. After the annual refresh, the new entitlements are
+      the baseline for requests still pending. The rules do not differ per country.'
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-007
+    question: 'Which days count as working days when leave is counted and when the weekly notification
+      determines absences: do weekends and public holidays (which differ per country) count?'
+    reason: Leave is counted in half days, but the working-day calendar is not defined.
+    impact_if_unanswered: The entitlement check and the weekly notification would be wrong around weekends
+      and public holidays.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: ANSWERED
+    related:
+      - ENT-006
+      - ENT-005
+      - UC-001
+      - UC-008
+      - BR-010
+      - BR-022
+    baseline: TO_BE
+    answer: 'Leave is counted in half days, with three options: All day, Morning, Afternoon. Weekends
+      and public holidays are not counted as working days.'
+    answer_source: BA (vietngo), 2026-09-30
+  - id: Q-008
+    question: Can an employee cancel or withdraw a request, and in which statuses (pending, approved)?
+    reason: The URS covers only submission, review and resubmission.
+    impact_if_unanswered: The request lifecycle may miss a state and a use case.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: ANSWERED
+    related:
+      - ENT-006
+      - BP-001
+    baseline: TO_BE
+    answer: An employee can cancel a leave request as long as the Line Manager has not approved it yet.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-009
+    question: Who approves a Line Manager's own request, and what happens when the Project Manager and
+      the Line Manager of a request are the same person?
+    reason: The URS defines auto-confirmation only for Project Managers' own requests.
+    impact_if_unanswered: A reviewer could end up deciding on their own request.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: ANSWERED
+    related:
+      - BR-007
+      - BR-006
+      - UC-005
+    baseline: TO_BE
+    answer: A Line Manager does not have to submit leave requests. A Line Manager manages the Business
+      Unit, not a project, so they can never be a Project Manager.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-010
+    question: Are Admin and HR one role or two? Which managers see reports (Project Managers, Line Managers,
+      both), and is what they see limited to their own unit, office or country?
+    reason: The URS uses 'Admin', 'HR', 'Admin/HR' and 'Managers' without defining them precisely.
+    impact_if_unanswered: Permissions for leave type management, import and reporting cannot be finalised.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: ANSWERED
+    related:
+      - ACT-004
+      - UC-009
+      - BR-014
+    baseline: TO_BE
+    answer: Admin and HR are one role. A manager can only see reports for their own unit.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-011
+    question: 'For the weekly notification: which period does it cover, which days are working days (weekends,
+      public holidays per country), and does a ''valid leave request'' mean approved only or any submitted
+      request?'
+    reason: The URS gives the schedule and the off-work definition only.
+    impact_if_unanswered: The notification content would be wrong for some employees.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: ANSWERED
+    related:
+      - UC-008
+      - BR-011
+      - BR-010
+    baseline: TO_BE
+    answer: The period is the last week. A valid leave request means any submitted request.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-012
+    question: How is card scanner data made available by the external system (API, file, database), how
+      often, and which identifier links a scanner record to an employee?
+    reason: The URS states the integration but no interface.
+    impact_if_unanswered: The integration and the weekly notification job cannot be designed.
+    target_stakeholder: INTEGRATION
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - INT-001
+      - ENT-009
+    baseline: TO_BE
+    answer: The data comes from an external system.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-013
+    question: Which mail service is used? What must be configurable in the notification emails, and by
+      whom? Are emails also sent when a request is cancelled, by the employee or automatically?
+    reason: The email events for submission and decisions are defined; the mail service is not, and the
+      URS asks for configurable emails without detail.
+    impact_if_unanswered: The email integration cannot be designed and cancellation would send no email.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - INT-002
+      - REQ-016
+      - BR-018
+      - UC-010
+      - UC-011
+    baseline: TO_BE
+    answer: The mail service is not defined yet. Submission sends an email to the Project Manager; confirmation
+      sends one to the Line Manager; denial, approval and rejection send one to the employee who submitted
+      the request.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-014
+    question: Which languages are needed at launch, if any?
+    reason: The URS says localisation 'if needed'.
+    impact_if_unanswered: UI texts would be specified in one language only.
+    target_stakeholder: BUSINESS
+    priority: LOW
+    status: ANSWERED
+    related:
+      - REQ-017
+    baseline: TO_BE
+    answer: English only.
+    answer_source: BA (vietngo), GATE-02 review, 2026-09-30
+  - id: Q-015
+    question: How is HR system data made available (API, file, database), and how often can it be fetched?
+    reason: The HR system is the source of employees, organisation, project teams, roles and public holidays,
+      but no interface is defined.
+    impact_if_unanswered: The HR integration and the services that depend on employee data cannot be designed.
+    target_stakeholder: INTEGRATION
+    priority: HIGH
+    status: OPEN
+    related:
+      - INT-003
+      - ENT-001
+      - ENT-002
+      - ENT-003
+      - ENT-010
+    baseline: TO_BE
+    answer: 'Proposed in the technical baseline (pending GATE-09): HR data is copied into read-only tables
+      by a scheduled sync, not read on demand.'
+    answer_source: Technical baseline proposal, 2026-09-30
+    remaining: 'Not answered yet: the interface the HR system offers, and how often data can be fetched.'
+  - id: Q-016
+    question: How does an employee who joins during the year get a leave entitlement?
+    reason: Entitlements are calculated at the automatic refresh at the start of the year and do not change
+      during the year; a new joiner has none until the next refresh.
+    impact_if_unanswered: An employee who joins during the year would have no entitlement until the next
+      refresh.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - UC-006
+      - BR-012
+      - ENT-005
+    baseline: TO_BE
+    answer: The annual refresh starts automatically at the start of the year. An entitlement does not
+      change when seniority changes during the year.
+    answer_source: BA (vietngo), 2026-09-30
+    remaining: 'Not answered yet: employees who join during the year.'
+  - id: Q-017
+    question: 'What does the entitlement rule of a seniority-based leave type look like (for example:
+      base days plus one day per N years of service)?'
+    reason: The system calculates entitlements from rules that Admin/HR configure per leave type; the
+      shape of those rules is not defined.
+    impact_if_unanswered: The leave type configuration screen and the entitlement calculation cannot be
+      specified.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: ANSWERED
+    related:
+      - UC-007
+      - UC-006
+      - BR-003
+      - ENT-004
+    baseline: TO_BE
+    answer: Base days plus one day per N years of service.
+    answer_source: BA (vietngo), 2026-09-30
+  - id: Q-018
+    question: 'Where does the public holiday calendar of each country come from: the HR system, or maintained
+      in this system by Admin/HR? Are weekends Saturday and Sunday in every country?'
+    reason: Weekends and public holidays are not working days, and the offices are in several countries,
+      but no source for the calendar is named.
+    impact_if_unanswered: Leave counting and the weekly notification cannot tell working days apart, and
+      a use case for maintaining holidays may be missing.
+    target_stakeholder: BUSINESS
+    priority: HIGH
+    status: ANSWERED
+    related:
+      - ENT-010
+      - BR-022
+      - UC-001
+      - UC-008
+    baseline: TO_BE
+    answer: Public holidays come from the HR system.
+    answer_source: BA (vietngo), 2026-09-30
+  - id: Q-019
+    question: 'In which time zone are the current month, the end of the month and Friday evaluated: one
+      company time zone, or the local time of each employee''s office?'
+    reason: The date window, the review deadline and the weekly notification depend on calendar boundaries,
+      and the offices are in several countries.
+    impact_if_unanswered: Requests near a month boundary could be blocked or cancelled at the wrong moment
+      for some offices.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - BR-001
+      - BR-008
+      - BR-011
+      - UC-001
+      - UC-008
+      - UC-011
+    baseline: TO_BE
+  - id: Q-020
+    question: 'How are the documents a leave type can require defined: does Admin/HR type each document
+      name on the leave type, or choose from a fixed list of document types kept elsewhere in system settings?
+      If it is a fixed list, who maintains it?'
+    reason: BR-005 says required documents are defined in system settings and ENT-004 holds them as a
+      list, but no entity or use case defines a list of document types.
+    impact_if_unanswered: The required documents field of the leave type form (UC-007) and the upload
+      step of the request form (UC-001) cannot be finalised.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - UC-007
+      - UC-001
+      - BR-005
+      - ENT-004
+      - ENT-007
+    baseline: TO_BE
+  - id: Q-021
+    question: When does a change to a leave type take effect? (a) Does changing the base days or the years
+      of service per extra day recalculate the entitlements of the current year, or apply from the next
+      annual refresh? (b) Do employees get an entitlement for a leave type created during the year, before
+      the next refresh? (c) Are requests already submitted checked again when the gender eligibility or
+      the required documents change?
+    reason: BR-012 calculates entitlements at the start of the year and says they do not change when seniority
+      changes. Nothing says what happens when Admin/HR changes or adds a leave type during the year.
+    impact_if_unanswered: The leave type form cannot tell Admin/HR what saving a change does, and the
+      save behaviour and the entitlement calculation cannot be specified.
+    target_stakeholder: BUSINESS
+    priority: HIGH
+    status: OPEN
+    related:
+      - UC-007
+      - UC-006
+      - BR-012
+      - BR-003
+      - BR-004
+      - BR-005
+      - ENT-004
+      - ENT-005
+    baseline: TO_BE
+  - id: Q-022
+    question: 'Which limits apply to a leave type? Must the name be unique, and how long can it be? Which
+      range can the base days take: can it be 0 or a half day, and is there a maximum? Does a leave type
+      such as Unpaid Leave have no entitlement limit at all? Which range can N (years of service per extra
+      day) take?'
+    reason: ENT-004 lists the attributes of a leave type but gives no limits, and every leave type has
+      base days although some suggested types may have no yearly limit.
+    impact_if_unanswered: The validations of the leave type form cannot be finalised. A leave type without
+      a limit would have to be given 0 base days, so every request of that type would be flagged as exceeding
+      the entitlement (BR-002).
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - UC-007
+      - ENT-004
+      - BR-003
+      - BR-002
+    baseline: TO_BE
+  - id: Q-023
+    question: 'Which gender values does the HR system provide for an employee, and which eligibility options
+      must a leave type offer: all employees, female only, male only, or others?'
+    reason: ENT-004.gender_eligibility and ENT-002.gender are enums without defined values. BR-004 names
+      only Maternity Leave for female employees.
+    impact_if_unanswered: The options of the eligibility field on the leave type form (UC-007) and the
+      eligibility check on submission (UC-001) cannot be finalised.
+    target_stakeholder: DATA
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - UC-007
+      - UC-001
+      - BR-004
+      - ENT-004
+      - ENT-002
+      - INT-003
+    baseline: TO_BE
+  - id: Q-024
+    question: 'Does a reviewer give a reason when denying or rejecting a leave request: mandatory, optional
+      or not at all? May a reviewer add a comment when confirming or approving? Who sees the reason or
+      comment: the employee, the next reviewer, the notification email?'
+    reason: The Review Decision (ENT-008) holds no reason or comment, but an employee is expected to modify
+      and resubmit a request after a denial or rejection (BR-009) and would need to know what to change.
+    impact_if_unanswered: The deny and reject dialogs, the Review Decision data and the denial and rejection
+      emails cannot be finalised. Without a reason an employee does not know what to change before resubmitting.
+    target_stakeholder: BUSINESS
+    priority: HIGH
+    status: OPEN
+    related:
+      - UC-004
+      - UC-005
+      - ENT-008
+      - BR-009
+      - BR-018
+    baseline: TO_BE
+  - id: Q-025
+    question: On the reviewer dashboards, does the request type filter mean the leave type? Does the date
+      filter apply to the leave dates or to the date the request was submitted?
+    reason: URS §4.7 lists filters for request type, employee name, date and request status without saying
+      what a request type is or which date is meant. A leave request holds a leave type, the leave dates
+      and a submission date.
+    impact_if_unanswered: The dashboard filters of the Project Manager and the Line Manager could filter
+      on the wrong attribute.
+    target_stakeholder: BUSINESS
+    priority: LOW
+    status: OPEN
+    related:
+      - UC-004
+      - UC-005
+      - REQ-009
+    baseline: TO_BE
+  - id: Q-026
+    question: How does the day part apply to a request that spans several days? Can Morning or Afternoon
+      be chosen only for a single day, does it apply to every day of the range, or can the first and the
+      last day each have their own day part (for example from Monday afternoon to Wednesday morning)?
+    reason: A leave request holds one day part (ENT-006.day_part) and its description leaves the multi-day
+      case to the use case specification. No rule says which combinations an employee may request.
+    impact_if_unanswered: The request form, the count of days requested and the entitlement check cannot
+      be finalised. If the first and last day need their own day part, the leave request needs a second
+      day part attribute.
+    target_stakeholder: BUSINESS
+    priority: HIGH
+    status: OPEN
+    related:
+      - UC-001
+      - UC-003
+      - BR-017
+      - ENT-006
+    baseline: TO_BE
+  - id: Q-027
+    question: 'When the system checks whether a request exceeds the entitlement, which of the employee''s
+      other requests of the same leave type count as already used: approved requests only, or also requests
+      pending confirmation or approval? Against which year''s entitlement is a request counted when its
+      dates span two years?'
+    reason: BR-002 flags a request that exceeds the entitlement, and an entitlement is an amount per leave
+      type and year (ENT-005), but no rule says what is deducted from it.
+    impact_if_unanswered: The remaining balance shown on the request form and the Exceeds entitlement
+      flag would be guessed, so requests could be flagged or not flagged wrongly.
+    target_stakeholder: BUSINESS
+    priority: HIGH
+    status: OPEN
+    related:
+      - UC-001
+      - UC-003
+      - BR-002
+      - ENT-005
+      - ENT-006
+    baseline: TO_BE
+  - id: Q-028
+    question: Can an employee submit a leave request whose dates overlap another of their own requests
+      that is pending or approved? If not, is it blocked, or accepted and flagged for review?
+    reason: The blocking rules are the date window, a missing required document and an ineligible leave
+      type (BR-001, BR-005, BR-004). Overlapping requests are not mentioned.
+    impact_if_unanswered: An employee could request the same day twice, the same leave would be counted
+      twice against the entitlement, and reviewers would see duplicates.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - UC-001
+      - UC-003
+      - ENT-006
+    baseline: TO_BE
+  - id: Q-029
+    question: 'How many files can an employee upload for one required document: exactly one, or several
+      (for example a certificate photographed page by page)? Can an employee attach a document when the
+      leave type requires none?'
+    reason: BR-005 says a leave type may require documents and a supporting document records which required
+      document it satisfies (ENT-007.document_type), but not how many files are allowed or whether optional
+      documents exist.
+    impact_if_unanswered: The upload fields of the request form and the missing-document check cannot
+      be finalised.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - UC-001
+      - UC-003
+      - BR-005
+      - ENT-007
+    baseline: TO_BE
+  - id: Q-030
+    question: When an employee opens one of their own leave requests read-only, do they see the supporting
+      documents uploaded with it and can they download them?
+    reason: UC-002 reads the leave request, its review decisions and the leave type (ENT-006, ENT-008,
+      ENT-004) but not the supporting documents (ENT-007). The security rules allow an employee to access
+      their own documents, and the reviewer sees them when reviewing the request.
+    impact_if_unanswered: The request details screen of UC-002 shows no documents, so an employee cannot
+      check what they uploaded without starting to modify the request. Showing them adds ENT-007 to the
+      entities UC-002 reads, which is a change to the use case in the overview.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - UC-002
+      - ENT-007
+      - BR-005
+    baseline: TO_BE
+  - id: Q-031
+    question: 'When an employee requests leave that starts in the next year before the annual refresh
+      has run, no entitlement exists yet for that year. Is such a request checked against an entitlement
+      at all: flagged as exceeding (as if the entitlement were 0 days), checked against an estimated entitlement
+      for the next year, or not checked until the refresh?'
+    reason: BR-001 allows any future date, the entitlement is an amount per leave type and year (ENT-005)
+      and entitlements are calculated at the annual refresh at the start of the year (BR-012). The approved
+      functional UI of UC-001 shows "No entitlement on record" and counts 0 days when no entitlement exists,
+      so every request for the next year is flagged as Exceeds entitlement. The UC-001 prototype shows
+      this for a start date in January of the next year.
+    impact_if_unanswered: Every request for the next year that is submitted before the refresh would be
+      flagged for manual review (BR-002) and the employee would be warned that it exceeds the entitlement,
+      although it may be within next year's entitlement.
+    target_stakeholder: BUSINESS
+    priority: MEDIUM
+    status: OPEN
+    related:
+      - UC-001
+      - UC-003
+      - UC-006
+      - BR-002
+      - BR-012
+      - ENT-005
+    baseline: TO_BE

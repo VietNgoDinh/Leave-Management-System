@@ -1,0 +1,19 @@
+{
+  "gate": "GATE-09",
+  "subject": "RUN-001",
+  "requests": [
+    {
+      "n": 1,
+      "requested_at": "2026-09-30T09:17:13Z",
+      "artifacts": {
+        "technical/architecture/architecture.md": "d9c60c8a3686fdc0",
+        "technical/architecture/services.yaml": "323403c639e75d15",
+        "technical/coding-rules/frontend.md": "29ffc42d1c17c1e8",
+        "technical/coding-rules/backend.md": "5f49c2161e151923",
+        "technical/security/security-rules.md": "fe7707b988ea8630",
+        "ui/design-system.md": "d629612859b7bacd"
+      },
+      "summary": null
+    }
+  ]
+}

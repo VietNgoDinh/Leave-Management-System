@@ -5,4 +5,96 @@ meta:
   status: DRAFT
   baseline: TO_BE
   origin: AI
-items: []
+items:
+  - id: SCR-001
+    name: Leave types
+    application: APP-001
+    route: /leave-types
+    purpose: Admin/HR sees every leave type with its eligibility, entitlement and documentation rules,
+      and starts creating or editing one.
+    actors:
+      - ACT-004
+    use_cases:
+      - UC-007
+    baseline: TO_BE
+  - id: SCR-002
+    name: Leave type form
+    application: APP-001
+    route: /leave-types/new and /leave-types/{leaveTypeId}/edit
+    purpose: 'Admin/HR creates a leave type or edits an existing one: name, gender eligibility, entitlement
+      rule (base days, years of service per extra day) and required documents.'
+    actors:
+      - ACT-004
+    use_cases:
+      - UC-007
+    baseline: TO_BE
+  - id: SCR-003
+    name: Review dashboard
+    application: APP-001
+    route: /reviews
+    purpose: The reviewer's dashboard. Lists the leave requests that need the signed-in reviewer's action
+      by default, with filters for leave type, employee name, leave dates and status, and opens a request
+      for review. Specified for the Project Manager in UC-004.
+    actors:
+      - ACT-002
+    use_cases:
+      - UC-004
+    baseline: TO_BE
+  - id: SCR-004
+    name: Review leave request
+    application: APP-001
+    route: /reviews/:requestId
+    purpose: Shows one leave request to its reviewer with its details, supporting documents and history,
+      and carries the decision buttons. Specified for the Project Manager, who confirms or denies, in
+      UC-004.
+    actors:
+      - ACT-002
+    use_cases:
+      - UC-004
+    baseline: TO_BE
+  - id: SCR-005
+    name: Leave request form
+    application: APP-001
+    route: /leave-requests/new
+    purpose: 'An employee fills in and submits a new leave request: leave type, dates, day part, the confirming
+      Project Manager and any documents the leave type requires. Shows the working days requested against
+      the entitlement, and warns before submitting a request that exceeds it.'
+    actors:
+      - ACT-001
+    use_cases:
+      - UC-001
+    baseline: TO_BE
+  - id: SCR-006
+    name: Leave request submitted
+    application: APP-001
+    route: /leave-requests/:requestId/submitted
+    purpose: 'Confirms to the employee that the leave request was submitted: what was requested, its status,
+      whether it is flagged as exceeding the entitlement, who reviews it next and by when.'
+    actors:
+      - ACT-001
+    use_cases:
+      - UC-001
+    baseline: TO_BE
+  - id: SCR-007
+    name: My leave requests
+    application: APP-001
+    route: /leave-requests
+    purpose: An employee sees all of their own leave requests with the current status of each, filters
+      them by leave type, status and leave dates, and opens one to see its details.
+    actors:
+      - ACT-001
+    use_cases:
+      - UC-002
+    baseline: TO_BE
+  - id: SCR-008
+    name: Leave request details
+    application: APP-001
+    route: /leave-requests/:requestId
+    purpose: 'Shows the employee one of their own leave requests read-only: what was requested, its current
+      status, what happens next and its review history. Carries the entry points to modify and resubmit
+      (UC-003) and to cancel (UC-010).'
+    actors:
+      - ACT-001
+    use_cases:
+      - UC-002
+    baseline: TO_BE

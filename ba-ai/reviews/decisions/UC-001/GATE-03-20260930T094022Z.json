@@ -1,0 +1,14 @@
+{
+  "gate": "GATE-03",
+  "gate_name": "UI_MARKDOWN_REVIEW",
+  "subject": "UC-001",
+  "decision": "APPROVED",
+  "reviewer": "vietngo",
+  "decided_at": "2026-09-30T09:40:22Z",
+  "comments": null,
+  "request_n": 1,
+  "artifacts": {
+    "ui/markdown/UC-001.md": "5c5d631a268e3644"
+  },
+  "source": "UserPromptSubmit hook (typed by the user)"
+}

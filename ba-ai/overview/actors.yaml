@@ -2,9 +2,46 @@ meta:
   artifact_type: catalog
   catalog: actors
   title: Actors
-  status: DRAFT
+  status: APPROVED
   baseline: TO_BE
   origin: AI
   review:
-    GATE-02: NOT_REQUESTED
-items: []
+    GATE-02: APPROVED
+items:
+  - id: ACT-001
+    name: Employee
+    type: HUMAN
+    description: Submits leave requests, views their status and can cancel them until they are approved.
+      Receives the weekly attendance notification.
+    baseline: TO_BE
+  - id: ACT-002
+    name: Project Manager
+    type: HUMAN
+    description: 'Confirms or denies the leave requests of project team members who selected them (review
+      step 1). Also an employee: their own requests are auto-confirmed.'
+    baseline: TO_BE
+  - id: ACT-003
+    name: Line Manager
+    type: HUMAN
+    description: Approves or rejects confirmed leave requests (review step 2). Manages a Business Unit,
+      not a project, so is never a Project Manager. Does not submit leave requests. Sees leave reports
+      for their own unit.
+    baseline: TO_BE
+  - id: ACT-004
+    name: Admin/HR
+    type: HUMAN
+    description: One role. Manages leave types with their entitlement rules. Views leave reports.
+    baseline: TO_BE
+  - id: ACT-005
+    name: Card Scanner System
+    type: SYSTEM
+    description: Existing time-tracking system that records check-in and check-out times. Provides attendance
+      data only.
+    baseline: TO_BE
+  - id: ACT-006
+    name: System Scheduler
+    type: SYSTEM
+    description: 'Time-based trigger inside the Leave Request Management System that starts scheduled
+      jobs: the weekly attendance notification, the month-end cancellation and the annual entitlement
+      refresh.'
+    baseline: TO_BE

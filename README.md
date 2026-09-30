@@ -54,6 +54,7 @@ Milestone 1 has no elicitation, overview or baseline engine, so the Spec Engine'
 | Backlog | `planning/backlog.yaml` — epics, each with its use cases | — |
 
 - Catalog items are added with `tools/ba catalog add <catalog> --data '{…}'`, which allocates the IDs. Required fields are in `tools/schemas/catalogs.yaml`.
+- The backlog and each catalog under `overview/` and `requirements/` has a readable view next to it, `<name>.view.md` (open it with the Markdown preview). `tools/ba sync` regenerates the views; the YAML stays the source of truth.
 - The Markdown documents need the frontmatter and headings listed in `tools/schemas/artifacts.yaml`. `tools/ba validate` reports what is missing.
 - Set the project name in `ba-ai/workflow/state.json` (`project.name`). The template starts with one run, RUN-001, in MODE_B (new product).
 - Put the product repositories next to this folder. List them in `ba-ai/workflow/repositories.yaml` and in `permissions.additionalDirectories` in `.claude/settings.json`.

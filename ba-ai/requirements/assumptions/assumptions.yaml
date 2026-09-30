@@ -5,4 +5,143 @@ meta:
   status: DRAFT
   baseline: TO_BE
   origin: AI
-items: []
+items:
+  - id: ASM-001
+    statement: A resubmitted request starts again at Project Manager confirmation.
+    reason: The URS says requests can be resubmitted after denial or rejection but not where they re-enter
+      the workflow.
+    status: OPEN
+    related:
+      - BR-009
+      - ENT-006
+    baseline: TO_BE
+  - id: ASM-002
+    statement: One responsive web application serves all roles through role-specific screens; there is
+      no separate native mobile or back-office application.
+    reason: The URS asks for a web-based, mobile-responsive system with role-specific screens.
+    status: OPEN
+    related:
+      - APP-001
+    baseline: TO_BE
+  - id: ASM-003
+    statement: Admin and HR are treated as one actor, Admin/HR.
+    reason: URS §4.6 defines a single 'Admin/HR' role. Confirmed by the BA at the GATE-02 review, 2026-09-30.
+    status: CONFIRMED
+    related:
+      - ACT-004
+    baseline: TO_BE
+  - id: ASM-004
+    statement: Requirement priorities were proposed during analysis; the URS states none.
+    reason: The requirements catalog needs a priority for each item.
+    status: OPEN
+    baseline: TO_BE
+  - id: ASM-005
+    statement: The leave request status names (PENDING_CONFIRMATION, PENDING_APPROVAL, DENIED, APPROVED,
+      REJECTED, CANCELLED) are proposed labels.
+    reason: The URS names the actions (confirm, deny, approve, reject) and gives 'pending, approved, denied'
+      only as examples.
+    status: OPEN
+    related:
+      - ENT-006
+    baseline: TO_BE
+  - id: ASM-006
+    statement: Sign-in and sign-out are handled by the company's single sign-on, so this system has no
+      sign-in use case of its own.
+    reason: Users sign in with the company's single sign-on (Q-005).
+    status: OPEN
+    related:
+      - REQ-015
+      - Q-005
+      - INT-004
+    baseline: TO_BE
+  - id: ASM-007
+    statement: A request can be reviewed at any time from submission up to the end of the month of the
+      leave start date.
+    reason: The BA said a request for a later month can be reviewed at the end of that month and need
+      not be reviewed before it starts; whether earlier review is allowed was not said.
+    status: OPEN
+    related:
+      - BR-008
+      - Q-002
+    baseline: TO_BE
+  - id: ASM-008
+    statement: The managers who see leave reports are Line Managers. Project Managers have no access to
+      reports.
+    reason: The BA said a manager sees reports for their own unit only, and only Line Managers manage
+      a unit.
+    status: OPEN
+    related:
+      - UC-009
+      - BR-014
+      - Q-010
+    baseline: TO_BE
+  - id: ASM-009
+    statement: '''The last week'' in the weekly notification is the week that ends on the Friday the notification
+      is sent.'
+    reason: The BA said the period is the last week without naming its first and last day.
+    status: OPEN
+    related:
+      - BR-011
+      - UC-008
+      - Q-011
+    baseline: TO_BE
+  - id: ASM-010
+    statement: The base days and N (years of service per extra day) are configured per leave type by Admin/HR.
+    reason: The system calculates entitlements as base days plus one day per N years of service and nothing
+      is imported; URS §4.5 lets Admins configure the rules of each leave type.
+    status: OPEN
+    related:
+      - ENT-004
+      - UC-007
+      - BR-003
+      - Q-017
+    baseline: TO_BE
+  - id: ASM-011
+    statement: UC-006 keeps its ID but changes from an import by Admin/HR to an automatic annual refresh
+      run by the system.
+    reason: The BA decided that no entitlement amounts are imported and that the refresh starts automatically
+      at the start of the year.
+    status: OPEN
+    related:
+      - UC-006
+      - Q-006
+      - Q-016
+    baseline: TO_BE
+  - id: ASM-012
+    statement: When a request skips confirmation (a Project Manager's own request, or an employee with
+      no project), the Line Manager receives the email that confirmation would send.
+    reason: The BA defined the email for confirmation but not for requests that reach the Line Manager
+      without one.
+    status: OPEN
+    related:
+      - BR-018
+      - BR-007
+      - BR-021
+    baseline: TO_BE
+  - id: ASM-013
+    statement: Weekends are Saturday and Sunday in every country.
+    reason: The BA said weekends are not working days and that public holidays come from the HR system,
+      but not which days are the weekend in each country.
+    status: OPEN
+    related:
+      - BR-022
+      - Q-018
+      - ENT-010
+    baseline: TO_BE
+  - id: ASM-014
+    statement: The company single sign-on supports OpenID Connect.
+    reason: The technical baseline signs users in with OpenID Connect; the protocol of the company identity
+      provider was not given.
+    status: OPEN
+    related:
+      - INT-004
+      - Q-005
+    baseline: TO_BE
+  - id: ASM-015
+    statement: The system runs as containers on a Kubernetes platform chosen by the client, with managed
+      PostgreSQL and S3-compatible object storage available.
+    reason: The URS names no hosting environment; the BA delegated the technology choices.
+    status: OPEN
+    related:
+      - REQ-013
+    baseline: TO_BE

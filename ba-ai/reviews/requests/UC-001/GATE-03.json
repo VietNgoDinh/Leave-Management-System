@@ -1,0 +1,14 @@
+{
+  "gate": "GATE-03",
+  "subject": "UC-001",
+  "requests": [
+    {
+      "n": 1,
+      "requested_at": "2026-09-30T09:30:05Z",
+      "artifacts": {
+        "ui/markdown/UC-001.md": "5c5d631a268e3644"
+      },
+      "summary": null
+    }
+  ]
+}

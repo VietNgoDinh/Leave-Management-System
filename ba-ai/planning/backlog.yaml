@@ -2,4 +2,217 @@ meta:
   title: Delivery Backlog
   note: Status fields are maintained by `tools/ba sync`. The BA edits priority, status (BACKLOG/READY/BLOCKED)
     and dependencies.
-epics: []
+epics:
+  - epic_id: EPIC-001
+    name: Leave request lifecycle
+    priority: HIGH
+    status: READY
+    use_cases:
+      - use_case_id: UC-001
+        priority: HIGH
+        status: IN_PROGRESS
+        dependencies: []
+        name: Submit leave request
+        application: APP-001
+        actor: ACT-001
+        complexity: HIGH
+        risk_level: MEDIUM
+        current_step: GATE-04
+        workflow_note: waiting for human review (GATE-04)
+        ui_status: WAITING_FOR_REVIEW
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+        ui_artifact: ba-ai/ui/markdown/UC-001.md
+      - use_case_id: UC-002
+        priority: HIGH
+        status: IN_PROGRESS
+        dependencies: []
+        name: View my leave requests
+        application: APP-001
+        actor: ACT-001
+        complexity: LOW
+        risk_level: LOW
+        current_step: GATE-03
+        workflow_note: waiting for human review (GATE-03)
+        ui_status: WAITING_FOR_REVIEW
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+        ui_artifact: ba-ai/ui/markdown/UC-002.md
+      - use_case_id: UC-004
+        priority: HIGH
+        status: IN_PROGRESS
+        dependencies: []
+        name: Confirm or deny leave request
+        application: APP-001
+        actor: ACT-002
+        complexity: MEDIUM
+        risk_level: MEDIUM
+        current_step: GATE-03
+        workflow_note: waiting for human review (GATE-03)
+        ui_status: WAITING_FOR_REVIEW
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+        ui_artifact: ba-ai/ui/markdown/UC-004.md
+      - use_case_id: UC-005
+        priority: HIGH
+        status: READY
+        dependencies:
+          - UC-004
+        name: Approve or reject leave request
+        application: APP-001
+        actor: ACT-003
+        complexity: MEDIUM
+        risk_level: MEDIUM
+        current_step: BLOCKED
+        workflow_note: depends on UC-004 (GATE-05 is NOT_REQUESTED)
+        ui_status: NOT_STARTED
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+      - use_case_id: UC-003
+        priority: MEDIUM
+        status: READY
+        dependencies:
+          - UC-001
+        name: Modify and resubmit leave request
+        application: APP-001
+        actor: ACT-001
+        complexity: MEDIUM
+        risk_level: MEDIUM
+        current_step: BLOCKED
+        workflow_note: depends on UC-001 (GATE-05 is NOT_REQUESTED)
+        ui_status: NOT_STARTED
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+      - use_case_id: UC-010
+        priority: MEDIUM
+        status: READY
+        dependencies:
+          - UC-002
+        name: Cancel leave request
+        application: APP-001
+        actor: ACT-001
+        complexity: LOW
+        risk_level: LOW
+        current_step: BLOCKED
+        workflow_note: depends on UC-002 (GATE-05 is NOT_REQUESTED)
+        ui_status: NOT_STARTED
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+      - use_case_id: UC-011
+        priority: MEDIUM
+        status: READY
+        dependencies:
+          - UC-002
+        name: Cancel unreviewed leave requests at month end
+        application: APP-001
+        actor: ACT-006
+        complexity: LOW
+        risk_level: MEDIUM
+        current_step: BLOCKED
+        workflow_note: depends on UC-002 (GATE-05 is NOT_REQUESTED)
+        ui_status: NOT_STARTED
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+  - epic_id: EPIC-002
+    name: Leave policy and entitlements
+    priority: HIGH
+    status: READY
+    use_cases:
+      - use_case_id: UC-007
+        priority: HIGH
+        status: IN_PROGRESS
+        dependencies: []
+        name: Manage leave types
+        application: APP-001
+        actor: ACT-004
+        complexity: MEDIUM
+        risk_level: MEDIUM
+        current_step: GATE-03
+        workflow_note: waiting for human review (GATE-03)
+        ui_status: WAITING_FOR_REVIEW
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+        ui_artifact: ba-ai/ui/markdown/UC-007.md
+      - use_case_id: UC-006
+        priority: HIGH
+        status: READY
+        dependencies:
+          - UC-007
+        name: Refresh annual leave entitlements
+        application: APP-001
+        actor: ACT-006
+        complexity: HIGH
+        risk_level: HIGH
+        current_step: BLOCKED
+        workflow_note: depends on UC-007 (GATE-05 is NOT_REQUESTED)
+        ui_status: NOT_STARTED
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+  - epic_id: EPIC-003
+    name: Attendance notification and reporting
+    priority: MEDIUM
+    status: BACKLOG
+    use_cases:
+      - use_case_id: UC-008
+        priority: MEDIUM
+        status: BACKLOG
+        dependencies: []
+        name: Send weekly attendance notification
+        application: APP-001
+        actor: ACT-006
+        complexity: MEDIUM
+        risk_level: MEDIUM
+        current_step: NOT_STARTED
+        workflow_note: backlog status is BACKLOG — the BA sets it to READY when it can be specified
+        ui_status: NOT_STARTED
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED
+      - use_case_id: UC-009
+        priority: MEDIUM
+        status: BACKLOG
+        dependencies: []
+        name: View leave reports
+        application: APP-001
+        actor:
+          - ACT-004
+          - ACT-003
+        complexity: MEDIUM
+        risk_level: MEDIUM
+        current_step: NOT_STARTED
+        workflow_note: backlog status is BACKLOG — the BA sets it to READY when it can be specified
+        ui_status: NOT_STARTED
+        spec_status: NOT_STARTED
+        technical_review_status: NOT_STARTED
+        coding_status: NOT_STARTED
+        testing_status: NOT_STARTED
+        documentation_status: NOT_STARTED

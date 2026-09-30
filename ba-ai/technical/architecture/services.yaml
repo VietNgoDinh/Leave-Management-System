@@ -2,9 +2,67 @@ meta:
   artifact_type: catalog
   catalog: services
   title: Services
-  status: DRAFT
+  status: APPROVED
   baseline: TO_BE
   origin: AI
   review:
-    GATE-09: NOT_REQUESTED
-items: []
+    GATE-09: APPROVED
+items:
+  - id: SVC-001
+    name: Leave Request Service
+    responsibility: 'Leave requests, supporting documents and review decisions: submission checks, the
+      request lifecycle, confirmation, approval, cancellation and the month-end cancellation job.'
+    repository: REPO-001
+    entities:
+      - ENT-006
+      - ENT-007
+      - ENT-008
+    baseline: TO_BE
+  - id: SVC-002
+    name: Leave Policy Service
+    responsibility: Leave types with their eligibility, entitlement and documentation rules; leave entitlements
+      and the annual entitlement refresh job.
+    repository: REPO-001
+    entities:
+      - ENT-004
+      - ENT-005
+    baseline: TO_BE
+  - id: SVC-003
+    name: Organisation Service
+    responsibility: Read-only copy of HR data (employees, organisational units, projects, public holidays),
+      kept current by a scheduled sync. Resolves the signed-in user to an employee with roles, and answers
+      working-day questions for other services.
+    repository: REPO-001
+    integrations:
+      - INT-003
+      - INT-004
+    entities:
+      - ENT-001
+      - ENT-002
+      - ENT-003
+      - ENT-010
+    baseline: TO_BE
+  - id: SVC-004
+    name: Attendance Service
+    responsibility: Fetches check-in and check-out data from the card scanner system, determines off-work
+      days and runs the weekly attendance notification job.
+    repository: REPO-001
+    integrations:
+      - INT-001
+    entities:
+      - ENT-009
+    baseline: TO_BE
+  - id: SVC-005
+    name: Notification Service
+    responsibility: Builds and sends notification emails requested by the other services, through an outbox
+      so that no email is lost or sent twice.
+    repository: REPO-001
+    integrations:
+      - INT-002
+    baseline: TO_BE
+  - id: SVC-006
+    name: Reporting Service
+    responsibility: Read-only leave statistics by unit, department or company, scoped to what the user
+      may see.
+    repository: REPO-001
+    baseline: TO_BE

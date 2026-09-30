@@ -3,12 +3,14 @@ from __future__ import annotations
 
 from typing import Callable, Dict, List, Optional
 
-from . import gates, graph, paths, schema, store
+from . import gates, graph, paths, schema, store, views
 from .engine import GateCache, derive_run, derive_uc
 from .ids import as_list, prefix_of
 from .store import BAError
 from .validate import errors_by_rel, validate
 from .workspace import Doc, Workspace
+
+LATER_STAGE_FIELDS = ("technical_review_status", "coding_status", "testing_status", "documentation_status")
 
 
 # ------------------------------------------------------------------ stamping (D-12)
@@ -156,6 +158,10 @@ def run_sync() -> dict:
             upd["workflow_note"] = step_note(r)
             for field, sdef in stages.items():
                 upd[field] = stage_status(ws, gs, uc, sdef["artifact_types"], sdef["gates"])
+            # Stages with no engine yet: give a new backlog item their starting value, never overwrite one.
+            for field in LATER_STAGE_FIELDS:
+                if field not in stages and item.get(field) is None:
+                    upd[field] = "NOT_STARTED"
             for field, t in (("ui_artifact", "ui-markdown"), ("spec_artifact", "use-case-specification"),
                              ("technical_artifact", "api-design")):
                 rel = ws.doc_rel(t, uc)
@@ -185,6 +191,7 @@ def run_sync() -> dict:
             store.save_json(paths.STATE, ws.state)
 
         changed["graph"] = graph.save(ws)
+        changed["views"] = len(views.write_all(ws))
         changed["errors"] = sum(1 for i in issues if i.level == "ERROR")
         changed["warnings"] = sum(1 for i in issues if i.level == "WARN")
         return changed

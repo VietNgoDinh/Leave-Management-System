@@ -1,0 +1,22 @@
+{
+  "gate": "GATE-02",
+  "gate_name": "OVERVIEW_APPROVAL",
+  "subject": "RUN-001",
+  "decision": "CHANGES_REQUESTED",
+  "reviewer": "vietngo",
+  "decided_at": "2026-09-30T08:46:13Z",
+  "comments": "<answer_open_question>\nQ1: Exceeding the entitlement can still be submitted. Date window is a hard block\nQ2:  a request that is not confirmed or approved by the end of the month of the leave start date will be cancelled. A request for a later month can be review at the end of that month, no need to review before that month starts\nQ3: User can select which PM to confirm their request.\nQ4: All that data come from an existing HR system.\nQ5: Users sign in by the company's single sign-on\nQ6: File format for entitlement import can be decided by you. Annual refresh will be the new baseline for requests still pending. The system calculate seniority-based entitlement. Rules don't differ per country.\nQ7: Leave request is calculated in half days, which mean there. are 3 options: All day, morning, and afternoon.\nQ8: Employee can cancel leave request, as long as the request hasn't been approved by line manager yet.\nQ9: A line manager don't have to submit a leave request. A line manager is the one managing the Business Unit, not at project level, so they can never be a PM\nQ10: Admin and HR are one role only, not two. Manager can only see report from their own unit\nQ11: Period is the last week. Valid leave request means any submitted request\nQ12: Data come from an external system\nQ13: Mail service is not defined yet. Submission should sent email to PM, confirmation should send to Line Manager, denial, approval, rejection should send to the employee who submit the request\nQ14: English only\n</answer_open_question>",
+  "request_n": 1,
+  "artifacts": {
+    "overview/product-overview.md": "8fd51c9aa8b0190d",
+    "requirements/requirements.yaml": "764d260a9795f96b",
+    "overview/actors.yaml": "1be79d0a5d1add13",
+    "overview/applications.yaml": "c30fd11bc125653d",
+    "overview/business-processes.yaml": "7cd77aaa0a90fbf6",
+    "overview/business-rules.yaml": "1aa5c38facf66387",
+    "overview/data-model/entities.yaml": "f19ccad257181cc9",
+    "overview/integrations.yaml": "0b371fc364b27acc",
+    "overview/use-cases.yaml": "d1c30d6ce314a691"
+  },
+  "source": "UserPromptSubmit hook (typed by the user)"
+}

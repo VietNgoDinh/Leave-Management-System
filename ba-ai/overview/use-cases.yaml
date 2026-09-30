@@ -2,9 +2,324 @@ meta:
   artifact_type: catalog
   catalog: use-cases
   title: Use Case List
-  status: DRAFT
+  status: APPROVED
   baseline: TO_BE
   origin: AI
   review:
-    GATE-02: NOT_REQUESTED
-items: []
+    GATE-02: APPROVED
+items:
+  - id: UC-001
+    name: Submit leave request
+    business_process: BP-001
+    actor: ACT-001
+    application: APP-001
+    description: An employee requests leave by choosing a leave type, the dates with a day part (All day,
+      Morning, Afternoon) and the Project Manager who will confirm it, and by uploading any documents
+      the leave type requires. Leave is counted on working days only. The system blocks a request with
+      dates outside the allowed window, a missing required document or a leave type the employee is not
+      eligible for. A request that exceeds the entitlement is accepted and flagged for manual review.
+      The selected Project Manager is emailed. A Project Manager's own request is auto-confirmed, and
+      a request from an employee with no project goes straight to the Line Manager.
+    complexity: HIGH
+    risk_level: MEDIUM
+    requirements:
+      - REQ-001
+      - REQ-002
+      - REQ-003
+      - REQ-016
+    business_rules:
+      - BR-001
+      - BR-002
+      - BR-003
+      - BR-004
+      - BR-005
+      - BR-007
+      - BR-015
+      - BR-017
+      - BR-018
+      - BR-021
+      - BR-022
+    entities_read:
+      - ENT-002
+      - ENT-004
+      - ENT-005
+      - ENT-003
+      - ENT-010
+    risk_flags:
+      - PERSONAL_DATA
+      - COMPLIANCE
+    entities_written:
+      - ENT-006
+      - ENT-007
+      - ENT-008
+    baseline: TO_BE
+  - id: UC-002
+    name: View my leave requests
+    business_process: BP-001
+    actor: ACT-001
+    application: APP-001
+    description: An employee sees their leave requests and the current status of each.
+    complexity: LOW
+    risk_level: LOW
+    requirements:
+      - REQ-001
+      - REQ-008
+    business_rules:
+      - BR-014
+    entities_read:
+      - ENT-006
+      - ENT-008
+      - ENT-004
+    baseline: TO_BE
+  - id: UC-003
+    name: Modify and resubmit leave request
+    business_process: BP-001
+    actor: ACT-001
+    application: APP-001
+    description: After a request was denied by the Project Manager or rejected by the Line Manager, the
+      employee changes it and submits it again for review. The same checks apply as for a new request.
+    complexity: MEDIUM
+    risk_level: MEDIUM
+    requirements:
+      - REQ-004
+      - REQ-002
+      - REQ-016
+    business_rules:
+      - BR-009
+      - BR-001
+      - BR-002
+      - BR-004
+      - BR-005
+      - BR-007
+      - BR-015
+      - BR-017
+      - BR-018
+      - BR-021
+      - BR-022
+    entities_read:
+      - ENT-004
+      - ENT-005
+      - ENT-008
+      - ENT-003
+      - ENT-010
+    risk_flags:
+      - PERSONAL_DATA
+      - COMPLIANCE
+    entities_written:
+      - ENT-006
+      - ENT-007
+    baseline: TO_BE
+  - id: UC-004
+    name: Confirm or deny leave request
+    business_process: BP-001
+    actor: ACT-002
+    application: APP-001
+    description: A Project Manager works from a dashboard that shows the requests awaiting their confirmation,
+      filters them by request type, employee name, date and status, and confirms or denies each one by
+      the end of the month of the leave start date. Confirmation emails the Line Manager; denial emails
+      the employee.
+    complexity: MEDIUM
+    risk_level: MEDIUM
+    requirements:
+      - REQ-003
+      - REQ-009
+      - REQ-002
+      - REQ-016
+    business_rules:
+      - BR-006
+      - BR-008
+      - BR-013
+      - BR-002
+      - BR-014
+      - BR-015
+      - BR-018
+    entities_read:
+      - ENT-006
+      - ENT-007
+      - ENT-002
+      - ENT-003
+      - ENT-004
+    risk_flags:
+      - COMPLIANCE
+    entities_written:
+      - ENT-006
+      - ENT-008
+    baseline: TO_BE
+  - id: UC-005
+    name: Approve or reject leave request
+    business_process: BP-001
+    actor: ACT-003
+    application: APP-001
+    description: A Line Manager works from a dashboard that shows the requests awaiting approval, filters
+      them by request type, employee name, date and status, and approves or rejects each one by the end
+      of the month of the leave start date. These are confirmed requests, plus requests from employees
+      with no project, which need no confirmation. The employee is emailed the decision.
+    complexity: MEDIUM
+    risk_level: MEDIUM
+    requirements:
+      - REQ-003
+      - REQ-009
+      - REQ-002
+      - REQ-016
+    business_rules:
+      - BR-006
+      - BR-008
+      - BR-013
+      - BR-002
+      - BR-014
+      - BR-018
+      - BR-021
+    entities_read:
+      - ENT-006
+      - ENT-007
+      - ENT-002
+      - ENT-004
+      - ENT-008
+    risk_flags:
+      - COMPLIANCE
+    entities_written:
+      - ENT-006
+      - ENT-008
+    baseline: TO_BE
+  - id: UC-006
+    name: Refresh annual leave entitlements
+    business_process: BP-002
+    actor: ACT-006
+    application: APP-001
+    description: 'At the start of each year the system automatically refreshes leave entitlements: it
+      calculates every employee''s entitlement for each leave type as base days plus one day per N years
+      of service, for the leave types the employee is eligible for. No amounts are imported. Requests
+      still pending are then checked against the new entitlements.'
+    complexity: HIGH
+    risk_level: HIGH
+    requirements:
+      - REQ-006
+    business_rules:
+      - BR-012
+      - BR-003
+      - BR-004
+    entities_read:
+      - ENT-002
+      - ENT-004
+      - ENT-006
+    risk_flags:
+      - PERSONAL_DATA
+      - COMPLIANCE
+    entities_written:
+      - ENT-005
+      - ENT-006
+    baseline: TO_BE
+  - id: UC-007
+    name: Manage leave types
+    business_process: BP-003
+    actor: ACT-004
+    application: APP-001
+    description: Admin/HR creates and edits leave types and configures each type's eligibility rule (gender),
+      entitlement rule (base days, and N years of service per extra day) and required documentation.
+    complexity: MEDIUM
+    risk_level: MEDIUM
+    requirements:
+      - REQ-007
+    business_rules:
+      - BR-004
+      - BR-003
+      - BR-005
+    entities_read:
+      - ENT-004
+    risk_flags:
+      - COMPLIANCE
+    entities_written:
+      - ENT-004
+    baseline: TO_BE
+  - id: UC-008
+    name: Send weekly attendance notification
+    business_process: BP-004
+    actor: ACT-006
+    application: APP-001
+    description: Every Friday the system uses card scanner data to determine each employee's off-work
+      days among the working days of the last week, matches them against the employee's leave requests
+      (any submitted request counts as valid), and emails the employee the absent days without a leave
+      request and the absent days with a valid leave request.
+    complexity: MEDIUM
+    risk_level: MEDIUM
+    requirements:
+      - REQ-005
+      - REQ-011
+      - REQ-016
+    business_rules:
+      - BR-010
+      - BR-011
+      - BR-022
+    entities_read:
+      - ENT-009
+      - ENT-006
+      - ENT-002
+      - ENT-010
+    risk_flags:
+      - PERSONAL_DATA
+    baseline: TO_BE
+  - id: UC-009
+    name: View leave reports
+    business_process: BP-005
+    actor:
+      - ACT-004
+      - ACT-003
+    application: APP-001
+    description: HR and Line Managers view leave statistics, with leave usage summarised by unit, department
+      or the entire company. A Line Manager sees their own unit only.
+    complexity: MEDIUM
+    risk_level: MEDIUM
+    requirements:
+      - REQ-010
+      - REQ-012
+      - REQ-008
+    business_rules:
+      - BR-014
+    entities_read:
+      - ENT-006
+      - ENT-002
+      - ENT-001
+      - ENT-004
+      - ENT-005
+    risk_flags:
+      - PERSONAL_DATA
+    baseline: TO_BE
+  - id: UC-010
+    name: Cancel leave request
+    business_process: BP-001
+    actor: ACT-001
+    application: APP-001
+    description: An employee cancels one of their leave requests. This is possible as long as the Line
+      Manager has not approved it.
+    complexity: LOW
+    risk_level: LOW
+    requirements:
+      - REQ-018
+    business_rules:
+      - BR-016
+    entities_read:
+      - ENT-006
+      - ENT-008
+    entities_written:
+      - ENT-006
+    baseline: TO_BE
+  - id: UC-011
+    name: Cancel unreviewed leave requests at month end
+    business_process: BP-001
+    actor: ACT-006
+    application: APP-001
+    description: When a month ends, the system cancels every leave request whose leave start date is in
+      that month and which is still not confirmed or approved.
+    complexity: LOW
+    risk_level: MEDIUM
+    risk_flags:
+      - COMPLIANCE
+    requirements:
+      - REQ-003
+    business_rules:
+      - BR-008
+    entities_read:
+      - ENT-006
+    entities_written:
+      - ENT-006
+    baseline: TO_BE

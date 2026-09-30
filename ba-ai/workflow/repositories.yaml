@@ -5,4 +5,18 @@ meta:
   status: DRAFT
   baseline: TO_BE
   origin: AI
-items: []
+items:
+  - id: REPO-001
+    name: leave-management-api
+    type: backend
+    status: PLANNED
+    path: ../leave-management-api
+    description: 'Spring Boot modular monolith: REST API, scheduled jobs and integration adapters.'
+    baseline: TO_BE
+  - id: REPO-002
+    name: leave-management-web
+    type: frontend
+    status: PLANNED
+    path: ../leave-management-web
+    description: React single-page application for all roles.
+    baseline: TO_BE

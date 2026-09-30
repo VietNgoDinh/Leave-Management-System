@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype — UC-001 Submit leave request</title>
+<style>
+  :root {
+    --primary: #1677FF;
+    --success: #52C41A;
+    --warning: #FAAD14;
+    --error: #FF4D4F;
+    --info: #1677FF;
+    --neutral: #8C8C8C;
+    --text: #1F1F1F;
+    --border: #D9D9D9;
+    --bg: #F5F5F5;
+    --banner-h: 28px;
+    --topbar-h: 56px;
+    --nav-w: 220px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 14px; line-height: 22px; color: var(--text); background: var(--bg);
+  }
+  h1 { font-size: 24px; line-height: 32px; font-weight: 600; margin: 0 0 4px; }
+  h2 { font-size: 16px; line-height: 24px; font-weight: 600; margin: 24px 0 12px; }
+  p { margin: 0 0 12px; }
+  a { color: var(--primary); }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .muted { color: #595959; }
+
+  /* Frame */
+  .proto-banner {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--banner-h); z-index: 60;
+    background: #1F1F1F; color: #FFFFFF; font-size: 12px; line-height: var(--banner-h);
+    text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px;
+  }
+  .topbar {
+    position: fixed; top: var(--banner-h); left: 0; right: 0; height: var(--topbar-h); z-index: 50;
+    background: #FFFFFF; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px; padding: 0 24px;
+  }
+  .topbar .product { font-weight: 600; font-size: 16px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .topbar .user { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .topbar .user .who { text-align: right; line-height: 18px; }
+  .topbar .user .who span { display: block; }
+  .topbar .user .who .role { font-size: 12px; color: #595959; }
+  .btn.menu-btn { display: none; }
+  .sidenav {
+    position: fixed; top: calc(var(--banner-h) + var(--topbar-h)); bottom: 0; left: 0; width: var(--nav-w); z-index: 40;
+    background: #FFFFFF; border-right: 1px solid var(--border); padding: 12px 0; overflow-y: auto;
+  }
+  .sidenav a {
+    display: block; padding: 9px 24px; color: var(--text); text-decoration: none; border-right: 3px solid transparent;
+  }
+  .sidenav a:hover { background: #F5F5F5; }
+  .sidenav a[aria-current="page"] { color: var(--primary); background: #E6F4FF; border-right-color: var(--primary); font-weight: 600; }
+  .content {
+    margin-left: var(--nav-w); padding: calc(var(--banner-h) + var(--topbar-h) + 24px) 24px 96px; max-width: calc(1200px + var(--nav-w));
+  }
+  .page-header { margin-bottom: 16px; }
+  .page-header p { color: #595959; margin: 0; }
+  .form-col { max-width: 640px; }
+
+  /* Buttons */
+  .btn {
+    font: inherit; min-height: 32px; padding: 4px 15px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); background: #FFFFFF; color: var(--text);
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-primary { background: var(--primary); border-color: var(--primary); color: #FFFFFF; }
+  .btn-primary:hover { background: #4096FF; border-color: #4096FF; color: #FFFFFF; }
+  .btn-danger { background: var(--error); border-color: var(--error); color: #FFFFFF; }
+  .btn-danger:hover { background: #FF7875; border-color: #FF7875; color: #FFFFFF; }
+  .btn-link { border: 0; background: none; color: var(--primary); padding: 0 4px; min-height: 0; }
+  .btn-link:hover { text-decoration: underline; }
+  .btn[disabled] { cursor: not-allowed; opacity: .65; }
+  .btn-primary[disabled]:hover { background: var(--primary); border-color: var(--primary); }
+  .spinner {
+    width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .45); border-top-color: #FFFFFF;
+    animation: spin .8s linear infinite; display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Alerts */
+  .alert { border: 1px solid; border-radius: 6px; padding: 9px 12px; margin: 0 0 16px; }
+  .alert p:last-child { margin-bottom: 0; }
+  .alert ul { margin: 4px 0 0; padding-left: 20px; }
+  .alert-error { background: #FFF2F0; border-color: #FFCCC7; }
+  .alert-warning { background: #FFFBE6; border-color: #FFE58F; }
+  .alert-info { background: #E6F4FF; border-color: #91CAFF; }
+  .alert-success { background: #F6FFED; border-color: #B7EB8F; }
+  .alert .alert-title { font-weight: 600; }
+  .alert-row { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+  .alert-row > div { flex: 1 1 260px; }
+
+  /* Form */
+  fieldset.plain { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .field { margin-bottom: 16px; position: relative; }
+  .field > label, .field > .label, fieldset.field > legend { display: block; margin-bottom: 4px; font-weight: 400; padding: 0; }
+  fieldset.field { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
+  .req { color: var(--error); margin-left: 2px; }
+  .help { color: #595959; font-size: 13px; margin: 4px 0 0; }
+  .field-error { color: var(--error); margin-top: 4px; }
+  .field.has-error .select-trigger, .field.has-error .range, .field.has-error .drop { border-color: var(--error); }
+
+  .select { position: relative; }
+  .select-trigger {
+    width: 100%; min-height: 32px; font: inherit; text-align: left; background: #FFFFFF; color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px; padding: 4px 32px 4px 11px; cursor: pointer; position: relative;
+  }
+  .select-trigger:hover { border-color: var(--primary); }
+  .select-trigger[disabled] { background: #F5F5F5; cursor: not-allowed; color: #595959; }
+  .select-trigger .placeholder { color: #8C8C8C; }
+  .select-trigger::after {
+    content: ""; position: absolute; right: 12px; top: 50%; width: 7px; height: 7px; margin-top: -6px;
+    border-right: 1.5px solid #8C8C8C; border-bottom: 1.5px solid #8C8C8C; transform: rotate(45deg);
+  }
+  .select [role="listbox"] {
+    position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0; margin: 0; padding: 4px; list-style: none;
+    background: #FFFFFF; border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, .16); max-height: 280px; overflow-y: auto;
+  }
+  .select [role="option"] { padding: 5px 12px; border-radius: 4px; cursor: pointer; }
+  .select [role="option"] .opt-help { display: block; font-size: 12px; line-height: 18px; color: #595959; }
+  .select [role="option"].active { background: #F5F5F5; }
+  .select [role="option"][aria-selected="true"] { background: #E6F4FF; font-weight: 600; }
+  .select [role="option"][aria-disabled="true"] { cursor: not-allowed; color: #8C8C8C; }
+  .select [role="option"][aria-disabled="true"] .opt-help { color: #8C8C8C; }
+
+  .range {
+    display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 6px; background: #FFFFFF; padding: 0 11px;
+  }
+  .range:hover, .range:focus-within { border-color: var(--primary); }
+  .range input {
+    font: inherit; color: var(--text); border: 0; outline: 0; background: transparent; min-height: 30px; width: 100%; min-width: 0; cursor: pointer; padding: 0;
+  }
+  .range input:focus-visible { box-shadow: 0 2px 0 var(--primary); }
+  .range .sep { color: #8C8C8C; }
+  fieldset[disabled] .range { background: #F5F5F5; }
+  .calendar {
+    position: absolute; z-index: 20; left: 0; margin-top: 4px; width: 300px; max-width: 100%;
+    background: #FFFFFF; border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, .16); padding: 12px;
+  }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .cal-head .cal-title { font-weight: 600; }
+  .cal-grid, .cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-dow span { text-align: center; font-size: 12px; color: #595959; }
+  .cal-day {
+    font: inherit; height: 32px; border: 1px solid transparent; border-radius: 4px; background: #FFFFFF; color: var(--text); cursor: pointer; padding: 0; position: relative;
+  }
+  .cal-day:hover { background: #F5F5F5; }
+  .cal-day.nonworking { background: #F0F0F0; color: #8C8C8C; }
+  .cal-day.holiday::after {
+    content: ""; position: absolute; left: 50%; bottom: 3px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: #8C8C8C;
+  }
+  .cal-day.in-range { background: #E6F4FF; }
+  .cal-day.nonworking.in-range { background: #DCE6F0; }
+  .cal-day.sel { background: var(--primary); color: #FFFFFF; }
+  .cal-day.today { border-color: var(--primary); }
+  .cal-day.active { outline: 2px solid var(--primary); outline-offset: 1px; }
+  .cal-day[disabled] { color: #BFBFBF; background: #FFFFFF; cursor: not-allowed; text-decoration: line-through; }
+  .cal-holidays { list-style: none; margin: 8px 0 0; padding: 8px 0 0; border-top: 1px solid #F0F0F0; font-size: 12px; line-height: 18px; color: #595959; }
+  .cal-holidays:empty { display: none; }
+  .cal-legend { margin: 8px 0 0; font-size: 12px; line-height: 18px; color: #595959; }
+  .cal-legend .swatch { display: inline-block; width: 12px; height: 12px; background: #F0F0F0; border: 1px solid var(--border); vertical-align: -2px; margin-right: 4px; }
+
+  .segmented { display: inline-flex; background: #F5F5F5; border: 1px solid var(--border); border-radius: 6px; padding: 2px; }
+  .segmented input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .segmented label { padding: 3px 14px; border-radius: 4px; cursor: pointer; margin: 0; }
+  .segmented input:checked + label { background: #FFFFFF; color: var(--primary); font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, .15); }
+  .segmented input:focus-visible + label { outline: 2px solid var(--primary); outline-offset: 1px; }
+  .segmented input:disabled + label { color: #BFBFBF; cursor: not-allowed; }
+
+  .card { background: #FFFFFF; border: 1px solid #F0F0F0; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+  .card h2 { margin-top: 0; }
+  .figures { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 16px; margin: 0; }
+  .figures div { min-width: 0; }
+  .figures dt { color: #595959; font-size: 13px; }
+  .figures dd { margin: 0; font-size: 16px; font-weight: 600; }
+  .figures dd.text { font-size: 14px; font-weight: 400; }
+  .figures dd.warn { color: var(--warning); font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .icon-warn { width: 16px; height: 16px; flex: none; }
+  .readonly-text { margin: 0 0 16px; }
+
+  .drop {
+    border: 1px dashed var(--border); border-radius: 6px; background: #FAFAFA; padding: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .drop.over { border-color: var(--primary); background: #E6F4FF; }
+  .file-row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid #F0F0F0; background: #FFFFFF; border-radius: 6px; padding: 6px 12px; margin-top: 4px;
+  }
+  .file-row .file-name { font-weight: 600; word-break: break-all; }
+  .file-row .file-size { color: #595959; }
+  .file-row .file-remove { margin-left: auto; }
+  .file-row.rejected { border-color: #FFCCC7; }
+  .file-row .file-error { flex-basis: 100%; color: var(--error); }
+
+  .form-actions, .page-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+
+  /* Tags */
+  .tag { display: inline-block; font-size: 12px; line-height: 20px; padding: 0 7px; border-radius: 4px; border: 1px solid; margin-right: 6px; }
+  .tag-warning { color: #D48806; background: #FFFBE6; border-color: #FFE58F; }
+  .tag-info { color: #0958D9; background: #E6F4FF; border-color: #91CAFF; }
+  .tag-success { color: #389E0D; background: #F6FFED; border-color: #B7EB8F; }
+  .tag-error { color: #CF1322; background: #FFF2F0; border-color: #FFCCC7; }
+  .tag-neutral { color: #595959; background: #FAFAFA; border-color: var(--border); }
+
+  /* Descriptions */
+  .desc { display: grid; grid-template-columns: 180px 1fr; margin: 0; background: #FFFFFF; border: 1px solid #F0F0F0; border-radius: 6px; overflow: hidden; }
+  .desc dt { background: #FAFAFA; padding: 9px 16px; color: #595959; border-bottom: 1px solid #F0F0F0; }
+  .desc dd { margin: 0; padding: 9px 16px; border-bottom: 1px solid #F0F0F0; min-width: 0; word-break: break-word; }
+  .desc dt:last-of-type, .desc dd:last-of-type { border-bottom: 0; }
+  .desc ul { margin: 0; padding: 0; list-style: none; }
+
+  /* States */
+  .skeleton span { display: block; height: 16px; border-radius: 4px; margin-bottom: 12px; background: linear-gradient(90deg, #EDEDED 25%, #E0E0E0 37%, #EDEDED 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+  .skeleton span.lbl { width: 120px; height: 12px; margin-bottom: 6px; }
+  .skeleton span.inp { height: 32px; margin-bottom: 20px; }
+  .skeleton span.btn-sk { width: 130px; height: 32px; display: inline-block; margin-right: 8px; }
+  .skeleton span.w40 { width: 40%; } .skeleton span.w60 { width: 60%; } .skeleton span.w80 { width: 80%; }
+  @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+  .empty { text-align: center; padding: 48px 16px; background: #FFFFFF; border: 1px solid #F0F0F0; border-radius: 6px; }
+  .empty svg { width: 72px; height: 56px; margin-bottom: 12px; }
+  .noaccess, .notfound, .stub { background: #FFFFFF; border: 1px solid #F0F0F0; border-radius: 6px; padding: 32px 24px; max-width: 640px; }
+  .stub .stub-note { color: #595959; }
+
+  /* Modal */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); z-index: 70; display: flex; align-items: flex-start; justify-content: center; padding: 120px 16px 16px; }
+  .modal { background: #FFFFFF; border-radius: 8px; padding: 20px 24px; width: 100%; max-width: 440px; box-shadow: 0 6px 16px rgba(0, 0, 0, .2); }
+  .modal h2 { margin: 0 0 8px; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+
+  /* Notification */
+  #notifications { position: fixed; top: calc(var(--banner-h) + var(--topbar-h) + 12px); right: 16px; z-index: 80; display: flex; flex-direction: column; gap: 8px; max-width: calc(100% - 32px); }
+  .notification { background: #FFFFFF; border-radius: 8px; box-shadow: 0 6px 16px rgba(0, 0, 0, .2); padding: 12px 16px; width: 320px; max-width: 100%; border-left: 4px solid var(--success); display: flex; gap: 8px; align-items: flex-start; }
+  .notification.error { border-left-color: var(--error); }
+  .notification span { flex: 1; }
+
+  /* Prototype controls */
+  .proto-controls {
+    position: fixed; right: 12px; bottom: 12px; z-index: 90; background: #FFFFFF; border: 1px solid #1F1F1F; border-radius: 6px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .2); font-size: 12px; line-height: 18px; width: 300px; max-width: calc(100% - 24px); max-height: calc(100vh - 110px); overflow-y: auto;
+  }
+  .proto-controls:not([open]) { width: auto; }
+  .proto-controls summary { cursor: pointer; padding: 6px 10px; font-weight: 600; background: #1F1F1F; color: #FFFFFF; }
+  .proto-controls .pc-body { padding: 8px 10px 10px; }
+  .proto-controls label { display: block; margin: 8px 0 2px; font-weight: 600; }
+  .proto-controls label.inline { display: flex; gap: 6px; align-items: center; font-weight: 400; }
+  .proto-controls select { width: 100%; font: inherit; padding: 3px; }
+  .proto-controls .pc-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .proto-controls .btn { min-height: 26px; padding: 2px 8px; font-size: 12px; }
+  .proto-controls p { margin: 6px 0 0; color: #595959; }
+
+  @media (max-width: 991px) {
+    .btn.menu-btn { display: inline-flex; }
+    .sidenav { transform: translateX(-100%); transition: transform .15s; box-shadow: 0 6px 16px rgba(0, 0, 0, .2); }
+    .sidenav.open { transform: none; }
+    .content { margin-left: 0; }
+  }
+  @media (max-width: 767px) {
+    .topbar { padding: 0 16px; }
+    .topbar .user .who .role { display: none; }
+    .content { padding: calc(var(--banner-h) + var(--topbar-h) + 16px) 16px 96px; }
+    .btn { min-height: 40px; }
+    .proto-controls .btn { min-height: 30px; }
+    .form-actions .btn, .page-actions .btn, .modal-actions .btn { width: 100%; }
+    .form-actions, .page-actions { flex-direction: column; }
+    .modal-actions { flex-direction: column-reverse; }
+    .select-trigger { min-height: 40px; }
+    .range input { min-height: 38px; }
+    .desc { grid-template-columns: 1fr; }
+    .desc dt { border-bottom: 0; padding-bottom: 0; background: #FFFFFF; font-size: 13px; }
+    .desc dt:last-of-type { border-bottom: 0; }
+    .figures { grid-template-columns: 1fr 1fr; }
+    .segmented { display: flex; }
+    .segmented label { flex: 1; text-align: center; padding: 8px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="proto-banner" role="note">Prototype — UC-001 Submit leave request — not production code</div>
+
+<header class="topbar">
+  <button type="button" class="btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="sidenav">Menu</button>
+  <div class="product">Leave Request Management</div>
+  <div class="user">
+    <div class="who"><span id="userName"></span><span class="role" id="userRole"></span></div>
+    <button type="button" class="btn btn-link" id="signOut" disabled title="Sign-out is not part of this prototype">Sign out</button>
+  </div>
+</header>
+
+<nav class="sidenav" id="sidenav" aria-label="Main navigation"></nav>
+
+<main class="content" id="main">
+
+  <!-- ============ SCR-005 Leave request form ============ -->
+  <section data-screen="SCR-005" id="scr-005" hidden>
+
+    <div class="noaccess" id="f-noaccess" hidden>
+      <h1>No access</h1>
+      <p>Your role cannot open this area.</p>
+      <p><a href="#/home">Go to home</a></p>
+    </div>
+
+    <div id="f-main">
+      <div class="page-header">
+        <h1>Request leave</h1>
+        <p data-rule="BR-022">Leave is counted in working days. Weekends and public holidays are not counted.</p>
+      </div>
+
+      <div class="form-col">
+
+        <div class="skeleton" id="f-skeleton" aria-busy="true" aria-label="Loading the leave request form" hidden>
+          <span class="lbl"></span><span class="inp"></span>
+          <span class="lbl"></span><span class="inp"></span>
+          <span class="lbl"></span><span class="inp w60"></span>
+          <span class="lbl"></span><span class="inp"></span>
+          <span class="w40"></span>
+          <span class="btn-sk"></span><span class="btn-sk"></span>
+        </div>
+
+        <div class="empty" id="f-empty" hidden>
+          <svg viewBox="0 0 72 56" aria-hidden="true"><rect x="8" y="14" width="56" height="36" rx="4" fill="#F0F0F0" stroke="#D9D9D9"/><path d="M8 32h16l4 6h16l4-6h16" fill="none" stroke="#BFBFBF" stroke-width="2"/><rect x="20" y="6" width="32" height="4" rx="2" fill="#E0E0E0"/></svg>
+          <p>No leave types are available yet. Ask Admin/HR to set them up.</p>
+        </div>
+
+        <div class="alert alert-error" id="f-loaderror" role="alert" hidden>
+          <div class="alert-row">
+            <div id="f-loaderror-text"></div>
+            <button type="button" class="btn" id="f-retry">Retry</button>
+          </div>
+        </div>
+
+        <form id="leaveForm" novalidate hidden>
+
+          <div class="alert alert-error" id="f-submiterror" role="alert" tabindex="-1" hidden></div>
+
+          <div class="alert alert-error" id="f-errsummary" role="alert" tabindex="-1" hidden></div>
+
+          <fieldset class="plain" id="f-fields">
+            <legend class="sr-only">Leave request</legend>
+
+            <h2>Leave details</h2>
+
+            <div class="field" id="field-leaveType">
+              <label for="leaveType" id="leaveType-label">Leave type<span class="req" aria-hidden="true">*</span></label>
+              <div class="select" id="leaveType-select">
+                <button type="button" class="select-trigger" id="leaveType" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="leaveType-list" aria-required="true"><span class="select-value"></span></button>
+                <ul role="listbox" id="leaveType-list" aria-labelledby="leaveType-label" hidden></ul>
+              </div>
+              <div class="field-error" id="leaveType-error" aria-live="polite" hidden></div>
+            </div>
+
+            <div class="field" id="field-dates">
+              <label for="startDate">Leave dates<span class="req" aria-hidden="true">*</span></label>
+              <div class="range" id="rangeBox">
+                <input type="text" id="startDate" readonly placeholder="Start date" autocomplete="off" aria-haspopup="dialog" aria-describedby="dates-error">
+                <span class="sep" aria-hidden="true">&rarr;</span>
+                <label for="endDate" class="sr-only">Leave dates, end date</label>
+                <input type="text" id="endDate" readonly placeholder="End date" autocomplete="off" aria-haspopup="dialog" aria-describedby="dates-error">
+              </div>
+              <div class="calendar" id="calendar" role="group" aria-label="Choose the first and the last day" hidden>
+                <div class="cal-head">
+                  <button type="button" class="btn" id="cal-prev" tabindex="-1" aria-label="Previous month">&lsaquo;</button>
+                  <span class="cal-title" id="cal-title" aria-live="polite"></span>
+                  <button type="button" class="btn" id="cal-next" tabindex="-1" aria-label="Next month">&rsaquo;</button>
+                </div>
+                <div class="cal-dow" aria-hidden="true"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+                <div class="cal-grid" id="cal-grid"></div>
+                <p class="cal-legend" data-rule="BR-022"><span class="swatch"></span>Weekends and public holidays are not counted.</p>
+                <ul class="cal-holidays" id="cal-holidays" data-rule="BR-022"></ul>
+              </div>
+              <div class="field-error" id="dates-error" aria-live="polite" hidden></div>
+            </div>
+
+            <fieldset class="field" id="field-dayPart" data-rule="BR-017">
+              <legend>Day part<span class="req" aria-hidden="true">*</span></legend>
+              <div class="segmented">
+                <input type="radio" name="dayPart" id="dp-all" value="ALL_DAY" checked><label for="dp-all">All day</label>
+                <input type="radio" name="dayPart" id="dp-morning" value="MORNING"><label for="dp-morning">Morning</label>
+                <input type="radio" name="dayPart" id="dp-afternoon" value="AFTERNOON"><label for="dp-afternoon">Afternoon</label>
+              </div>
+              <p class="help" id="dayPart-help" data-rule="BR-017" hidden>Morning and Afternoon are available for a single day only.</p>
+            </fieldset>
+
+            <div class="card" id="f-summary" aria-live="polite" hidden>
+              <h2>Request summary</h2>
+              <dl class="figures">
+                <div><dt>Days requested</dt><dd id="sum-days" data-rule="BR-022"></dd></div>
+                <div><dt>Entitlement</dt><dd id="sum-ent" data-rule="BR-003"></dd></div>
+                <div><dt>Already requested</dt><dd id="sum-already" data-rule="BR-002"></dd></div>
+                <div><dt>Remaining after this request</dt><dd id="sum-remaining" data-rule="BR-002"></dd></div>
+              </dl>
+            </div>
+
+            <h2>Reviewer</h2>
+            <div id="f-reviewer"></div>
+            <p class="readonly-text" id="f-linemanager" data-rule="BR-021"></p>
+
+            <div id="f-docs" hidden></div>
+
+          </fieldset>
+
+          <div class="alert alert-warning" id="f-exceeds" role="status" data-rule="BR-002" hidden></div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Submit request</button>
+            <button type="button" class="btn" id="cancelBtn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Exceeds entitlement dialog (section of SCR-005) -->
+    <div class="modal-backdrop" id="modal-exceeds" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mx-title" aria-describedby="mx-text" data-rule="BR-002">
+        <h2 id="mx-title">Submit a request that exceeds your entitlement?</h2>
+        <p id="mx-text"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn" id="mx-back">Go back</button>
+          <button type="button" class="btn btn-primary" id="mx-submit">Submit request</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discard dialog (section of SCR-005) -->
+    <div class="modal-backdrop" id="modal-discard" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="md-title" aria-describedby="md-text">
+        <h2 id="md-title">Discard this request?</h2>
+        <p id="md-text">What you entered will not be saved.</p>
+        <div class="modal-actions">
+          <button type="button" class="btn" id="md-keep">Keep editing</button>
+          <button type="button" class="btn btn-danger" id="md-discard">Discard</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCR-006 Leave request submitted ============ -->
+  <section data-screen="SCR-006" id="scr-006" hidden>
+    <div id="c-body"></div>
+  </section>
+
+  <!-- ============ Navigation targets outside UC-001 (placeholders) ============ -->
+  <section data-stub="outside-uc-001" id="stub" hidden>
+    <div class="stub">
+      <h1 id="stub-title"></h1>
+      <p class="stub-note" id="stub-note"></p>
+      <div class="page-actions" id="stub-actions"></div>
+    </div>
+  </section>
+
+</main>
+
+<div id="notifications" aria-live="polite"></div>
+
+<details class="proto-controls" id="protoControls">
+  <summary>Prototype controls</summary>
+  <div class="pc-body">
+    <p>Sample date: today is <strong>30 Sep 2026</strong>. All people and data are fictional.</p>
+
+    <label for="pc-persona">Signed in as</label>
+    <select id="pc-persona"></select>
+
+    <label for="pc-formload">SCR-005: form load</label>
+    <select id="pc-formload">
+      <option value="normal">Normal</option>
+      <option value="loading">Loading (keep the skeleton)</option>
+      <option value="empty">Empty: no leave types exist</option>
+      <option value="error">Server error 503 on load</option>
+    </select>
+
+    <label class="inline" for="pc-noent"><input type="checkbox" id="pc-noent"> No entitlement on record (Q-016)</label>
+
+    <label for="pc-file">SCR-005: files added are treated as</label>
+    <select id="pc-file">
+      <option value="normal">Normal (real type and size are checked)</option>
+      <option value="too-large">Larger than 10 MB</option>
+      <option value="upload-fails">Refused by the server (upload fails)</option>
+    </select>
+    <div class="pc-row"><button type="button" class="btn" id="pc-samplefiles">Attach sample files to empty upload fields</button></div>
+
+    <label for="pc-submit">SCR-005: result of Submit request</label>
+    <select id="pc-submit">
+      <option value="success">Success</option>
+      <option value="hold">Submitting (keep waiting)</option>
+      <option value="error503">Server error 503: nothing saved</option>
+      <option value="reject-type">Server rejects the leave type (BR-004)</option>
+      <option value="reject-dates">Server rejects the start date (BR-001)</option>
+      <option value="reject-pm">Server rejects the Project Manager (BR-015)</option>
+      <option value="late-exceeds">Success, but the server finds it exceeds the entitlement (BR-002)</option>
+    </select>
+
+    <label for="pc-confirmload">SCR-006: page load</label>
+    <select id="pc-confirmload">
+      <option value="normal">Normal</option>
+      <option value="loading">Loading (keep the skeleton)</option>
+      <option value="error">Server error 503 on load</option>
+      <option value="notfound">Request not found</option>
+    </select>
+
+    <div class="pc-row">
+      <button type="button" class="btn" id="pc-expire">Expire session now</button>
+      <button type="button" class="btn" id="pc-reset">Reset data</button>
+    </div>
+    <p>Forced states stay on until you set them back to Normal or Success.</p>
+  </div>
+</details>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =====================================================================
+     Sample data. Fictional people, projects and figures, in memory only.
+     ===================================================================== */
+
+  var TODAY = '2026-09-30';
+  /* The earliest date that can be chosen comes from the server (first day of the current month). */
+  var MIN_DATE = '2026-09-01';
+
+  /* ENT-010 public holidays of the employees' country (all sample employees share one country). */
+  var HOLIDAYS = {
+    '2026-09-21': 'Harvest Day',
+    '2026-10-14': 'Founders\' Day',
+    '2026-11-19': 'Unity Day',
+    '2026-12-25': 'Winter Holiday',
+    '2027-01-01': 'New Year\'s Day'
+  };
+
+  /* ENT-002 employees */
+  var EMPLOYEES = {
+    'E-1001': { name: 'Maya Okafor', gender: 'FEMALE', roles: ['EMPLOYEE'], lineManager: 'Helen Brandt', hint: 'employee in 3 projects, 2 Project Managers' },
+    'E-1002': { name: 'Tomas Lindqvist', gender: 'MALE', roles: ['EMPLOYEE'], lineManager: 'Helen Brandt', hint: 'employee in 1 project, male' },
+    'E-1003': { name: 'Daniel Reyes', gender: 'MALE', roles: ['EMPLOYEE', 'PROJECT_MANAGER'], lineManager: 'Helen Brandt', hint: 'Project Manager' },
+    'E-1004': { name: 'Aiko Tanaka', gender: 'FEMALE', roles: ['EMPLOYEE'], lineManager: 'Marcus Hale', hint: 'employee with no project' },
+    'E-1005': { name: 'Helen Brandt', gender: 'FEMALE', roles: ['LINE_MANAGER'], lineManager: null, hint: 'Line Manager, no access' }
+  };
+  var PERSONA_ORDER = ['E-1001', 'E-1002', 'E-1003', 'E-1004', 'E-1005'];
+  var ROLE_LABELS = { EMPLOYEE: 'Employee', PROJECT_MANAGER: 'Project Manager', LINE_MANAGER: 'Line Manager', ADMIN_HR: 'Admin/HR' };
+
+  /* ENT-003 projects */
+  var PROJECTS = [
+    { name: 'Atlas Billing', pm: 'Daniel Reyes', members: ['E-1001'] },
+    { name: 'Helios Mobile', pm: 'Daniel Reyes', members: ['E-1001'] },
+    { name: 'Orion Portal', pm: 'Priya Natarajan', members: ['E-1001', 'E-1002'] }
+  ];
+
+  /* ENT-004 leave types */
+  var LEAVE_TYPES = [
+    { id: 'LT-PAID', name: 'Paid Leave', eligibility: 'ALL', docs: [] },
+    { id: 'LT-SICK', name: 'Sick Leave', eligibility: 'ALL', docs: ['Hospital certificate'] },
+    { id: 'LT-MAT', name: 'Maternity Leave', eligibility: 'FEMALE', eligibilityText: 'For female employees only', docs: ['Hospital certificate', 'Maternity leave application'] },
+    { id: 'LT-BER', name: 'Bereavement Leave', eligibility: 'ALL', docs: [] },
+    { id: 'LT-UNPAID', name: 'Unpaid Leave', eligibility: 'ALL', docs: [] }
+  ];
+
+  /* ENT-005 entitlements: year -> employee -> leave type -> days.
+     Only the current year exists: entitlements are calculated at the annual refresh. */
+  var ENTITLEMENTS = {
+    2026: {
+      'E-1001': { 'LT-PAID': 14, 'LT-SICK': 10, 'LT-MAT': 120, 'LT-BER': 3, 'LT-UNPAID': 0 },
+      'E-1002': { 'LT-PAID': 12, 'LT-SICK': 10, 'LT-BER': 3, 'LT-UNPAID': 0 },
+      'E-1003': { 'LT-PAID': 16, 'LT-SICK': 10, 'LT-BER': 3, 'LT-UNPAID': 0 },
+      'E-1004': { 'LT-PAID': 13, 'LT-SICK': 10, 'LT-MAT': 120, 'LT-BER': 3, 'LT-UNPAID': 0 }
+    }
+  };
+
+  /* ENT-006 existing requests of the sample employees */
+  var SEED_REQUESTS = [
+    { employeeId: 'E-1001', leaveTypeId: 'LT-PAID', start: '2026-07-06', end: '2026-07-10', dayPart: 'ALL_DAY', days: 5, status: 'APPROVED' },
+    { employeeId: 'E-1001', leaveTypeId: 'LT-PAID', start: '2026-08-14', end: '2026-08-14', dayPart: 'MORNING', days: 0.5, status: 'APPROVED' },
+    { employeeId: 'E-1001', leaveTypeId: 'LT-PAID', start: '2026-08-17', end: '2026-08-19', dayPart: 'ALL_DAY', days: 3, status: 'DENIED' },
+    { employeeId: 'E-1001', leaveTypeId: 'LT-PAID', start: '2026-11-03', end: '2026-11-06', dayPart: 'ALL_DAY', days: 4, status: 'PENDING_APPROVAL' },
+    { employeeId: 'E-1001', leaveTypeId: 'LT-PAID', start: '2026-12-07', end: '2026-12-08', dayPart: 'ALL_DAY', days: 2, status: 'PENDING_CONFIRMATION' },
+    { employeeId: 'E-1001', leaveTypeId: 'LT-SICK', start: '2026-03-10', end: '2026-03-11', dayPart: 'ALL_DAY', days: 2, status: 'APPROVED' },
+    { employeeId: 'E-1002', leaveTypeId: 'LT-PAID', start: '2026-05-18', end: '2026-05-20', dayPart: 'ALL_DAY', days: 3, status: 'APPROVED' },
+    { employeeId: 'E-1003', leaveTypeId: 'LT-PAID', start: '2026-04-06', end: '2026-04-10', dayPart: 'ALL_DAY', days: 5, status: 'APPROVED' },
+    { employeeId: 'E-1003', leaveTypeId: 'LT-PAID', start: '2026-10-19', end: '2026-10-19', dayPart: 'ALL_DAY', days: 1, status: 'PENDING_APPROVAL' },
+    { employeeId: 'E-1004', leaveTypeId: 'LT-PAID', start: '2026-02-09', end: '2026-02-20', dayPart: 'ALL_DAY', days: 10, status: 'APPROVED' }
+  ];
+
+  var STATUS = {
+    PENDING_CONFIRMATION: { label: 'Pending confirmation', cls: 'tag-warning' },
+    PENDING_APPROVAL: { label: 'Pending approval', cls: 'tag-info' },
+    APPROVED: { label: 'Approved', cls: 'tag-success' },
+    DENIED: { label: 'Denied', cls: 'tag-error' },
+    REJECTED: { label: 'Rejected', cls: 'tag-error' },
+    CANCELLED: { label: 'Cancelled', cls: 'tag-neutral' }
+  };
+  var COUNTED_STATUSES = ['PENDING_CONFIRMATION', 'PENDING_APPROVAL', 'APPROVED'];
+  var DAY_PART_LABELS = { ALL_DAY: 'All day', MORNING: 'Morning', AFTERNOON: 'Afternoon' };
+
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var MAX_FILE_BYTES = 10 * 1024 * 1024;
+  var STORE_KEY = 'uc001-prototype-requests';
+
+  /* =====================================================================
+     Helpers
+     ===================================================================== */
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function toKey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function fromKey(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function addDays(k, n) { var d = fromKey(k); d.setDate(d.getDate() + n); return toKey(d); }
+  function yearOf(k) { return +k.slice(0, 4); }
+  function fmtDate(k) { var d = fromKey(k); return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(); }
+  function fmtRange(s, e) {
+    if (s === e) { return fmtDate(s); }
+    var a = fromKey(s), b = fromKey(e);
+    if (a.getFullYear() !== b.getFullYear()) { return fmtDate(s) + ' – ' + fmtDate(e); }
+    if (a.getMonth() !== b.getMonth()) { return a.getDate() + ' ' + MONTHS[a.getMonth()] + ' – ' + fmtDate(e); }
+    return a.getDate() + ' – ' + fmtDate(e);
+  }
+  function fmtDays(n) { return String(Math.round(n * 2) / 2) + (n === 1 ? ' day' : ' days'); }
+  function fmtSize(bytes) {
+    if (bytes >= 1024 * 1024) { return (Math.round(bytes / (1024 * 1024) * 10) / 10) + ' MB'; }
+    return Math.max(1, Math.round(bytes / 1024)) + ' KB';
+  }
+  function lastDayOfMonth(k) { var d = fromKey(k); return toKey(new Date(d.getFullYear(), d.getMonth() + 1, 0)); }
+  function isWorkingDay(k) { var dow = fromKey(k).getDay(); return dow !== 0 && dow !== 6 && !HOLIDAYS[k]; }
+  function workingDays(s, e) {
+    var n = 0, k = s, guard = 0;
+    while (k <= e && guard < 3700) { if (isWorkingDay(k)) { n++; } k = addDays(k, 1); guard++; }
+    return n;
+  }
+  function traceId() {
+    var s = '', hex = '0123456789abcdef', i;
+    for (i = 0; i < 12; i++) { s += hex.charAt(Math.floor(Math.random() * 16)); }
+    return s;
+  }
+  function leaveTypeById(id) {
+    var i;
+    for (i = 0; i < LEAVE_TYPES.length; i++) { if (LEAVE_TYPES[i].id === id) { return LEAVE_TYPES[i]; } }
+    return null;
+  }
+  function hasRole(emp, role) { return emp.roles.indexOf(role) >= 0; }
+  function canRequestLeave(emp) { return hasRole(emp, 'EMPLOYEE') && !hasRole(emp, 'LINE_MANAGER'); }
+
+  /* =====================================================================
+     State
+     ===================================================================== */
+
+  var ctl = { persona: 'E-1001', formLoad: 'normal', submitResult: 'success', fileMode: 'normal', confirmLoad: 'normal', noEntitlement: false };
+  var addedRequests = loadStored();
+  var form, errors, summaryVisible, submitting, submitHeld, submitFromDialog, reviewerVariant, pmOptions;
+  var loadTimer = null, submitTimer = null, confirmTimer = null, redirectTimer = null;
+  var flashSubmitted = false;
+  var openModalEl = null, modalReturnFocus = null;
+  var leaveSelect = null, pmSelect = null;
+  var cal = { open: false, y: 2026, m: 8, active: TODAY };
+
+  function persona() { return EMPLOYEES[ctl.persona]; }
+  function allRequests() { return SEED_REQUESTS.concat(addedRequests); }
+  function loadStored() {
+    try {
+      var raw = window.sessionStorage.getItem(STORE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+  function saveStored() {
+    try { window.sessionStorage.setItem(STORE_KEY, JSON.stringify(addedRequests)); } catch (e) { /* storage not available: data stays in memory */ }
+  }
+  function resetFormState() {
+    form = { leaveType: null, start: null, end: null, dayPart: 'ALL_DAY', pm: null, pmChosenByUser: false, files: {}, rejects: {}, docsNotice: false };
+    errors = {};
+    summaryVisible = false;
+    submitting = false;
+    submitHeld = false;
+    submitFromDialog = false;
+    clearTimeout(submitTimer);
+  }
+  resetFormState();
+
+  /* =====================================================================
+     Notifications (top right, close after 4 seconds)
+     ===================================================================== */
+
+  function notify(text, type) {
+    var el = document.createElement('div');
+    el.className = 'notification' + (type === 'error' ? ' error' : '');
+    el.setAttribute('role', 'status');
+    el.innerHTML = '<span>' + esc(text) + '</span>';
+    $('notifications').appendChild(el);
+    setTimeout(function () { if (el.parentNode) { el.parentNode.removeChild(el); } }, 4000);
+  }
+
+  /* =====================================================================
+     Modal
+     ===================================================================== */
+
+  function openModal(id, focusId) {
+    closeCal(false);
+    modalReturnFocus = document.activeElement;
+    openModalEl = $(id);
+    openModalEl.hidden = false;
+    $(focusId).focus();
+  }
+  function closeModal(restoreFocus) {
+    if (!openModalEl) { return; }
+    openModalEl.hidden = true;
+    openModalEl = null;
+    if (restoreFocus !== false && modalReturnFocus && modalReturnFocus.focus && !modalReturnFocus.disabled) { modalReturnFocus.focus(); }
+    modalReturnFocus = null;
+  }
+  document.addEventListener('keydown', function (e) {
+    if (!openModalEl) { return; }
+    if (e.key === 'Escape') { e.preventDefault(); closeModal(); return; }
+    if (e.key === 'Tab') {
+      var f = openModalEl.querySelectorAll('button:not([disabled])');
+      if (!f.length) { e.preventDefault(); return; }
+      var first = f[0], last = f[f.length - 1];
+      if (!openModalEl.contains(document.activeElement)) {
+        if ($('protoControls').contains(document.activeElement)) { return; }
+        e.preventDefault(); first.focus();
+      } else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  /* =====================================================================
+     Select component (Select of the design system)
+     ===================================================================== */
+
+  function Select(root, opts) {
+    var trigger = root.querySelector('.select-trigger');
+    var valueEl = root.querySelector('.select-value');
+    var list = root.querySelector('[role="listbox"]');
+    var items = [], value = null, isOpen = false, active = -1;
+
+    function indexOfValue(v) {
+      var i;
+      for (i = 0; i < items.length; i++) { if (items[i].value === v) { return i; } }
+      return -1;
+    }
+    function render() {
+      var html = '', i, it;
+      for (i = 0; i < items.length; i++) {
+        it = items[i];
+        html += '<li role="option" id="' + trigger.id + '-opt-' + i + '" data-i="' + i + '" aria-selected="' + (it.value === value ? 'true' : 'false') + '"' +
+          (it.disabled ? ' aria-disabled="true"' : '') + (it.rule ? ' data-rule="' + it.rule + '"' : '') +
+          ' class="' + (i === active ? 'active' : '') + '"><span class="opt-name">' + esc(it.label) + '</span>' +
+          (it.help ? '<span class="opt-help">' + esc(it.help) + '</span>' : '') + '</li>';
+      }
+      list.innerHTML = html;
+      var sel = indexOfValue(value);
+      if (sel >= 0) {
+        valueEl.textContent = items[sel].label + (items[sel].help ? ' — ' + items[sel].help : '');
+        valueEl.className = 'select-value';
+      } else {
+        valueEl.textContent = opts.placeholder;
+        valueEl.className = 'select-value placeholder';
+      }
+      if (isOpen && active >= 0) { trigger.setAttribute('aria-activedescendant', trigger.id + '-opt-' + active); }
+      else { trigger.removeAttribute('aria-activedescendant'); }
+    }
+    function firstEnabled(from, dir) {
+      var i = from, n = 0;
+      while (n < items.length) {
+        if (i < 0) { i = items.length - 1; }
+        if (i >= items.length) { i = 0; }
+        if (!items[i].disabled) { return i; }
+        i += dir; n++;
+      }
+      return -1;
+    }
+    function openList() {
+      if (isOpen || trigger.disabled || !items.length) { return; }
+      isOpen = true;
+      var sel = indexOfValue(value);
+      active = sel >= 0 ? sel : firstEnabled(0, 1);
+      list.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      render();
+    }
+    function closeList() {
+      if (!isOpen) { return; }
+      isOpen = false; active = -1;
+      list.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+      render();
+    }
+    function choose(i) {
+      if (i < 0 || !items[i] || items[i].disabled) { return; }
+      var changed = items[i].value !== value;
+      value = items[i].value;
+      closeList();
+      render();
+      if (changed && opts.onChange) { opts.onChange(value); }
+    }
+    trigger.addEventListener('click', function () {
+      trigger.focus();
+      if (isOpen) { closeList(); } else { openList(); }
+    });
+    trigger.addEventListener('keydown', function (e) {
+      var k = e.key;
+      if (k === 'ArrowDown' || k === 'ArrowUp') {
+        e.preventDefault();
+        if (!isOpen) { openList(); }
+        else { active = firstEnabled(active + (k === 'ArrowDown' ? 1 : -1), k === 'ArrowDown' ? 1 : -1); render(); }
+      } else if (k === 'Enter' || k === ' ') {
+        e.preventDefault();
+        if (!isOpen) { openList(); } else { choose(active); }
+      } else if (k === 'Escape' && isOpen) {
+        e.preventDefault(); e.stopPropagation(); closeList();
+      }
+    });
+    trigger.addEventListener('keyup', function (e) { if (e.key === ' ') { e.preventDefault(); } });
+    trigger.addEventListener('blur', function () {
+      closeList();
+      if (opts.onBlur) { opts.onBlur(); }
+    });
+    list.addEventListener('mousedown', function (e) { e.preventDefault(); });
+    list.addEventListener('click', function (e) {
+      var li = e.target.closest ? e.target.closest('[role="option"]') : null;
+      if (li) { trigger.focus(); choose(+li.getAttribute('data-i')); }
+    });
+    list.addEventListener('mousemove', function (e) {
+      var li = e.target.closest ? e.target.closest('[role="option"]') : null;
+      if (li) {
+        var i = +li.getAttribute('data-i');
+        if (i !== active && !items[i].disabled) { active = i; render(); }
+      }
+    });
+
+    return {
+      setItems: function (list2) { items = list2; render(); },
+      setValue: function (v) { value = v; render(); },
+      getValue: function () { return value; },
+      close: closeList
+    };
+  }
+
+  /* =====================================================================
+     SCR-005: calculations
+     ===================================================================== */
+
+  function entitlementFor(empId, ltId, year) {
+    if (ctl.noEntitlement) { return null; }
+    var y = ENTITLEMENTS[year];
+    if (!y || !y[empId] || typeof y[empId][ltId] !== 'number') { return null; }
+    return y[empId][ltId];
+  }
+  function alreadyRequested(empId, ltId, year) {
+    var sum = 0;
+    allRequests().forEach(function (r) {
+      if (r.employeeId === empId && r.leaveTypeId === ltId && yearOf(r.start) === year && COUNTED_STATUSES.indexOf(r.status) >= 0) { sum += r.days; }
+    });
+    return sum;
+  }
+  /* Returns the figures of the Request summary, or null while the leave type or the dates are missing. */
+  function calc() {
+    if (!form.leaveType || !form.start || !form.end) { return null; }
+    var lt = leaveTypeById(form.leaveType);
+    var year = yearOf(form.start);
+    var days = workingDays(form.start, form.end) * (form.dayPart === 'ALL_DAY' ? 1 : 0.5);
+    var ent = entitlementFor(ctl.persona, form.leaveType, year);
+    var hasEnt = ent !== null;
+    var entDays = hasEnt ? ent : 0;
+    var already = alreadyRequested(ctl.persona, form.leaveType, year);
+    var remaining = entDays - already - days;
+    return {
+      lt: lt, year: year, days: days, hasEnt: hasEnt, ent: entDays, already: already, remaining: remaining,
+      exceeds: remaining < 0, exceedsBy: -remaining, left: Math.max(0, entDays - already)
+    };
+  }
+
+  /* =====================================================================
+     SCR-005: errors
+     ===================================================================== */
+
+  function setErr(key, msg, rule) { errors[key] = { msg: msg, rule: rule || null }; }
+  function clearErr(key) { delete errors[key]; }
+  function currentDocs() { var lt = form.leaveType ? leaveTypeById(form.leaveType) : null; return lt ? lt.docs : []; }
+
+  function vLeaveType() {
+    if (!form.leaveType) { setErr('leaveType', 'Choose a leave type.'); } else { clearErr('leaveType'); }
+  }
+  function vDates() {
+    if (!form.start || !form.end) { setErr('dates', 'Choose the first and the last day of your leave.', 'BR-001'); }
+    else if (form.start < MIN_DATE) { setErr('dates', 'Choose a start date in the future or in the current month.', 'BR-001'); }
+    else if (workingDays(form.start, form.end) === 0) { setErr('dates', 'These dates contain no working day. Choose dates that include at least one working day.', 'BR-022'); }
+    else { clearErr('dates'); }
+  }
+  function vPm() {
+    if (reviewerVariant === 'select' && !form.pm) { setErr('pm', 'Choose the Project Manager who will confirm this request.', 'BR-015'); }
+    else { clearErr('pm'); }
+  }
+  function vDocs() {
+    var lt = form.leaveType ? leaveTypeById(form.leaveType) : null;
+    Object.keys(errors).forEach(function (k) { if (k.indexOf('doc:') === 0) { delete errors[k]; } });
+    if (lt) {
+      lt.docs.forEach(function (d) {
+        if (!form.files[d]) { setErr('doc:' + d, 'Upload ' + d + '. ' + lt.name + ' requires it.', 'BR-005'); }
+      });
+    }
+  }
+  function errorList() {
+    var out = [];
+    if (errors.leaveType) { out.push({ key: 'leaveType', focus: 'leaveType', e: errors.leaveType }); }
+    if (errors.dates) { out.push({ key: 'dates', focus: 'startDate', e: errors.dates }); }
+    if (errors.pm) { out.push({ key: 'pm', focus: 'pm', e: errors.pm }); }
+    currentDocs().forEach(function (d, i) {
+      if (errors['doc:' + d]) { out.push({ key: 'doc:' + d, focus: 'doc-btn-' + i, e: errors['doc:' + d] }); }
+    });
+    return out;
+  }
+  function showFieldError(key, fieldId, errId) {
+    var field = $(fieldId), el = $(errId);
+    if (!field || !el) { return; }
+    var e = errors[key];
+    field.classList.toggle('has-error', !!e);
+    el.hidden = !e;
+    el.textContent = e ? e.msg : '';
+    if (e && e.rule) { el.setAttribute('data-rule', e.rule); } else { el.removeAttribute('data-rule'); }
+  }
+  function updateErrors() {
+    showFieldError('leaveType', 'field-leaveType', 'leaveType-error');
+    showFieldError('dates', 'field-dates', 'dates-error');
+    showFieldError('pm', 'field-pm', 'pm-error');
+    currentDocs().forEach(function (d, i) { showFieldError('doc:' + d, 'field-doc-' + i, 'doc-error-' + i); });
+    renderErrorSummary();
+  }
+  function renderErrorSummary() {
+    var box = $('f-errsummary');
+    var list = errorList();
+    if (!summaryVisible || !list.length) { summaryVisible = false; box.hidden = true; box.innerHTML = ''; return; }
+    var html = '<p class="alert-title">This request cannot be submitted yet. Fix the following:</p><ul>';
+    list.forEach(function (it) {
+      html += '<li' + (it.e.rule ? ' data-rule="' + it.e.rule + '"' : '') + '><a href="#/scr-005" data-focus="' + it.focus + '">' + esc(it.e.msg) + '</a></li>';
+    });
+    box.innerHTML = html + '</ul>';
+    box.hidden = false;
+  }
+  function showSummaryAndFocus() {
+    summaryVisible = true;
+    updateErrors();
+    $('f-errsummary').focus();
+    $('f-errsummary').scrollIntoView({ block: 'center' });
+  }
+
+  /* =====================================================================
+     SCR-005: date range picker
+     ===================================================================== */
+
+  function renderCal() {
+    var y = cal.y, m = cal.m, html = '', hol = [], i, d;
+    $('cal-title').textContent = MONTHS_LONG[m] + ' ' + y;
+    var offset = (new Date(y, m, 1).getDay() + 6) % 7;
+    var dim = new Date(y, m + 1, 0).getDate();
+    for (i = 0; i < offset; i++) { html += '<span></span>'; }
+    for (d = 1; d <= dim; d++) {
+      var k = y + '-' + pad(m + 1) + '-' + pad(d);
+      var dow = new Date(y, m, d).getDay();
+      var weekend = dow === 0 || dow === 6;
+      var holiday = HOLIDAYS[k];
+      var cls = ['cal-day'], label = fmtDate(k);
+      if (weekend || holiday) { cls.push('nonworking'); }
+      if (holiday) { cls.push('holiday'); hol.push(d + ' ' + MONTHS[m] + ': ' + holiday); label += ', public holiday: ' + holiday + ', not counted'; }
+      else if (weekend) { label += ', weekend, not counted'; }
+      if (k === TODAY) { cls.push('today'); }
+      if (k === form.start || k === form.end) { cls.push('sel'); }
+      if (form.start && form.end && k > form.start && k < form.end) { cls.push('in-range'); }
+      if (k === cal.active) { cls.push('active'); }
+      html += '<button type="button" tabindex="-1" class="' + cls.join(' ') + '" data-date="' + k + '"' + (k < MIN_DATE ? ' disabled' : '') +
+        ' aria-label="' + esc(label) + '"' + (holiday ? ' title="' + esc(holiday) + '"' : '') + '>' + d + '</button>';
+    }
+    $('cal-grid').innerHTML = html;
+    $('cal-holidays').innerHTML = hol.map(function (h) { return '<li>' + esc(h) + '</li>'; }).join('');
+  }
+  function openCal() {
+    if (cal.open || submitting) { return; }
+    var base = form.start || TODAY;
+    var d = fromKey(base);
+    cal.y = d.getFullYear(); cal.m = d.getMonth(); cal.active = base;
+    cal.open = true;
+    renderCal();
+    $('calendar').hidden = false;
+    $('startDate').setAttribute('aria-expanded', 'true');
+  }
+  /* Closing the picker is the moment the user leaves the field: validate it. */
+  function closeCal(validate) {
+    if (!cal.open) { return; }
+    cal.open = false;
+    $('calendar').hidden = true;
+    $('startDate').setAttribute('aria-expanded', 'false');
+    if (validate !== false) { vDates(); updateErrors(); }
+  }
+  function shiftMonth(n) {
+    var d = new Date(cal.y, cal.m + n, 1);
+    cal.y = d.getFullYear(); cal.m = d.getMonth();
+    var firstKey = toKey(d);
+    cal.active = firstKey < MIN_DATE ? MIN_DATE : firstKey;
+    if (yearOf(cal.active) !== cal.y || fromKey(cal.active).getMonth() !== cal.m) { cal.active = firstKey; }
+    renderCal();
+  }
+  function setActiveDate(k) {
+    if (k < MIN_DATE) { k = MIN_DATE; }
+    var d = fromKey(k);
+    cal.active = k; cal.y = d.getFullYear(); cal.m = d.getMonth();
+    renderCal();
+  }
+  function pickDate(k) {
+    if (k < MIN_DATE || submitting) { return; }
+    if (!form.start || form.end) { form.start = k; form.end = null; }
+    else if (k >= form.start) { form.end = k; }
+    else { form.start = k; }
+    cal.active = k;
+    onDatesChanged();
+    if (form.start && form.end) { closeCal(); } else { renderCal(); }
+  }
+  function onDatesChanged() {
+    $('startDate').value = form.start ? fmtDate(form.start) : '';
+    $('endDate').value = form.end ? fmtDate(form.end) : '';
+    syncDayPart();
+    if (form.start && form.end) { vDates(); } else { clearErr('dates'); }
+    updateSummary();
+    updateErrors();
+  }
+  function onDateKey(e) {
+    var k = e.key;
+    if (k === 'Tab') { return; }
+    if (k === 'Escape') { if (cal.open) { e.preventDefault(); e.stopPropagation(); closeCal(); } return; }
+    if (k === 'Enter' || k === ' ') {
+      e.preventDefault();
+      if (!cal.open) { openCal(); } else { pickDate(cal.active); }
+      return;
+    }
+    var delta = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[k];
+    if (delta) {
+      e.preventDefault();
+      if (!cal.open) { openCal(); } else { setActiveDate(addDays(cal.active, delta)); }
+      return;
+    }
+    if (k === 'PageUp' || k === 'PageDown') {
+      e.preventDefault();
+      if (!cal.open) { openCal(); } else { shiftMonth(k === 'PageUp' ? -1 : 1); }
+    }
+  }
+
+  /* =====================================================================
+     SCR-005: day part
+     ===================================================================== */
+
+  function syncDayPart() {
+    var multi = !!(form.start && form.end && form.start !== form.end);
+    $('dp-morning').disabled = multi;
+    $('dp-afternoon').disabled = multi;
+    if (multi && form.dayPart !== 'ALL_DAY') { form.dayPart = 'ALL_DAY'; }
+    $('dp-all').checked = form.dayPart === 'ALL_DAY';
+    $('dp-morning').checked = form.dayPart === 'MORNING';
+    $('dp-afternoon').checked = form.dayPart === 'AFTERNOON';
+    $('dayPart-help').hidden = !multi;
+  }
+
+  /* =====================================================================
+     SCR-005: request summary and exceeds-entitlement warning
+     ===================================================================== */
+
+  var WARN_ICON = '<svg class="icon-warn" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 15 14H1L8 1.5z" fill="#FAAD14"/><rect x="7.25" y="6" width="1.5" height="4.5" fill="#FFFFFF"/><rect x="7.25" y="11.3" width="1.5" height="1.5" fill="#FFFFFF"/></svg>';
+
+  function updateSummary() {
+    var c = calc();
+    var card = $('f-summary'), warn = $('f-exceeds');
+    if (!c) { card.hidden = true; warn.hidden = true; warn.textContent = ''; return; }
+    $('sum-days').textContent = fmtDays(c.days);
+    var ent = $('sum-ent');
+    if (c.hasEnt) { ent.textContent = fmtDays(c.ent); ent.className = ''; }
+    else { ent.textContent = 'No entitlement on record for ' + c.lt.name + ' in ' + c.year + '.'; ent.className = 'text'; }
+    $('sum-already').textContent = fmtDays(c.already);
+    var rem = $('sum-remaining');
+    if (c.exceeds) { rem.className = 'warn'; rem.innerHTML = WARN_ICON + '<span>Exceeds by ' + esc(fmtDays(c.exceedsBy)) + '</span>'; }
+    else { rem.className = ''; rem.textContent = fmtDays(c.remaining); }
+    card.hidden = false;
+    if (c.exceeds) {
+      warn.textContent = 'This request exceeds your ' + c.lt.name + ' entitlement by ' + fmtDays(c.exceedsBy) + '. You can still submit it. It will be flagged for manual review.';
+      warn.hidden = false;
+    } else { warn.hidden = true; warn.textContent = ''; }
+  }
+
+  /* =====================================================================
+     SCR-005: reviewer
+     ===================================================================== */
+
+  function pmOptionsFor(empId) {
+    var byPm = {}, order = [];
+    PROJECTS.forEach(function (p) {
+      if (p.members.indexOf(empId) >= 0) {
+        if (!byPm[p.pm]) { byPm[p.pm] = []; order.push(p.pm); }
+        byPm[p.pm].push(p.name);
+      }
+    });
+    return order.map(function (name) { return { value: name, label: name, help: byPm[name].join(', ') }; });
+  }
+  function renderReviewer() {
+    var p = persona(), box = $('f-reviewer');
+    pmSelect = null;
+    pmOptions = pmOptionsFor(ctl.persona);
+    if (hasRole(p, 'PROJECT_MANAGER')) {
+      reviewerVariant = 'pm';
+      box.innerHTML = '<div class="alert alert-info" data-rule="BR-007">You are a Project Manager, so your request is confirmed automatically. It goes straight to your Line Manager for approval.</div>';
+    } else if (!pmOptions.length) {
+      reviewerVariant = 'noproject';
+      box.innerHTML = '<div class="alert alert-info" data-rule="BR-021">You are not in a project, so your request needs no confirmation. It goes straight to your Line Manager for approval.</div>';
+    } else {
+      reviewerVariant = 'select';
+      box.innerHTML =
+        '<div class="field" id="field-pm" data-rule="BR-015">' +
+        '<label for="pm" id="pm-label">Project Manager<span class="req" aria-hidden="true">*</span></label>' +
+        '<div class="select" id="pm-select">' +
+        '<button type="button" class="select-trigger" id="pm" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="pm-list" aria-required="true"><span class="select-value"></span></button>' +
+        '<ul role="listbox" id="pm-list" aria-labelledby="pm-label" hidden></ul>' +
+        '</div>' +
+        '<div class="field-error" id="pm-error" aria-live="polite" hidden></div>' +
+        '</div>';
+      pmSelect = Select($('pm-select'), {
+        placeholder: 'Select',
+        onChange: function (v) { form.pm = v; form.pmChosenByUser = true; vPm(); updateErrors(); },
+        onBlur: function () { if (!submitting) { vPm(); updateErrors(); } }
+      });
+      pmSelect.setItems(pmOptions);
+      if (pmOptions.length === 1) { form.pm = pmOptions[0].value; pmSelect.setValue(form.pm); }
+    }
+    $('f-linemanager').textContent = 'Approved by: ' + p.lineManager;
+  }
+
+  /* =====================================================================
+     SCR-005: supporting documents
+     ===================================================================== */
+
+  function renderDocs() {
+    var box = $('f-docs');
+    var lt = form.leaveType ? leaveTypeById(form.leaveType) : null;
+    var docs = lt ? lt.docs : [];
+    if (!docs.length && !form.docsNotice) { box.hidden = true; box.innerHTML = ''; return; }
+    var html = '<h2>Supporting documents</h2>';
+    if (form.docsNotice) {
+      html += '<div class="alert alert-info" role="status" data-rule="BR-005">The required documents changed with the leave type. Files that are no longer needed were removed.</div>';
+    }
+    docs.forEach(function (doc, i) {
+      var file = form.files[doc], rej = form.rejects[doc];
+      html += '<div class="field" id="field-doc-' + i + '" data-rule="BR-005">';
+      html += '<label for="doc-' + i + '">' + esc(doc) + '<span class="req" aria-hidden="true">*</span></label>';
+      html += '<div class="drop" data-doc-index="' + i + '"' + (file ? ' hidden' : '') + '>' +
+        '<span>Drop a file here or</span>' +
+        '<button type="button" class="btn" id="doc-btn-' + i + '" data-choose="' + i + '">Choose file</button>' +
+        '<input type="file" class="sr-only" tabindex="-1" id="doc-' + i + '" data-doc-input="' + i + '"' + (file ? ' disabled' : '') + '>' +
+        '</div>';
+      if (file) {
+        html += '<div class="file-row"><span class="file-name">' + esc(file.name) + '</span><span class="file-size">' + esc(fmtSize(file.size)) + '</span>' +
+          '<button type="button" class="btn btn-link file-remove" id="doc-remove-' + i + '" data-remove="' + i + '" aria-label="Remove ' + esc(file.name) + '">Remove</button></div>';
+      } else if (rej) {
+        html += '<div class="file-row rejected"><span class="file-name">' + esc(rej.name) + '</span><span class="file-size">' + esc(fmtSize(rej.size)) + '</span>' +
+          '<button type="button" class="btn btn-link file-remove" data-remove="' + i + '" aria-label="Remove ' + esc(rej.name) + '">Remove</button>' +
+          '<span class="file-error" role="alert" data-rule="BR-005">' + esc(rej.error) + '</span></div>';
+      }
+      html += '<div class="field-error" id="doc-error-' + i + '" aria-live="polite" hidden></div>';
+      html += '</div>';
+    });
+    if (docs.length) { html += '<p class="help" data-rule="BR-005">PDF, JPG or PNG, up to 10 MB.</p>'; }
+    box.innerHTML = html;
+    box.hidden = false;
+  }
+  /* file: {name, size}. Checks type and size, then lists the file as accepted or refused. */
+  function addFile(docIndex, file) {
+    var docs = currentDocs(), doc = docs[docIndex];
+    if (!doc || form.files[doc] || submitting) { return; }
+    var name = file.name, size = file.size, err = null;
+    if (ctl.fileMode === 'too-large') { size = Math.max(size, Math.round(12.4 * 1024 * 1024)); }
+    if (!/\.(pdf|jpe?g|png)$/i.test(name)) { err = name + ' is not a PDF, JPG or PNG file. Upload a PDF, JPG or PNG file.'; }
+    else if (size > MAX_FILE_BYTES) { err = name + ' is larger than 10 MB. Upload a smaller file.'; }
+    else if (ctl.fileMode === 'upload-fails') { err = name + ' could not be uploaded. Try again or upload a different file.'; }
+    if (err) {
+      form.rejects[doc] = { name: name, size: size, error: err };
+    } else {
+      delete form.rejects[doc];
+      form.files[doc] = { name: name, size: size };
+      clearErr('doc:' + doc);
+    }
+    renderDocs();
+    updateErrors();
+    var focusEl = err ? $('doc-btn-' + docIndex) : $('doc-remove-' + docIndex);
+    if (focusEl) { focusEl.focus(); }
+  }
+  function removeFile(docIndex) {
+    var doc = currentDocs()[docIndex];
+    if (!doc || submitting) { return; }
+    delete form.files[doc];
+    delete form.rejects[doc];
+    if (summaryVisible) { vDocs(); }
+    renderDocs();
+    updateErrors();
+    var btn = $('doc-btn-' + docIndex);
+    if (btn) { btn.focus(); }
+  }
+  function onLeaveTypeChanged(id) {
+    form.leaveType = id;
+    var lt = leaveTypeById(id), removed = false;
+    Object.keys(form.files).forEach(function (doc) {
+      if (lt.docs.indexOf(doc) < 0) { delete form.files[doc]; removed = true; }
+    });
+    Object.keys(form.rejects).forEach(function (doc) {
+      if (lt.docs.indexOf(doc) < 0) { delete form.rejects[doc]; }
+    });
+    form.docsNotice = removed;
+    var hadDocErrors = Object.keys(errors).some(function (k) { return k.indexOf('doc:') === 0; });
+    Object.keys(errors).forEach(function (k) { if (k.indexOf('doc:') === 0) { delete errors[k]; } });
+    if (summaryVisible || hadDocErrors) { vDocs(); }
+    vLeaveType();
+    renderDocs();
+    updateSummary();
+    updateErrors();
+  }
+
+  /* =====================================================================
+     SCR-005: load, submit, cancel
+     ===================================================================== */
+
+  function showFormPart(id) {
+    ['f-skeleton', 'f-empty', 'f-loaderror', 'leaveForm'].forEach(function (x) { $(x).hidden = x !== id; });
+  }
+  function enterForm() {
+    clearTimeout(loadTimer);
+    resetFormState();
+    closeModal(false);
+    cal.open = false; $('calendar').hidden = true;
+    var p = persona();
+    if (!canRequestLeave(p)) {
+      $('f-noaccess').hidden = false; $('f-main').hidden = true;
+      return;
+    }
+    $('f-noaccess').hidden = true; $('f-main').hidden = false;
+    showFormPart('f-skeleton');
+    if (ctl.formLoad === 'loading') { return; }
+    loadTimer = setTimeout(function () {
+      if (ctl.formLoad === 'loading') { return; }
+      if (ctl.formLoad === 'error') {
+        $('f-loaderror-text').textContent = 'We could not load the leave request form. Try again. Trace ID: ' + traceId();
+        showFormPart('f-loaderror');
+        return;
+      }
+      if (ctl.formLoad === 'empty') { showFormPart('f-empty'); return; }
+      buildForm();
+    }, 500);
+  }
+  function buildForm() {
+    var p = persona();
+    leaveSelect.setItems(LEAVE_TYPES.map(function (lt) {
+      var eligible = lt.eligibility === 'ALL' || lt.eligibility === p.gender;
+      return { value: lt.id, label: lt.name, disabled: !eligible, help: eligible ? '' : lt.eligibilityText, rule: eligible ? '' : 'BR-004' };
+    }));
+    leaveSelect.setValue(null);
+    renderReviewer();
+    $('startDate').value = ''; $('endDate').value = '';
+    $('f-submiterror').hidden = true;
+    syncDayPart();
+    renderDocs();
+    updateSummary();
+    setSubmittingUI(false);
+    updateErrors();
+    showFormPart('leaveForm');
+  }
+  function isDirty() {
+    return !!(form.leaveType || form.start || form.end || form.dayPart !== 'ALL_DAY' || form.pmChosenByUser ||
+      Object.keys(form.files).length || Object.keys(form.rejects).length);
+  }
+  function setSubmittingUI(on) {
+    var label = on ? '<span class="spinner" aria-hidden="true"></span>Submit request<span class="sr-only"> (submitting)</span>' : 'Submit request';
+    $('f-fields').disabled = on;
+    $('submitBtn').disabled = on; $('submitBtn').innerHTML = label;
+    $('mx-submit').disabled = on; $('mx-submit').innerHTML = label;
+    $('leaveForm').setAttribute('aria-busy', on ? 'true' : 'false');
+  }
+  function onSubmit() {
+    if (submitting) { return; }
+    closeCal(false);
+    $('f-submiterror').hidden = true;
+    vLeaveType(); vDates(); vPm(); vDocs();
+    if (errorList().length) { showSummaryAndFocus(); return; }
+    summaryVisible = false; updateErrors();
+    var c = calc();
+    if (c.exceeds) {
+      $('mx-text').textContent = 'You are requesting ' + fmtDays(c.days) + ' of ' + c.lt.name + ' and have ' + fmtDays(c.left) + ' left for ' + c.year +
+        '. The request will be flagged as Exceeds entitlement for the people who review it.';
+      openModal('modal-exceeds', 'mx-back');
+      return;
+    }
+    startSubmission(false);
+  }
+  function startSubmission(fromDialog) {
+    submitting = true; submitFromDialog = fromDialog;
+    setSubmittingUI(true);
+    clearTimeout(submitTimer);
+    if (ctl.submitResult === 'hold') { submitHeld = true; return; }
+    submitHeld = false;
+    submitTimer = setTimeout(resolveSubmission, 1200);
+  }
+  function endSubmission() {
+    submitting = false; submitHeld = false;
+    setSubmittingUI(false);
+    closeModal(false);
+  }
+  function resolveSubmission() {
+    if (!submitting) { return; }
+    var mode = ctl.submitResult;
+    var lt = leaveTypeById(form.leaveType);
+    if (mode === 'hold') { submitHeld = true; return; }
+    if (mode === 'error503') {
+      endSubmission();
+      var box = $('f-submiterror');
+      box.textContent = 'We could not submit your request and nothing was saved. Try again. Trace ID: ' + traceId();
+      box.hidden = false; box.focus(); box.scrollIntoView({ block: 'center' });
+      return;
+    }
+    if (mode === 'reject-type') {
+      endSubmission();
+      setErr('leaveType', 'You are not eligible for ' + lt.name + '. Choose another leave type.', 'BR-004');
+      showSummaryAndFocus();
+      return;
+    }
+    if (mode === 'reject-dates') {
+      endSubmission();
+      setErr('dates', 'Choose a start date in the future or in the current month.', 'BR-001');
+      showSummaryAndFocus();
+      return;
+    }
+    if (mode === 'reject-pm' && reviewerVariant === 'select') {
+      endSubmission();
+      setErr('pm', form.pm + ' is not a Project Manager of one of your projects. Choose another Project Manager.', 'BR-015');
+      showSummaryAndFocus();
+      return;
+    }
+    if (mode === 'late-exceeds') {
+      var before = calc();
+      if (!before.exceeds) {
+        /* Simulates another request of the same leave type submitted in the meantime: it uses up what was left. */
+        addedRequests.push({
+          id: null, concurrent: true, employeeId: ctl.persona, leaveTypeId: form.leaveType, start: form.start, end: form.start,
+          dayPart: 'ALL_DAY', days: before.remaining + before.days, status: 'PENDING_CONFIRMATION'
+        });
+      }
+    }
+    createRequest();
+  }
+  function nextRequestId() {
+    var max = 10482;
+    addedRequests.forEach(function (r) { if (r.id && +r.id > max) { max = +r.id; } });
+    return String(max + 1);
+  }
+  function createRequest() {
+    var c = calc(), p = persona(), now = new Date();
+    var docs = c.lt.docs.map(function (d) { return { type: d, fileName: form.files[d].name }; });
+    var req = {
+      id: nextRequestId(),
+      employeeId: ctl.persona,
+      leaveTypeId: form.leaveType,
+      start: form.start, end: form.end, dayPart: form.dayPart, days: c.days,
+      status: reviewerVariant === 'select' ? 'PENDING_CONFIRMATION' : 'PENDING_APPROVAL',
+      route: reviewerVariant,
+      exceeds: c.exceeds, exceedsBy: c.exceeds ? c.exceedsBy : 0,
+      projectManager: reviewerVariant === 'select' ? form.pm : null,
+      lineManager: p.lineManager,
+      documents: docs,
+      submittedAt: fmtDate(TODAY) + ', ' + pad(now.getHours()) + ':' + pad(now.getMinutes())
+    };
+    addedRequests.push(req);
+    saveStored();
+    endSubmission();
+    resetFormState();
+    flashSubmitted = true;
+    location.hash = '#/scr-006/' + req.id;
+  }
+  function expireSession() {
+    notify('Your session has expired. Sign in again.', 'error');
+    clearTimeout(redirectTimer);
+    redirectTimer = setTimeout(function () {
+      resetFormState();
+      closeModal(false);
+      location.hash = '#/sso';
+    }, 1500);
+  }
+
+  /* =====================================================================
+     SCR-006
+     ===================================================================== */
+
+  function findRequest(id) {
+    var i;
+    for (i = 0; i < addedRequests.length; i++) { if (addedRequests[i].id === id) { return addedRequests[i]; } }
+    return null;
+  }
+  function enterConfirmation(id) {
+    clearTimeout(confirmTimer);
+    var body = $('c-body');
+    var p = persona();
+    if (!canRequestLeave(p)) {
+      body.innerHTML = '<div class="noaccess"><h1>No access</h1><p>Your role cannot open this area.</p><p><a href="#/home">Go to home</a></p></div>';
+      return;
+    }
+    var header = '<div class="page-header"><h1>Leave request submitted</h1></div>';
+    body.innerHTML = header +
+      '<div class="skeleton form-col" aria-busy="true" aria-label="Loading the leave request">' +
+      '<span class="inp"></span><span class="w80"></span><span class="w60"></span><span class="w80"></span><span class="w40"></span><span class="w60"></span><span class="w80"></span>' +
+      '</div>';
+    if (flashSubmitted) { flashSubmitted = false; notify('Leave request submitted.'); }
+    if (ctl.confirmLoad === 'loading') { return; }
+    confirmTimer = setTimeout(function () {
+      if (ctl.confirmLoad === 'loading') { return; }
+      if (ctl.confirmLoad === 'error') {
+        body.innerHTML = header +
+          '<div class="alert alert-error form-col" role="alert"><div class="alert-row"><div>We could not load your request. It was submitted. Try again. Trace ID: ' + traceId() + '</div>' +
+          '<button type="button" class="btn" data-action="retry-confirm">Retry</button></div></div>';
+        return;
+      }
+      var r = ctl.confirmLoad === 'notfound' ? null : findRequest(id);
+      if (!r || r.employeeId !== ctl.persona) {
+        body.innerHTML = '<div class="notfound"><p>We could not find this leave request.</p><p><a href="#/my-leave-requests">My leave requests</a></p></div>';
+        return;
+      }
+      body.innerHTML = header + confirmationHtml(r);
+    }, 500);
+  }
+  function confirmationHtml(r) {
+    var lt = leaveTypeById(r.leaveTypeId), st = STATUS[r.status];
+    var outcome, rule;
+    if (r.route === 'select') {
+      outcome = 'Your request was submitted. ' + r.projectManager + ' has been notified by email and will confirm or deny it.';
+      rule = 'BR-018';
+    } else if (r.route === 'pm') {
+      outcome = 'Your request was submitted and confirmed automatically because you are a Project Manager. ' + r.lineManager + ' has been notified by email and will approve or reject it.';
+      rule = 'BR-007';
+    } else {
+      outcome = 'Your request was submitted. You are not in a project, so it needs no confirmation. ' + r.lineManager + ' has been notified by email and will approve or reject it.';
+      rule = 'BR-021';
+    }
+    var html = '<div class="form-col">';
+    html += '<div class="alert alert-success" role="status" data-rule="' + rule + '">' + esc(outcome) + '</div>';
+    if (r.exceeds) {
+      html += '<div class="alert alert-warning" data-rule="BR-002">This request exceeds your ' + esc(lt.name) + ' entitlement by ' + esc(fmtDays(r.exceedsBy)) + '. It is flagged for manual review.</div>';
+    }
+    html += '<h2>Request summary</h2><dl class="desc">';
+    html += '<dt>Leave type</dt><dd>' + esc(lt.name) + '</dd>';
+    html += '<dt>Dates</dt><dd data-rule="BR-017">' + esc(fmtRange(r.start, r.end) + ', ' + DAY_PART_LABELS[r.dayPart]) + '</dd>';
+    html += '<dt>Days requested</dt><dd data-rule="BR-022">' + esc(fmtDays(r.days)) + '</dd>';
+    html += '<dt>Status</dt><dd><span class="tag ' + st.cls + '">' + esc(st.label) + '</span>' +
+      (r.exceeds ? '<span class="tag tag-warning" data-rule="BR-002">Exceeds entitlement</span>' : '') + '</dd>';
+    if (r.projectManager) { html += '<dt>Project Manager</dt><dd data-rule="BR-015">' + esc(r.projectManager) + '</dd>'; }
+    html += '<dt>Line Manager</dt><dd>' + esc(r.lineManager) + '</dd>';
+    if (r.documents && r.documents.length) {
+      html += '<dt>Documents</dt><dd data-rule="BR-005"><ul>' + r.documents.map(function (d) { return '<li>' + esc(d.type) + ': ' + esc(d.fileName) + '</li>'; }).join('') + '</ul></dd>';
+    }
+    html += '<dt>Submitted</dt><dd>' + esc(r.submittedAt) + '</dd>';
+    html += '</dl>';
+    html += '<h2>What happens next</h2>';
+    if (r.status === 'PENDING_CONFIRMATION') {
+      html += '<p>After the confirmation, ' + esc(r.lineManager) + ' approves or rejects your request.</p>';
+    }
+    html += '<p data-rule="BR-008">Your request must be decided by ' + esc(fmtDate(lastDayOfMonth(r.start))) + '. If it is still undecided then, it is cancelled automatically.</p>';
+    html += '<p data-rule="BR-018">You will get an email when your request is denied, approved or rejected.</p>';
+    html += '<div class="page-actions">' +
+      '<button type="button" class="btn btn-primary" data-go="#/my-leave-requests">View my leave requests</button>' +
+      '<button type="button" class="btn" data-go="#/leave-request-detail/' + esc(r.id) + '">View this request</button>' +
+      '<button type="button" class="btn" data-go="#/scr-005">Request more leave</button>' +
+      '</div></div>';
+    return html;
+  }
+
+  /* =====================================================================
+     Placeholders for navigation targets outside UC-001
+     ===================================================================== */
+
+  function showStub(name, arg) {
+    var title, note, actions = '';
+    if (name === 'my-leave-requests') {
+      title = 'My leave requests';
+      note = 'This screen belongs to UC-002. In this prototype it is a navigation target only.';
+      if (canRequestLeave(persona())) { actions = '<button type="button" class="btn btn-primary" data-go="#/scr-005">Request leave</button>'; }
+    } else if (name === 'leave-request-detail') {
+      title = 'Leave request detail';
+      note = 'This screen belongs to UC-002. In this prototype it is a navigation target only. Request: ' + (arg || '');
+      actions = '<button type="button" class="btn" data-go="#/my-leave-requests">My leave requests</button>';
+    } else if (name === 'sso') {
+      title = 'Company single sign-on';
+      note = 'The user was sent here because the session expired. Signing in is outside this prototype. What was entered on the form is lost.';
+      actions = '<button type="button" class="btn btn-primary" data-go="#/scr-005">Back to the prototype</button>';
+    } else if (name === 'reviews') {
+      title = 'Reviews';
+      note = 'This area belongs to other use cases. In this prototype it is a navigation target only.';
+    } else {
+      title = 'Home';
+      note = 'The home page is outside UC-001. In this prototype it is a navigation target only.';
+    }
+    $('stub-title').textContent = title;
+    $('stub-note').textContent = note;
+    $('stub-actions').innerHTML = actions;
+  }
+
+  /* =====================================================================
+     Frame: navigation, routing
+     ===================================================================== */
+
+  function renderFrame(routeName) {
+    var p = persona();
+    $('userName').textContent = p.name;
+    $('userRole').textContent = p.roles.map(function (r) { return ROLE_LABELS[r]; }).join(', ');
+    var items = [];
+    if (canRequestLeave(p)) {
+      items.push(['#/scr-005', 'Request leave', 'scr-005']);
+      items.push(['#/my-leave-requests', 'My leave requests', 'my-leave-requests']);
+    }
+    if (hasRole(p, 'PROJECT_MANAGER') || hasRole(p, 'LINE_MANAGER')) { items.push(['#/reviews', 'Reviews', 'reviews']); }
+    $('sidenav').innerHTML = items.map(function (it) {
+      return '<a href="' + it[0] + '"' + (it[2] === routeName ? ' aria-current="page"' : '') + '>' + esc(it[1]) + '</a>';
+    }).join('');
+  }
+  function route() {
+    var h = location.hash.replace(/^#\/?/, '');
+    var parts = h.split('/');
+    var name = parts[0];
+    if (!name) { location.hash = '#/scr-005'; return; }
+    clearTimeout(loadTimer); clearTimeout(confirmTimer); clearTimeout(submitTimer);
+    closeModal(false);
+    $('sidenav').classList.remove('open');
+    $('menuBtn').setAttribute('aria-expanded', 'false');
+    $('scr-005').hidden = name !== 'scr-005';
+    $('scr-006').hidden = name !== 'scr-006';
+    $('stub').hidden = name === 'scr-005' || name === 'scr-006';
+    renderFrame(name);
+    if (name === 'scr-005') { enterForm(); }
+    else if (name === 'scr-006') { resetFormState(); enterConfirmation(parts[1] || ''); }
+    else { resetFormState(); showStub(name, parts[1]); }
+    window.scrollTo(0, 0);
+  }
+
+  /* =====================================================================
+     Wiring
+     ===================================================================== */
+
+  leaveSelect = Select($('leaveType-select'), {
+    placeholder: 'Select',
+    onChange: function (v) { onLeaveTypeChanged(v); },
+    onBlur: function () { if (!submitting && !$('leaveForm').hidden) { vLeaveType(); updateErrors(); } }
+  });
+
+  $('leaveForm').addEventListener('submit', function (e) { e.preventDefault(); onSubmit(); });
+
+  /* Date range picker */
+  ['startDate', 'endDate'].forEach(function (id) {
+    $(id).addEventListener('focus', openCal);
+    $(id).addEventListener('click', openCal);
+    $(id).addEventListener('keydown', onDateKey);
+  });
+  $('calendar').addEventListener('mousedown', function (e) { e.preventDefault(); });
+  $('calendar').addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('button') : null;
+    if (!btn || btn.disabled) { return; }
+    if (btn.id === 'cal-prev') { shiftMonth(-1); }
+    else if (btn.id === 'cal-next') { shiftMonth(1); }
+    else if (btn.getAttribute('data-date')) { pickDate(btn.getAttribute('data-date')); }
+  });
+  $('field-dates').addEventListener('focusout', function () {
+    setTimeout(function () {
+      if (cal.open && !$('field-dates').contains(document.activeElement)) { closeCal(); }
+    }, 0);
+  });
+  document.addEventListener('mousedown', function (e) {
+    if (cal.open && !$('field-dates').contains(e.target)) { closeCal(); }
+  });
+
+  /* Day part */
+  ['dp-all', 'dp-morning', 'dp-afternoon'].forEach(function (id) {
+    $(id).addEventListener('change', function () {
+      if (this.checked) { form.dayPart = this.value; syncDayPart(); updateSummary(); }
+    });
+  });
+
+  /* Supporting documents (delegated: the section is re-rendered) */
+  $('f-docs').addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('button') : null;
+    if (!t) { return; }
+    if (t.hasAttribute('data-choose')) { $('doc-' + t.getAttribute('data-choose')).click(); }
+    else if (t.hasAttribute('data-remove')) { removeFile(+t.getAttribute('data-remove')); }
+  });
+  $('f-docs').addEventListener('change', function (e) {
+    var t = e.target;
+    if (t && t.hasAttribute && t.hasAttribute('data-doc-input') && t.files && t.files.length) {
+      addFile(+t.getAttribute('data-doc-input'), { name: t.files[0].name, size: t.files[0].size });
+    }
+  });
+  $('f-docs').addEventListener('dragover', function (e) {
+    var drop = e.target.closest ? e.target.closest('.drop') : null;
+    if (drop) { e.preventDefault(); drop.classList.add('over'); }
+  });
+  $('f-docs').addEventListener('dragleave', function (e) {
+    var drop = e.target.closest ? e.target.closest('.drop') : null;
+    if (drop) { drop.classList.remove('over'); }
+  });
+  $('f-docs').addEventListener('drop', function (e) {
+    var drop = e.target.closest ? e.target.closest('.drop') : null;
+    if (!drop) { return; }
+    e.preventDefault();
+    drop.classList.remove('over');
+    var files = e.dataTransfer && e.dataTransfer.files;
+    if (files && files.length) { addFile(+drop.getAttribute('data-doc-index'), { name: files[0].name, size: files[0].size }); }
+  });
+  /* A file dropped next to a drop area must not replace the page. */
+  window.addEventListener('dragover', function (e) { e.preventDefault(); });
+  window.addEventListener('drop', function (e) { e.preventDefault(); });
+
+  /* Error summary links move focus to the field */
+  $('f-errsummary').addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[data-focus]') : null;
+    if (!a) { return; }
+    e.preventDefault();
+    var el = $(a.getAttribute('data-focus'));
+    if (el) { el.focus(); el.scrollIntoView({ block: 'center' }); }
+  });
+
+  /* Form actions and dialogs */
+  $('cancelBtn').addEventListener('click', function () {
+    if (isDirty()) { openModal('modal-discard', 'md-keep'); }
+    else { location.hash = '#/my-leave-requests'; }
+  });
+  $('md-keep').addEventListener('click', function () { closeModal(); });
+  $('md-discard').addEventListener('click', function () {
+    closeModal(false);
+    resetFormState();
+    location.hash = '#/my-leave-requests';
+  });
+  $('mx-back').addEventListener('click', function () { closeModal(); });
+  $('mx-submit').addEventListener('click', function () { if (!submitting) { startSubmission(true); } });
+  $('f-retry').addEventListener('click', enterForm);
+
+  /* Buttons that navigate, and Retry on SCR-006 */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-go], [data-action]') : null;
+    if (!t) { return; }
+    if (t.hasAttribute('data-go')) {
+      var target = t.getAttribute('data-go');
+      if (location.hash === target) { route(); } else { location.hash = target; }
+    } else if (t.getAttribute('data-action') === 'retry-confirm') {
+      enterConfirmation(location.hash.replace(/^#\/?/, '').split('/')[1] || '');
+    }
+  });
+
+  $('menuBtn').addEventListener('click', function () {
+    var open = $('sidenav').classList.toggle('open');
+    this.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  /* Prototype controls */
+  $('pc-persona').innerHTML = PERSONA_ORDER.map(function (id) {
+    return '<option value="' + id + '">' + esc(EMPLOYEES[id].name + ' — ' + EMPLOYEES[id].hint) + '</option>';
+  }).join('');
+  function syncControls() {
+    $('pc-persona').value = ctl.persona;
+    $('pc-formload').value = ctl.formLoad;
+    $('pc-submit').value = ctl.submitResult;
+    $('pc-file').value = ctl.fileMode;
+    $('pc-confirmload').value = ctl.confirmLoad;
+    $('pc-noent').checked = ctl.noEntitlement;
+  }
+  function currentRouteName() { return location.hash.replace(/^#\/?/, '').split('/')[0]; }
+  $('pc-persona').addEventListener('change', function () { ctl.persona = this.value; route(); });
+  $('pc-formload').addEventListener('change', function () {
+    ctl.formLoad = this.value;
+    if (currentRouteName() === 'scr-005') { enterForm(); }
+  });
+  $('pc-noent').addEventListener('change', function () {
+    ctl.noEntitlement = this.checked;
+    if (currentRouteName() === 'scr-005' && !$('leaveForm').hidden) { updateSummary(); }
+  });
+  $('pc-file').addEventListener('change', function () { ctl.fileMode = this.value; });
+  $('pc-samplefiles').addEventListener('click', function () {
+    if (currentRouteName() !== 'scr-005' || $('leaveForm').hidden) { return; }
+    currentDocs().forEach(function (doc, i) {
+      if (!form.files[doc]) {
+        addFile(i, { name: doc.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.pdf', size: 248 * 1024 });
+      }
+    });
+  });
+  $('pc-submit').addEventListener('change', function () {
+    ctl.submitResult = this.value;
+    if (submitting && submitHeld && ctl.submitResult !== 'hold') { submitHeld = false; resolveSubmission(); }
+  });
+  $('pc-confirmload').addEventListener('change', function () {
+    ctl.confirmLoad = this.value;
+    if (currentRouteName() === 'scr-006') { enterConfirmation(location.hash.replace(/^#\/?/, '').split('/')[1] || ''); }
+  });
+  $('pc-expire').addEventListener('click', expireSession);
+  $('pc-reset').addEventListener('click', function () {
+    addedRequests = [];
+    try { window.sessionStorage.removeItem(STORE_KEY); } catch (e) { /* ignore */ }
+    ctl = { persona: 'E-1001', formLoad: 'normal', submitResult: 'success', fileMode: 'normal', confirmLoad: 'normal', noEntitlement: false };
+    syncControls();
+    clearTimeout(redirectTimer);
+    if (currentRouteName() === 'scr-005') { route(); } else { location.hash = '#/scr-005'; }
+  });
+
+  syncControls();
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+</body>
+</html>

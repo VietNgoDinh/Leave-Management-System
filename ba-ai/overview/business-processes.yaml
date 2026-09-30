@@ -2,9 +2,126 @@ meta:
   artifact_type: catalog
   catalog: business-processes
   title: Business Processes
-  status: DRAFT
+  status: APPROVED
   baseline: TO_BE
   origin: AI
   review:
-    GATE-02: NOT_REQUESTED
-items: []
+    GATE-02: APPROVED
+items:
+  - id: BP-001
+    name: Leave request and approval
+    objective: Take an employee's leave request from submission to a final decision, consistently and
+      by the end of the month of the leave start date.
+    actors:
+      - ACT-001
+      - ACT-002
+      - ACT-003
+      - ACT-006
+    trigger: An employee needs to take leave, or took leave earlier in the current month.
+    steps:
+      - id: BP-001-S01
+        name: 'Employee submits a leave request: leave type, dates with day part (All day, Morning, Afternoon),
+          the confirming Project Manager and any required documents'
+        actor: ACT-001
+      - id: BP-001-S02
+        name: System blocks a request with dates outside the allowed window, a missing required document
+          or an ineligible leave type; it accepts a request that exceeds the entitlement, flags it for
+          manual review, and emails the selected Project Manager
+      - id: BP-001-S03
+        name: Selected Project Manager confirms or denies the request. The step is auto-confirmed when
+          the requester is a Project Manager and skipped when the employee belongs to no project. Confirmation
+          emails the Line Manager; denial emails the employee
+        actor: ACT-002
+      - id: BP-001-S04
+        name: Line Manager approves or rejects the request. The employee is emailed
+        actor: ACT-003
+      - id: BP-001-S05
+        name: After a denial or rejection, the employee may modify and resubmit the request
+        actor: ACT-001
+      - id: BP-001-S06
+        name: Until the Line Manager has approved it, the employee may cancel the request
+        actor: ACT-001
+      - id: BP-001-S07
+        name: When the month of the leave start date ends, the system cancels a request that is still
+          not confirmed or approved
+        actor: ACT-006
+    baseline: TO_BE
+  - id: BP-002
+    name: Annual leave entitlement refresh
+    objective: Give every employee the correct leave entitlements for the new year.
+    actors:
+      - ACT-006
+    trigger: Start of each year, automatically.
+    steps:
+      - id: BP-002-S01
+        name: System starts the annual refresh automatically at the start of the year
+        actor: ACT-006
+      - id: BP-002-S02
+        name: 'System calculates each employee''s entitlements for the new year: base days plus one day
+          per N years of service, for the leave types the employee is eligible for'
+        actor: ACT-006
+      - id: BP-002-S03
+        name: System checks the requests still pending against the new entitlements
+        actor: ACT-006
+    baseline: TO_BE
+  - id: BP-003
+    name: Leave type and policy administration
+    objective: Keep leave types, their eligibility rules and documentation requirements in line with company
+      policy and regulations.
+    actors:
+      - ACT-004
+    trigger: A leave type or its rules need to be added or changed.
+    steps:
+      - id: BP-003-S01
+        name: Admin/HR creates or edits a leave type
+        actor: ACT-004
+      - id: BP-003-S02
+        name: Admin/HR sets its eligibility rule (gender) and its entitlement rule (base days, and N years
+          of service per extra day)
+        actor: ACT-004
+      - id: BP-003-S03
+        name: Admin/HR sets its required documentation
+        actor: ACT-004
+    baseline: TO_BE
+  - id: BP-004
+    name: Weekly attendance compliance notification
+    objective: Make absence without approved leave visible to employees every week.
+    actors:
+      - ACT-006
+      - ACT-005
+      - ACT-001
+    trigger: Every Friday.
+    steps:
+      - id: BP-004-S01
+        name: System fetches check-in and check-out data from the card scanner system
+        actor: ACT-005
+      - id: BP-004-S02
+        name: System determines each employee's off-work days among the working days of the last week
+        actor: ACT-006
+      - id: BP-004-S03
+        name: System matches off-work days against the employee's leave requests; any submitted request
+          counts
+        actor: ACT-006
+      - id: BP-004-S04
+        name: System notifies the employee of absent days without a leave request and absent days with
+          a valid leave request
+        actor: ACT-006
+    baseline: TO_BE
+  - id: BP-005
+    name: Leave reporting
+    objective: Give HR and Line Managers visibility of leave usage.
+    actors:
+      - ACT-004
+      - ACT-003
+    trigger: HR or a Line Manager needs leave statistics.
+    steps:
+      - id: BP-005-S01
+        name: User opens the reporting screen
+        actor: ACT-004
+      - id: BP-005-S02
+        name: 'User chooses the level: unit, department or entire company. A Line Manager is limited to
+          their own unit'
+        actor: ACT-004
+      - id: BP-005-S03
+        name: System shows leave usage statistics for that level
+    baseline: TO_BE

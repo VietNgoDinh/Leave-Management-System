@@ -1,6 +1,5994 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-30T07:04:20Z",
-  "nodes": [],
-  "edges": []
+  "generated_at": "2026-09-30T09:59:28Z",
+  "nodes": [
+    {
+      "id": "ACT-001",
+      "type": "Actor",
+      "name": "Employee",
+      "artifacts": {
+        "TO_BE": [
+          "overview/actors.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ACT-002",
+      "type": "Actor",
+      "name": "Project Manager",
+      "artifacts": {
+        "TO_BE": [
+          "overview/actors.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ACT-003",
+      "type": "Actor",
+      "name": "Line Manager",
+      "artifacts": {
+        "TO_BE": [
+          "overview/actors.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ACT-004",
+      "type": "Actor",
+      "name": "Admin/HR",
+      "artifacts": {
+        "TO_BE": [
+          "overview/actors.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ACT-005",
+      "type": "Actor",
+      "name": "Card Scanner System",
+      "artifacts": {
+        "TO_BE": [
+          "overview/actors.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ACT-006",
+      "type": "Actor",
+      "name": "System Scheduler",
+      "artifacts": {
+        "TO_BE": [
+          "overview/actors.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "APP-001",
+      "type": "Application",
+      "name": "Leave Request Management Web Application",
+      "artifacts": {
+        "TO_BE": [
+          "overview/applications.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-001",
+      "type": "Assumption",
+      "name": "A resubmitted request starts again at Project Manager confirmation.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-002",
+      "type": "Assumption",
+      "name": "One responsive web application serves all roles through role-specific screens; there is no separate native mobile or back-office application.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-003",
+      "type": "Assumption",
+      "name": "Admin and HR are treated as one actor, Admin/HR.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-004",
+      "type": "Assumption",
+      "name": "Requirement priorities were proposed during analysis; the URS states none.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-005",
+      "type": "Assumption",
+      "name": "The leave request status names (PENDING_CONFIRMATION, PENDING_APPROVAL, DENIED, APPROVED, REJECTED, CANCELLED) are proposed labels.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-006",
+      "type": "Assumption",
+      "name": "Sign-in and sign-out are handled by the company's single sign-on, so this system has no sign-in use case of its own.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-007",
+      "type": "Assumption",
+      "name": "A request can be reviewed at any time from submission up to the end of the month of the leave start date.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-008",
+      "type": "Assumption",
+      "name": "The managers who see leave reports are Line Managers. Project Managers have no access to reports.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-009",
+      "type": "Assumption",
+      "name": "'The last week' in the weekly notification is the week that ends on the Friday the notification is sent.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-010",
+      "type": "Assumption",
+      "name": "The base days and N (years of service per extra day) are configured per leave type by Admin/HR.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-011",
+      "type": "Assumption",
+      "name": "UC-006 keeps its ID but changes from an import by Admin/HR to an automatic annual refresh run by the system.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-012",
+      "type": "Assumption",
+      "name": "When a request skips confirmation (a Project Manager's own request, or an employee with no project), the Line Manager receives the email that confirmation would send.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-013",
+      "type": "Assumption",
+      "name": "Weekends are Saturday and Sunday in every country.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-014",
+      "type": "Assumption",
+      "name": "The company single sign-on supports OpenID Connect.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ASM-015",
+      "type": "Assumption",
+      "name": "The system runs as containers on a Kubernetes platform chosen by the client, with managed PostgreSQL and S3-compatible object storage available.",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/assumptions/assumptions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-001",
+      "type": "BusinessProcess",
+      "name": "Leave request and approval",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-001-S01",
+      "type": "ProcessStep",
+      "name": "Employee submits a leave request: leave type, dates with day part (All day, Morning, Afternoon), the confirming Project Manager and any required documents",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-001-S02",
+      "type": "ProcessStep",
+      "name": "System blocks a request with dates outside the allowed window, a missing required document or an ineligible leave type; it accepts a request that exceeds the entitlement, flags it for manual review, and emails the selected Project Manager",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-001-S03",
+      "type": "ProcessStep",
+      "name": "Selected Project Manager confirms or denies the request. The step is auto-confirmed when the requester is a Project Manager and skipped when the employee belongs to no project. Confirmation emails the Line Manager; denial emails the employee",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-001-S04",
+      "type": "ProcessStep",
+      "name": "Line Manager approves or rejects the request. The employee is emailed",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-001-S05",
+      "type": "ProcessStep",
+      "name": "After a denial or rejection, the employee may modify and resubmit the request",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-001-S06",
+      "type": "ProcessStep",
+      "name": "Until the Line Manager has approved it, the employee may cancel the request",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-001-S07",
+      "type": "ProcessStep",
+      "name": "When the month of the leave start date ends, the system cancels a request that is still not confirmed or approved",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-002",
+      "type": "BusinessProcess",
+      "name": "Annual leave entitlement refresh",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-002-S01",
+      "type": "ProcessStep",
+      "name": "System starts the annual refresh automatically at the start of the year",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-002-S02",
+      "type": "ProcessStep",
+      "name": "System calculates each employee's entitlements for the new year: base days plus one day per N years of service, for the leave types the employee is eligible for",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-002-S03",
+      "type": "ProcessStep",
+      "name": "System checks the requests still pending against the new entitlements",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-003",
+      "type": "BusinessProcess",
+      "name": "Leave type and policy administration",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-003-S01",
+      "type": "ProcessStep",
+      "name": "Admin/HR creates or edits a leave type",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-003-S02",
+      "type": "ProcessStep",
+      "name": "Admin/HR sets its eligibility rule (gender) and its entitlement rule (base days, and N years of service per extra day)",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-003-S03",
+      "type": "ProcessStep",
+      "name": "Admin/HR sets its required documentation",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-004",
+      "type": "BusinessProcess",
+      "name": "Weekly attendance compliance notification",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-004-S01",
+      "type": "ProcessStep",
+      "name": "System fetches check-in and check-out data from the card scanner system",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-004-S02",
+      "type": "ProcessStep",
+      "name": "System determines each employee's off-work days among the working days of the last week",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-004-S03",
+      "type": "ProcessStep",
+      "name": "System matches off-work days against the employee's leave requests; any submitted request counts",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-004-S04",
+      "type": "ProcessStep",
+      "name": "System notifies the employee of absent days without a leave request and absent days with a valid leave request",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-005",
+      "type": "BusinessProcess",
+      "name": "Leave reporting",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-005-S01",
+      "type": "ProcessStep",
+      "name": "User opens the reporting screen",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-005-S02",
+      "type": "ProcessStep",
+      "name": "User chooses the level: unit, department or entire company. A Line Manager is limited to their own unit",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BP-005-S03",
+      "type": "ProcessStep",
+      "name": "System shows leave usage statistics for that level",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-processes.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-001",
+      "type": "BusinessRule",
+      "name": "Leave date window",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-002",
+      "type": "BusinessRule",
+      "name": "Exceeding the entitlement is reviewed, not blocked",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-003",
+      "type": "BusinessRule",
+      "name": "Seniority-based entitlement",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-004",
+      "type": "BusinessRule",
+      "name": "Gender-specific leave types",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-005",
+      "type": "BusinessRule",
+      "name": "Required documentation per leave type",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-006",
+      "type": "BusinessRule",
+      "name": "Two-step review",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-007",
+      "type": "BusinessRule",
+      "name": "Project Manager self-request is auto-confirmed",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-008",
+      "type": "BusinessRule",
+      "name": "Review deadline and automatic cancellation",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-009",
+      "type": "BusinessRule",
+      "name": "Resubmission after denial or rejection",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-010",
+      "type": "BusinessRule",
+      "name": "Off-work day definition",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-011",
+      "type": "BusinessRule",
+      "name": "Weekly attendance notification",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-012",
+      "type": "BusinessRule",
+      "name": "Annual entitlement refresh",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-013",
+      "type": "BusinessRule",
+      "name": "Reviewer dashboards show actionable requests by default",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-014",
+      "type": "BusinessRule",
+      "name": "Access by role and organisation",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-015",
+      "type": "BusinessRule",
+      "name": "Employee selects the confirming Project Manager",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-016",
+      "type": "BusinessRule",
+      "name": "Cancellation by the employee",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-017",
+      "type": "BusinessRule",
+      "name": "Half-day leave",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-018",
+      "type": "BusinessRule",
+      "name": "Workflow email notifications",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-019",
+      "type": "BusinessRule",
+      "name": "Line Managers do not request leave",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-020",
+      "type": "BusinessRule",
+      "name": "Master data comes from the HR system",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-021",
+      "type": "BusinessRule",
+      "name": "No confirmation for an employee without a project",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "BR-022",
+      "type": "BusinessRule",
+      "name": "Working days",
+      "artifacts": {
+        "TO_BE": [
+          "overview/business-rules.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-001",
+      "type": "Entity",
+      "name": "Organisational Unit",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-002",
+      "type": "Entity",
+      "name": "Employee",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-003",
+      "type": "Entity",
+      "name": "Project",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-004",
+      "type": "Entity",
+      "name": "Leave Type",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-005",
+      "type": "Entity",
+      "name": "Leave Entitlement",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-006",
+      "type": "Entity",
+      "name": "Leave Request",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-007",
+      "type": "Entity",
+      "name": "Supporting Document",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-008",
+      "type": "Entity",
+      "name": "Review Decision",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-009",
+      "type": "Entity",
+      "name": "Attendance Record",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "ENT-010",
+      "type": "Entity",
+      "name": "Public Holiday",
+      "artifacts": {
+        "TO_BE": [
+          "overview/data-model/entities.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "EPIC-001",
+      "type": "Epic",
+      "name": "Leave request lifecycle",
+      "artifacts": {
+        "TO_BE": [
+          "planning/backlog.yaml"
+        ]
+      },
+      "priority": "HIGH"
+    },
+    {
+      "id": "EPIC-002",
+      "type": "Epic",
+      "name": "Leave policy and entitlements",
+      "artifacts": {
+        "TO_BE": [
+          "planning/backlog.yaml"
+        ]
+      },
+      "priority": "HIGH"
+    },
+    {
+      "id": "EPIC-003",
+      "type": "Epic",
+      "name": "Attendance notification and reporting",
+      "artifacts": {
+        "TO_BE": [
+          "planning/backlog.yaml"
+        ]
+      },
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "INT-001",
+      "type": "Integration",
+      "name": "Card scanner attendance data",
+      "artifacts": {
+        "TO_BE": [
+          "overview/integrations.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "INT-002",
+      "type": "Integration",
+      "name": "Notification email delivery",
+      "artifacts": {
+        "TO_BE": [
+          "overview/integrations.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "INT-003",
+      "type": "Integration",
+      "name": "HR system master data",
+      "artifacts": {
+        "TO_BE": [
+          "overview/integrations.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "INT-004",
+      "type": "Integration",
+      "name": "Company single sign-on",
+      "artifacts": {
+        "TO_BE": [
+          "overview/integrations.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-001",
+      "type": "OpenQuestion",
+      "name": "Which policy rules can a request violate and still be submitted (exceeding the entitlement, missing a required document, not eligible for the leave type)? Is the date window (future, or past within the current month) a hard block or also a reviewable violation?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-002",
+      "type": "OpenQuestion",
+      "name": "What happens to a request that is not confirmed or approved by the end of the month of the leave start date? May a request for a later month be reviewed before that month starts?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-003",
+      "type": "OpenQuestion",
+      "name": "Who confirms a request from an employee who belongs to no project?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-004",
+      "type": "OpenQuestion",
+      "name": "Where do employees, the organisational structure, project teams, line-manager assignments and role assignments come from: an existing HR system, an import, or maintenance inside this system? How do country/city/office relate to unit/department?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-005",
+      "type": "OpenQuestion",
+      "name": "How do users sign in: the company's single sign-on / identity provider, or accounts managed by this system?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-006",
+      "type": "OpenQuestion",
+      "name": "For the entitlement import: what is the file format, and what does the annual refresh do to unused entitlement and to requests still pending? Does the system calculate seniority-based entitlement, or is it only imported? Do the rules differ per country?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-007",
+      "type": "OpenQuestion",
+      "name": "Which days count as working days when leave is counted and when the weekly notification determines absences: do weekends and public holidays (which differ per country) count?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-008",
+      "type": "OpenQuestion",
+      "name": "Can an employee cancel or withdraw a request, and in which statuses (pending, approved)?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-009",
+      "type": "OpenQuestion",
+      "name": "Who approves a Line Manager's own request, and what happens when the Project Manager and the Line Manager of a request are the same person?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-010",
+      "type": "OpenQuestion",
+      "name": "Are Admin and HR one role or two? Which managers see reports (Project Managers, Line Managers, both), and is what they see limited to their own unit, office or country?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-011",
+      "type": "OpenQuestion",
+      "name": "For the weekly notification: which period does it cover, which days are working days (weekends, public holidays per country), and does a 'valid leave request' mean approved only or any submitted request?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-012",
+      "type": "OpenQuestion",
+      "name": "How is card scanner data made available by the external system (API, file, database), how often, and which identifier links a scanner record to an employee?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-013",
+      "type": "OpenQuestion",
+      "name": "Which mail service is used? What must be configurable in the notification emails, and by whom? Are emails also sent when a request is cancelled, by the employee or automatically?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-014",
+      "type": "OpenQuestion",
+      "name": "Which languages are needed at launch, if any?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-015",
+      "type": "OpenQuestion",
+      "name": "How is HR system data made available (API, file, database), and how often can it be fetched?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-016",
+      "type": "OpenQuestion",
+      "name": "How does an employee who joins during the year get a leave entitlement?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-017",
+      "type": "OpenQuestion",
+      "name": "What does the entitlement rule of a seniority-based leave type look like (for example: base days plus one day per N years of service)?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-018",
+      "type": "OpenQuestion",
+      "name": "Where does the public holiday calendar of each country come from: the HR system, or maintained in this system by Admin/HR? Are weekends Saturday and Sunday in every country?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-019",
+      "type": "OpenQuestion",
+      "name": "In which time zone are the current month, the end of the month and Friday evaluated: one company time zone, or the local time of each employee's office?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-020",
+      "type": "OpenQuestion",
+      "name": "How are the documents a leave type can require defined: does Admin/HR type each document name on the leave type, or choose from a fixed list of document types kept elsewhere in system settings? If it is a fixed list, who maintains it?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-021",
+      "type": "OpenQuestion",
+      "name": "When does a change to a leave type take effect? (a) Does changing the base days or the years of service per extra day recalculate the entitlements of the current year, or apply from the next annual refresh? (b) Do employees get an entitlement for a leave type created during the year, before the next refresh? (c) Are requests already submitted checked again when the gender eligibility or the required documents change?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-022",
+      "type": "OpenQuestion",
+      "name": "Which limits apply to a leave type? Must the name be unique, and how long can it be? Which range can the base days take: can it be 0 or a half day, and is there a maximum? Does a leave type such as Unpaid Leave have no entitlement limit at all? Which range can N (years of service per extra day) take?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-023",
+      "type": "OpenQuestion",
+      "name": "Which gender values does the HR system provide for an employee, and which eligibility options must a leave type offer: all employees, female only, male only, or others?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-024",
+      "type": "OpenQuestion",
+      "name": "Does a reviewer give a reason when denying or rejecting a leave request: mandatory, optional or not at all? May a reviewer add a comment when confirming or approving? Who sees the reason or comment: the employee, the next reviewer, the notification email?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-025",
+      "type": "OpenQuestion",
+      "name": "On the reviewer dashboards, does the request type filter mean the leave type? Does the date filter apply to the leave dates or to the date the request was submitted?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-026",
+      "type": "OpenQuestion",
+      "name": "How does the day part apply to a request that spans several days? Can Morning or Afternoon be chosen only for a single day, does it apply to every day of the range, or can the first and the last day each have their own day part (for example from Monday afternoon to Wednesday morning)?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-027",
+      "type": "OpenQuestion",
+      "name": "When the system checks whether a request exceeds the entitlement, which of the employee's other requests of the same leave type count as already used: approved requests only, or also requests pending confirmation or approval? Against which year's entitlement is a request counted when its dates span two years?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-028",
+      "type": "OpenQuestion",
+      "name": "Can an employee submit a leave request whose dates overlap another of their own requests that is pending or approved? If not, is it blocked, or accepted and flagged for review?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-029",
+      "type": "OpenQuestion",
+      "name": "How many files can an employee upload for one required document: exactly one, or several (for example a certificate photographed page by page)? Can an employee attach a document when the leave type requires none?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-030",
+      "type": "OpenQuestion",
+      "name": "When an employee opens one of their own leave requests read-only, do they see the supporting documents uploaded with it and can they download them?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "Q-031",
+      "type": "OpenQuestion",
+      "name": "When an employee requests leave that starts in the next year before the annual refresh has run, no entitlement exists yet for that year. Is such a request checked against an entitlement at all: flagged as exceeding (as if the entitlement were 0 days), checked against an estimated entitlement for the next year, or not checked until the refresh?",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/clarification-log/open-questions.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REPO-001",
+      "type": "Repository",
+      "name": "leave-management-api",
+      "artifacts": {
+        "TO_BE": [
+          "workflow/repositories.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REPO-002",
+      "type": "Repository",
+      "name": "leave-management-web",
+      "artifacts": {
+        "TO_BE": [
+          "workflow/repositories.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-001",
+      "type": "Requirement",
+      "name": "Leave request submission",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-002",
+      "type": "Requirement",
+      "name": "Requests exceeding the entitlement allowed with manual review",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-003",
+      "type": "Requirement",
+      "name": "Two-step review and approval workflow",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-004",
+      "type": "Requirement",
+      "name": "Modify and resubmit after denial or rejection",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-005",
+      "type": "Requirement",
+      "name": "Weekly attendance-based notification",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-006",
+      "type": "Requirement",
+      "name": "Annual leave entitlement refresh",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-007",
+      "type": "Requirement",
+      "name": "Leave type management",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-008",
+      "type": "Requirement",
+      "name": "Role-based access",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-009",
+      "type": "Requirement",
+      "name": "Role-specific action dashboards",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-010",
+      "type": "Requirement",
+      "name": "Leave statistics reporting",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-011",
+      "type": "Requirement",
+      "name": "Card scanner integration",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-012",
+      "type": "Requirement",
+      "name": "Multinational organisational structure",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-013",
+      "type": "Requirement",
+      "name": "Scale and concurrency",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-014",
+      "type": "Requirement",
+      "name": "Web-based and mobile-responsive",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-015",
+      "type": "Requirement",
+      "name": "Secure login and logout",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-016",
+      "type": "Requirement",
+      "name": "Automated, configurable notification emails",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-017",
+      "type": "Requirement",
+      "name": "Localisation",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-018",
+      "type": "Requirement",
+      "name": "Cancel a leave request",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "REQ-019",
+      "type": "Requirement",
+      "name": "HR system as source of employee and organisation data",
+      "artifacts": {
+        "TO_BE": [
+          "requirements/requirements.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SCR-001",
+      "type": "Screen",
+      "name": "Leave types",
+      "artifacts": {
+        "TO_BE": [
+          "ui/screen-catalog.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SCR-002",
+      "type": "Screen",
+      "name": "Leave type form",
+      "artifacts": {
+        "TO_BE": [
+          "ui/screen-catalog.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SCR-003",
+      "type": "Screen",
+      "name": "Review dashboard",
+      "artifacts": {
+        "TO_BE": [
+          "ui/screen-catalog.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SCR-004",
+      "type": "Screen",
+      "name": "Review leave request",
+      "artifacts": {
+        "TO_BE": [
+          "ui/screen-catalog.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SCR-005",
+      "type": "Screen",
+      "name": "Leave request form",
+      "artifacts": {
+        "TO_BE": [
+          "ui/screen-catalog.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SCR-006",
+      "type": "Screen",
+      "name": "Leave request submitted",
+      "artifacts": {
+        "TO_BE": [
+          "ui/screen-catalog.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SCR-007",
+      "type": "Screen",
+      "name": "My leave requests",
+      "artifacts": {
+        "TO_BE": [
+          "ui/screen-catalog.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SCR-008",
+      "type": "Screen",
+      "name": "Leave request details",
+      "artifacts": {
+        "TO_BE": [
+          "ui/screen-catalog.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SVC-001",
+      "type": "Service",
+      "name": "Leave Request Service",
+      "artifacts": {
+        "TO_BE": [
+          "technical/architecture/services.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SVC-002",
+      "type": "Service",
+      "name": "Leave Policy Service",
+      "artifacts": {
+        "TO_BE": [
+          "technical/architecture/services.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SVC-003",
+      "type": "Service",
+      "name": "Organisation Service",
+      "artifacts": {
+        "TO_BE": [
+          "technical/architecture/services.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SVC-004",
+      "type": "Service",
+      "name": "Attendance Service",
+      "artifacts": {
+        "TO_BE": [
+          "technical/architecture/services.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SVC-005",
+      "type": "Service",
+      "name": "Notification Service",
+      "artifacts": {
+        "TO_BE": [
+          "technical/architecture/services.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "SVC-006",
+      "type": "Service",
+      "name": "Reporting Service",
+      "artifacts": {
+        "TO_BE": [
+          "technical/architecture/services.yaml"
+        ]
+      },
+      "baseline": "TO_BE"
+    },
+    {
+      "id": "UC-001",
+      "type": "UseCase",
+      "name": "Submit leave request",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml",
+          "ui/markdown/UC-001.md",
+          "ui/prototypes/UC-001/README.md"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-002",
+      "type": "UseCase",
+      "name": "View my leave requests",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml",
+          "ui/markdown/UC-002.md"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-003",
+      "type": "UseCase",
+      "name": "Modify and resubmit leave request",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-004",
+      "type": "UseCase",
+      "name": "Confirm or deny leave request",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml",
+          "ui/markdown/UC-004.md"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-005",
+      "type": "UseCase",
+      "name": "Approve or reject leave request",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-006",
+      "type": "UseCase",
+      "name": "Refresh annual leave entitlements",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-007",
+      "type": "UseCase",
+      "name": "Manage leave types",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml",
+          "ui/markdown/UC-007.md"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-008",
+      "type": "UseCase",
+      "name": "Send weekly attendance notification",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-009",
+      "type": "UseCase",
+      "name": "View leave reports",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-010",
+      "type": "UseCase",
+      "name": "Cancel leave request",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    },
+    {
+      "id": "UC-011",
+      "type": "UseCase",
+      "name": "Cancel unreviewed leave requests at month end",
+      "artifacts": {
+        "TO_BE": [
+          "overview/use-cases.yaml"
+        ]
+      },
+      "baseline": "TO_BE",
+      "spec_status": "NOT_STARTED"
+    }
+  ],
+  "edges": [
+    {
+      "from": "ACT-001",
+      "type": "ACCESSES",
+      "to": "SCR-005",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "ACCESSES",
+      "to": "SCR-006",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "ACCESSES",
+      "to": "SCR-007",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "ACCESSES",
+      "to": "SCR-008",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-001",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-004",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "PERFORMS",
+      "to": "UC-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "PERFORMS",
+      "to": "UC-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "PERFORMS",
+      "to": "UC-003",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "PERFORMS",
+      "to": "UC-010",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-001",
+      "type": "USES_APPLICATION",
+      "to": "APP-001",
+      "sources": [
+        "overview/applications.yaml"
+      ]
+    },
+    {
+      "from": "ACT-002",
+      "type": "ACCESSES",
+      "to": "SCR-003",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "ACT-002",
+      "type": "ACCESSES",
+      "to": "SCR-004",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "ACT-002",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-001",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-002",
+      "type": "PERFORMS",
+      "to": "UC-004",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-002",
+      "type": "USES_APPLICATION",
+      "to": "APP-001",
+      "sources": [
+        "overview/applications.yaml"
+      ]
+    },
+    {
+      "from": "ACT-003",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-001",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-003",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-005",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-003",
+      "type": "PERFORMS",
+      "to": "UC-005",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-003",
+      "type": "PERFORMS",
+      "to": "UC-009",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-003",
+      "type": "USES_APPLICATION",
+      "to": "APP-001",
+      "sources": [
+        "overview/applications.yaml"
+      ]
+    },
+    {
+      "from": "ACT-004",
+      "type": "ACCESSES",
+      "to": "SCR-001",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "ACT-004",
+      "type": "ACCESSES",
+      "to": "SCR-002",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "ACT-004",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-003",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-004",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-005",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-004",
+      "type": "PERFORMS",
+      "to": "UC-007",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-004",
+      "type": "PERFORMS",
+      "to": "UC-009",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-004",
+      "type": "USES_APPLICATION",
+      "to": "APP-001",
+      "sources": [
+        "overview/applications.yaml"
+      ]
+    },
+    {
+      "from": "ACT-005",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-004",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-006",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-001",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-006",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-002",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-006",
+      "type": "PARTICIPATES_IN",
+      "to": "BP-004",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "ACT-006",
+      "type": "PERFORMS",
+      "to": "UC-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-006",
+      "type": "PERFORMS",
+      "to": "UC-008",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "ACT-006",
+      "type": "PERFORMS",
+      "to": "UC-011",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "APP-001",
+      "type": "CONTAINS",
+      "to": "SCR-001",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "APP-001",
+      "type": "CONTAINS",
+      "to": "SCR-002",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "APP-001",
+      "type": "CONTAINS",
+      "to": "SCR-003",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "APP-001",
+      "type": "CONTAINS",
+      "to": "SCR-004",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "APP-001",
+      "type": "CONTAINS",
+      "to": "SCR-005",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "APP-001",
+      "type": "CONTAINS",
+      "to": "SCR-006",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "APP-001",
+      "type": "CONTAINS",
+      "to": "SCR-007",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "APP-001",
+      "type": "CONTAINS",
+      "to": "SCR-008",
+      "sources": [
+        "ui/screen-catalog.yaml"
+      ]
+    },
+    {
+      "from": "ASM-001",
+      "type": "ABOUT",
+      "to": "BR-009",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-001",
+      "type": "ABOUT",
+      "to": "ENT-006",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-002",
+      "type": "ABOUT",
+      "to": "APP-001",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-003",
+      "type": "ABOUT",
+      "to": "ACT-004",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-005",
+      "type": "ABOUT",
+      "to": "ENT-006",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-006",
+      "type": "ABOUT",
+      "to": "INT-004",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-006",
+      "type": "ABOUT",
+      "to": "Q-005",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-006",
+      "type": "ABOUT",
+      "to": "REQ-015",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-007",
+      "type": "ABOUT",
+      "to": "BR-008",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-007",
+      "type": "ABOUT",
+      "to": "Q-002",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-008",
+      "type": "ABOUT",
+      "to": "BR-014",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-008",
+      "type": "ABOUT",
+      "to": "Q-010",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-008",
+      "type": "ABOUT",
+      "to": "UC-009",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-009",
+      "type": "ABOUT",
+      "to": "BR-011",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-009",
+      "type": "ABOUT",
+      "to": "Q-011",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-009",
+      "type": "ABOUT",
+      "to": "UC-008",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-010",
+      "type": "ABOUT",
+      "to": "BR-003",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-010",
+      "type": "ABOUT",
+      "to": "ENT-004",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-010",
+      "type": "ABOUT",
+      "to": "Q-017",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-010",
+      "type": "ABOUT",
+      "to": "UC-007",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-011",
+      "type": "ABOUT",
+      "to": "Q-006",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-011",
+      "type": "ABOUT",
+      "to": "Q-016",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-011",
+      "type": "ABOUT",
+      "to": "UC-006",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-012",
+      "type": "ABOUT",
+      "to": "BR-007",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-012",
+      "type": "ABOUT",
+      "to": "BR-018",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-012",
+      "type": "ABOUT",
+      "to": "BR-021",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-013",
+      "type": "ABOUT",
+      "to": "BR-022",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-013",
+      "type": "ABOUT",
+      "to": "ENT-010",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-013",
+      "type": "ABOUT",
+      "to": "Q-018",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-014",
+      "type": "ABOUT",
+      "to": "INT-004",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-014",
+      "type": "ABOUT",
+      "to": "Q-005",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "ASM-015",
+      "type": "ABOUT",
+      "to": "REQ-013",
+      "sources": [
+        "requirements/assumptions/assumptions.yaml"
+      ]
+    },
+    {
+      "from": "BP-001",
+      "type": "HAS_STEP",
+      "to": "BP-001-S01",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-001",
+      "type": "HAS_STEP",
+      "to": "BP-001-S02",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-001",
+      "type": "HAS_STEP",
+      "to": "BP-001-S03",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-001",
+      "type": "HAS_STEP",
+      "to": "BP-001-S04",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-001",
+      "type": "HAS_STEP",
+      "to": "BP-001-S05",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-001",
+      "type": "HAS_STEP",
+      "to": "BP-001-S06",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-001",
+      "type": "HAS_STEP",
+      "to": "BP-001-S07",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-002",
+      "type": "HAS_STEP",
+      "to": "BP-002-S01",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-002",
+      "type": "HAS_STEP",
+      "to": "BP-002-S02",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-002",
+      "type": "HAS_STEP",
+      "to": "BP-002-S03",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-003",
+      "type": "HAS_STEP",
+      "to": "BP-003-S01",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-003",
+      "type": "HAS_STEP",
+      "to": "BP-003-S02",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-003",
+      "type": "HAS_STEP",
+      "to": "BP-003-S03",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-004",
+      "type": "HAS_STEP",
+      "to": "BP-004-S01",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-004",
+      "type": "HAS_STEP",
+      "to": "BP-004-S02",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-004",
+      "type": "HAS_STEP",
+      "to": "BP-004-S03",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-004",
+      "type": "HAS_STEP",
+      "to": "BP-004-S04",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-005",
+      "type": "HAS_STEP",
+      "to": "BP-005-S01",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-005",
+      "type": "HAS_STEP",
+      "to": "BP-005-S02",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BP-005",
+      "type": "HAS_STEP",
+      "to": "BP-005-S03",
+      "sources": [
+        "overview/business-processes.yaml"
+      ]
+    },
+    {
+      "from": "BR-001",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-001",
+      "type": "DERIVED_FROM",
+      "to": "REQ-001",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-002",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-002",
+      "type": "DERIVED_FROM",
+      "to": "REQ-002",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-003",
+      "type": "APPLIES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-003",
+      "type": "APPLIES_TO",
+      "to": "ENT-004",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-003",
+      "type": "APPLIES_TO",
+      "to": "ENT-005",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-003",
+      "type": "DERIVED_FROM",
+      "to": "REQ-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-003",
+      "type": "DERIVED_FROM",
+      "to": "REQ-007",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-004",
+      "type": "APPLIES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-004",
+      "type": "APPLIES_TO",
+      "to": "ENT-004",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-004",
+      "type": "DERIVED_FROM",
+      "to": "REQ-007",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-005",
+      "type": "APPLIES_TO",
+      "to": "ENT-004",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-005",
+      "type": "APPLIES_TO",
+      "to": "ENT-007",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-005",
+      "type": "DERIVED_FROM",
+      "to": "REQ-007",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-006",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-006",
+      "type": "APPLIES_TO",
+      "to": "ENT-008",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-006",
+      "type": "DERIVED_FROM",
+      "to": "REQ-003",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-007",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-007",
+      "type": "APPLIES_TO",
+      "to": "ENT-008",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-007",
+      "type": "DERIVED_FROM",
+      "to": "REQ-003",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-008",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-008",
+      "type": "APPLIES_TO",
+      "to": "ENT-008",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-008",
+      "type": "DERIVED_FROM",
+      "to": "REQ-003",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-009",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-009",
+      "type": "DERIVED_FROM",
+      "to": "REQ-004",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-010",
+      "type": "APPLIES_TO",
+      "to": "ENT-009",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-010",
+      "type": "DERIVED_FROM",
+      "to": "REQ-005",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-011",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-011",
+      "type": "APPLIES_TO",
+      "to": "ENT-009",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-011",
+      "type": "DERIVED_FROM",
+      "to": "REQ-005",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-012",
+      "type": "APPLIES_TO",
+      "to": "ENT-005",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-012",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-012",
+      "type": "DERIVED_FROM",
+      "to": "REQ-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-013",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-013",
+      "type": "DERIVED_FROM",
+      "to": "REQ-009",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-014",
+      "type": "APPLIES_TO",
+      "to": "ENT-001",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-014",
+      "type": "APPLIES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-014",
+      "type": "DERIVED_FROM",
+      "to": "REQ-008",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-014",
+      "type": "DERIVED_FROM",
+      "to": "REQ-012",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-015",
+      "type": "APPLIES_TO",
+      "to": "ENT-003",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-015",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-015",
+      "type": "DERIVED_FROM",
+      "to": "REQ-001",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-015",
+      "type": "DERIVED_FROM",
+      "to": "REQ-003",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-016",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-016",
+      "type": "DERIVED_FROM",
+      "to": "REQ-018",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-017",
+      "type": "APPLIES_TO",
+      "to": "ENT-005",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-017",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-017",
+      "type": "DERIVED_FROM",
+      "to": "REQ-001",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-018",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-018",
+      "type": "APPLIES_TO",
+      "to": "ENT-008",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-018",
+      "type": "DERIVED_FROM",
+      "to": "REQ-003",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-018",
+      "type": "DERIVED_FROM",
+      "to": "REQ-016",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-019",
+      "type": "APPLIES_TO",
+      "to": "ENT-001",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-019",
+      "type": "APPLIES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-019",
+      "type": "DERIVED_FROM",
+      "to": "REQ-008",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-020",
+      "type": "APPLIES_TO",
+      "to": "ENT-001",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-020",
+      "type": "APPLIES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-020",
+      "type": "APPLIES_TO",
+      "to": "ENT-003",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-020",
+      "type": "APPLIES_TO",
+      "to": "ENT-010",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-020",
+      "type": "DERIVED_FROM",
+      "to": "REQ-019",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-021",
+      "type": "APPLIES_TO",
+      "to": "ENT-003",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-021",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-021",
+      "type": "APPLIES_TO",
+      "to": "ENT-008",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-021",
+      "type": "DERIVED_FROM",
+      "to": "REQ-003",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-022",
+      "type": "APPLIES_TO",
+      "to": "ENT-005",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-022",
+      "type": "APPLIES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-022",
+      "type": "APPLIES_TO",
+      "to": "ENT-009",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-022",
+      "type": "APPLIES_TO",
+      "to": "ENT-010",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-022",
+      "type": "DERIVED_FROM",
+      "to": "REQ-001",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "BR-022",
+      "type": "DERIVED_FROM",
+      "to": "REQ-005",
+      "sources": [
+        "overview/business-rules.yaml"
+      ]
+    },
+    {
+      "from": "ENT-001",
+      "type": "RELATES_TO",
+      "to": "ENT-001",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-001",
+      "type": "RELATES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-002",
+      "type": "RELATES_TO",
+      "to": "ENT-001",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-002",
+      "type": "RELATES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-003",
+      "type": "RELATES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:M"
+    },
+    {
+      "from": "ENT-005",
+      "type": "RELATES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-005",
+      "type": "RELATES_TO",
+      "to": "ENT-004",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-006",
+      "type": "RELATES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-006",
+      "type": "RELATES_TO",
+      "to": "ENT-004",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-007",
+      "type": "RELATES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-008",
+      "type": "RELATES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-008",
+      "type": "RELATES_TO",
+      "to": "ENT-006",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-009",
+      "type": "RELATES_TO",
+      "to": "ENT-002",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "ENT-010",
+      "type": "RELATES_TO",
+      "to": "ENT-001",
+      "sources": [
+        "overview/data-model/entities.yaml"
+      ],
+      "cardinality": "N:1"
+    },
+    {
+      "from": "EPIC-001",
+      "type": "CONTAINS",
+      "to": "UC-001",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-001",
+      "type": "CONTAINS",
+      "to": "UC-002",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-001",
+      "type": "CONTAINS",
+      "to": "UC-003",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-001",
+      "type": "CONTAINS",
+      "to": "UC-004",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-001",
+      "type": "CONTAINS",
+      "to": "UC-005",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-001",
+      "type": "CONTAINS",
+      "to": "UC-010",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-001",
+      "type": "CONTAINS",
+      "to": "UC-011",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-002",
+      "type": "CONTAINS",
+      "to": "UC-006",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-002",
+      "type": "CONTAINS",
+      "to": "UC-007",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-003",
+      "type": "CONTAINS",
+      "to": "UC-008",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "EPIC-003",
+      "type": "CONTAINS",
+      "to": "UC-009",
+      "sources": [
+        "planning/backlog.yaml"
+      ]
+    },
+    {
+      "from": "INT-001",
+      "type": "EXCHANGES",
+      "to": "ENT-009",
+      "sources": [
+        "overview/integrations.yaml"
+      ]
+    },
+    {
+      "from": "INT-003",
+      "type": "EXCHANGES",
+      "to": "ENT-001",
+      "sources": [
+        "overview/integrations.yaml"
+      ]
+    },
+    {
+      "from": "INT-003",
+      "type": "EXCHANGES",
+      "to": "ENT-002",
+      "sources": [
+        "overview/integrations.yaml"
+      ]
+    },
+    {
+      "from": "INT-003",
+      "type": "EXCHANGES",
+      "to": "ENT-003",
+      "sources": [
+        "overview/integrations.yaml"
+      ]
+    },
+    {
+      "from": "INT-003",
+      "type": "EXCHANGES",
+      "to": "ENT-010",
+      "sources": [
+        "overview/integrations.yaml"
+      ]
+    },
+    {
+      "from": "Q-001",
+      "type": "ABOUT",
+      "to": "BR-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-001",
+      "type": "ABOUT",
+      "to": "BR-002",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-001",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-002",
+      "type": "ABOUT",
+      "to": "BR-008",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-002",
+      "type": "ABOUT",
+      "to": "ENT-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-002",
+      "type": "ABOUT",
+      "to": "UC-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-002",
+      "type": "ABOUT",
+      "to": "UC-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-003",
+      "type": "ABOUT",
+      "to": "BR-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-003",
+      "type": "ABOUT",
+      "to": "BR-015",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-003",
+      "type": "ABOUT",
+      "to": "BR-021",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-003",
+      "type": "ABOUT",
+      "to": "ENT-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-003",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-003",
+      "type": "ABOUT",
+      "to": "UC-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-004",
+      "type": "ABOUT",
+      "to": "ENT-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-004",
+      "type": "ABOUT",
+      "to": "ENT-002",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-004",
+      "type": "ABOUT",
+      "to": "ENT-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-004",
+      "type": "ABOUT",
+      "to": "REQ-012",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-005",
+      "type": "ABOUT",
+      "to": "REQ-015",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-006",
+      "type": "ABOUT",
+      "to": "BR-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-006",
+      "type": "ABOUT",
+      "to": "BR-012",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-006",
+      "type": "ABOUT",
+      "to": "ENT-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-006",
+      "type": "ABOUT",
+      "to": "UC-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-007",
+      "type": "ABOUT",
+      "to": "BR-010",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-007",
+      "type": "ABOUT",
+      "to": "BR-022",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-007",
+      "type": "ABOUT",
+      "to": "ENT-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-007",
+      "type": "ABOUT",
+      "to": "ENT-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-007",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-007",
+      "type": "ABOUT",
+      "to": "UC-008",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-008",
+      "type": "ABOUT",
+      "to": "BP-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-008",
+      "type": "ABOUT",
+      "to": "ENT-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-009",
+      "type": "ABOUT",
+      "to": "BR-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-009",
+      "type": "ABOUT",
+      "to": "BR-007",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-009",
+      "type": "ABOUT",
+      "to": "UC-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-010",
+      "type": "ABOUT",
+      "to": "ACT-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-010",
+      "type": "ABOUT",
+      "to": "BR-014",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-010",
+      "type": "ABOUT",
+      "to": "UC-009",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-011",
+      "type": "ABOUT",
+      "to": "BR-010",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-011",
+      "type": "ABOUT",
+      "to": "BR-011",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-011",
+      "type": "ABOUT",
+      "to": "UC-008",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-012",
+      "type": "ABOUT",
+      "to": "ENT-009",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-012",
+      "type": "ABOUT",
+      "to": "INT-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-013",
+      "type": "ABOUT",
+      "to": "BR-018",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-013",
+      "type": "ABOUT",
+      "to": "INT-002",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-013",
+      "type": "ABOUT",
+      "to": "REQ-016",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-013",
+      "type": "ABOUT",
+      "to": "UC-010",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-013",
+      "type": "ABOUT",
+      "to": "UC-011",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-014",
+      "type": "ABOUT",
+      "to": "REQ-017",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-015",
+      "type": "ABOUT",
+      "to": "ENT-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-015",
+      "type": "ABOUT",
+      "to": "ENT-002",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-015",
+      "type": "ABOUT",
+      "to": "ENT-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-015",
+      "type": "ABOUT",
+      "to": "ENT-010",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-015",
+      "type": "ABOUT",
+      "to": "INT-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-016",
+      "type": "ABOUT",
+      "to": "BR-012",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-016",
+      "type": "ABOUT",
+      "to": "ENT-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-016",
+      "type": "ABOUT",
+      "to": "UC-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-017",
+      "type": "ABOUT",
+      "to": "BR-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-017",
+      "type": "ABOUT",
+      "to": "ENT-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-017",
+      "type": "ABOUT",
+      "to": "UC-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-017",
+      "type": "ABOUT",
+      "to": "UC-007",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-018",
+      "type": "ABOUT",
+      "to": "BR-022",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-018",
+      "type": "ABOUT",
+      "to": "ENT-010",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-018",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-018",
+      "type": "ABOUT",
+      "to": "UC-008",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-019",
+      "type": "ABOUT",
+      "to": "BR-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-019",
+      "type": "ABOUT",
+      "to": "BR-008",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-019",
+      "type": "ABOUT",
+      "to": "BR-011",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-019",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-019",
+      "type": "ABOUT",
+      "to": "UC-008",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-019",
+      "type": "ABOUT",
+      "to": "UC-011",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-020",
+      "type": "ABOUT",
+      "to": "BR-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-020",
+      "type": "ABOUT",
+      "to": "ENT-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-020",
+      "type": "ABOUT",
+      "to": "ENT-007",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-020",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-020",
+      "type": "ABOUT",
+      "to": "UC-007",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-021",
+      "type": "ABOUT",
+      "to": "BR-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-021",
+      "type": "ABOUT",
+      "to": "BR-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-021",
+      "type": "ABOUT",
+      "to": "BR-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-021",
+      "type": "ABOUT",
+      "to": "BR-012",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-021",
+      "type": "ABOUT",
+      "to": "ENT-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-021",
+      "type": "ABOUT",
+      "to": "ENT-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-021",
+      "type": "ABOUT",
+      "to": "UC-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-021",
+      "type": "ABOUT",
+      "to": "UC-007",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-022",
+      "type": "ABOUT",
+      "to": "BR-002",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-022",
+      "type": "ABOUT",
+      "to": "BR-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-022",
+      "type": "ABOUT",
+      "to": "ENT-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-022",
+      "type": "ABOUT",
+      "to": "UC-007",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-023",
+      "type": "ABOUT",
+      "to": "BR-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-023",
+      "type": "ABOUT",
+      "to": "ENT-002",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-023",
+      "type": "ABOUT",
+      "to": "ENT-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-023",
+      "type": "ABOUT",
+      "to": "INT-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-023",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-023",
+      "type": "ABOUT",
+      "to": "UC-007",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-024",
+      "type": "ABOUT",
+      "to": "BR-009",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-024",
+      "type": "ABOUT",
+      "to": "BR-018",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-024",
+      "type": "ABOUT",
+      "to": "ENT-008",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-024",
+      "type": "ABOUT",
+      "to": "UC-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-024",
+      "type": "ABOUT",
+      "to": "UC-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-025",
+      "type": "ABOUT",
+      "to": "REQ-009",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-025",
+      "type": "ABOUT",
+      "to": "UC-004",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-025",
+      "type": "ABOUT",
+      "to": "UC-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-026",
+      "type": "ABOUT",
+      "to": "BR-017",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-026",
+      "type": "ABOUT",
+      "to": "ENT-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-026",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-026",
+      "type": "ABOUT",
+      "to": "UC-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-027",
+      "type": "ABOUT",
+      "to": "BR-002",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-027",
+      "type": "ABOUT",
+      "to": "ENT-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-027",
+      "type": "ABOUT",
+      "to": "ENT-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-027",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-027",
+      "type": "ABOUT",
+      "to": "UC-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-028",
+      "type": "ABOUT",
+      "to": "ENT-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-028",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-028",
+      "type": "ABOUT",
+      "to": "UC-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-029",
+      "type": "ABOUT",
+      "to": "BR-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-029",
+      "type": "ABOUT",
+      "to": "ENT-007",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-029",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-029",
+      "type": "ABOUT",
+      "to": "UC-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-030",
+      "type": "ABOUT",
+      "to": "BR-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-030",
+      "type": "ABOUT",
+      "to": "ENT-007",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-030",
+      "type": "ABOUT",
+      "to": "UC-002",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-031",
+      "type": "ABOUT",
+      "to": "BR-002",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-031",
+      "type": "ABOUT",
+      "to": "BR-012",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-031",
+      "type": "ABOUT",
+      "to": "ENT-005",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-031",
+      "type": "ABOUT",
+      "to": "UC-001",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-031",
+      "type": "ABOUT",
+      "to": "UC-003",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "Q-031",
+      "type": "ABOUT",
+      "to": "UC-006",
+      "sources": [
+        "requirements/clarification-log/open-questions.yaml"
+      ]
+    },
+    {
+      "from": "SVC-001",
+      "type": "LOCATED_IN",
+      "to": "REPO-001",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-001",
+      "type": "OWNS",
+      "to": "ENT-006",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-001",
+      "type": "OWNS",
+      "to": "ENT-007",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-001",
+      "type": "OWNS",
+      "to": "ENT-008",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-002",
+      "type": "LOCATED_IN",
+      "to": "REPO-001",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-002",
+      "type": "OWNS",
+      "to": "ENT-004",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-002",
+      "type": "OWNS",
+      "to": "ENT-005",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-003",
+      "type": "INTEGRATES_WITH",
+      "to": "INT-003",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-003",
+      "type": "INTEGRATES_WITH",
+      "to": "INT-004",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-003",
+      "type": "LOCATED_IN",
+      "to": "REPO-001",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-003",
+      "type": "OWNS",
+      "to": "ENT-001",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-003",
+      "type": "OWNS",
+      "to": "ENT-002",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-003",
+      "type": "OWNS",
+      "to": "ENT-003",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-003",
+      "type": "OWNS",
+      "to": "ENT-010",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-004",
+      "type": "INTEGRATES_WITH",
+      "to": "INT-001",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-004",
+      "type": "LOCATED_IN",
+      "to": "REPO-001",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-004",
+      "type": "OWNS",
+      "to": "ENT-009",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-005",
+      "type": "INTEGRATES_WITH",
+      "to": "INT-002",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-005",
+      "type": "LOCATED_IN",
+      "to": "REPO-001",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "SVC-006",
+      "type": "LOCATED_IN",
+      "to": "REPO-001",
+      "sources": [
+        "technical/architecture/services.yaml"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "BELONGS_TO",
+      "to": "BP-001",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "READS",
+      "to": "ENT-002",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "READS",
+      "to": "ENT-003",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "READS",
+      "to": "ENT-004",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "READS",
+      "to": "ENT-005",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "READS",
+      "to": "ENT-010",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "SATISFIES",
+      "to": "REQ-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "SATISFIES",
+      "to": "REQ-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "SATISFIES",
+      "to": "REQ-003",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "SATISFIES",
+      "to": "REQ-016",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-001",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-002",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-003",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-004",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-005",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-007",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-015",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-017",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-018",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-021",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_RULE",
+      "to": "BR-022",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_SCREEN",
+      "to": "SCR-005",
+      "sources": [
+        "ui/screen-catalog.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "USES_SCREEN",
+      "to": "SCR-006",
+      "sources": [
+        "ui/screen-catalog.yaml",
+        "ui/markdown/UC-001.md",
+        "ui/prototypes/UC-001/README.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "WRITES",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "WRITES",
+      "to": "ENT-007",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md"
+      ]
+    },
+    {
+      "from": "UC-001",
+      "type": "WRITES",
+      "to": "ENT-008",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-001.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "BELONGS_TO",
+      "to": "BP-001",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "READS",
+      "to": "ENT-002",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "READS",
+      "to": "ENT-004",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "READS",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "READS",
+      "to": "ENT-008",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "SATISFIES",
+      "to": "REQ-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "SATISFIES",
+      "to": "REQ-008",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-002",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-006",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-007",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-008",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-009",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-014",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-016",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-017",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-019",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-021",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_RULE",
+      "to": "BR-022",
+      "sources": [
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_SCREEN",
+      "to": "SCR-007",
+      "sources": [
+        "ui/screen-catalog.yaml",
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-002",
+      "type": "USES_SCREEN",
+      "to": "SCR-008",
+      "sources": [
+        "ui/screen-catalog.yaml",
+        "ui/markdown/UC-002.md"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "BELONGS_TO",
+      "to": "BP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "READS",
+      "to": "ENT-003",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "READS",
+      "to": "ENT-004",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "READS",
+      "to": "ENT-005",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "READS",
+      "to": "ENT-008",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "READS",
+      "to": "ENT-010",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "SATISFIES",
+      "to": "REQ-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "SATISFIES",
+      "to": "REQ-004",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "SATISFIES",
+      "to": "REQ-016",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-004",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-005",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-007",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-009",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-015",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-017",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-018",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-021",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "USES_RULE",
+      "to": "BR-022",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "WRITES",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-003",
+      "type": "WRITES",
+      "to": "ENT-007",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "BELONGS_TO",
+      "to": "BP-001",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "READS",
+      "to": "ENT-002",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "READS",
+      "to": "ENT-003",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "READS",
+      "to": "ENT-004",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "READS",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "READS",
+      "to": "ENT-007",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "READS",
+      "to": "ENT-008",
+      "sources": [
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "SATISFIES",
+      "to": "REQ-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "SATISFIES",
+      "to": "REQ-003",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "SATISFIES",
+      "to": "REQ-009",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "SATISFIES",
+      "to": "REQ-016",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "USES_RULE",
+      "to": "BR-002",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "USES_RULE",
+      "to": "BR-006",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "USES_RULE",
+      "to": "BR-008",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "USES_RULE",
+      "to": "BR-013",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "USES_RULE",
+      "to": "BR-014",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "USES_RULE",
+      "to": "BR-015",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "USES_RULE",
+      "to": "BR-018",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "USES_SCREEN",
+      "to": "SCR-003",
+      "sources": [
+        "ui/screen-catalog.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "USES_SCREEN",
+      "to": "SCR-004",
+      "sources": [
+        "ui/screen-catalog.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "WRITES",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-004",
+      "type": "WRITES",
+      "to": "ENT-008",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-004.md"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "BELONGS_TO",
+      "to": "BP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "READS",
+      "to": "ENT-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "READS",
+      "to": "ENT-004",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "READS",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "READS",
+      "to": "ENT-007",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "READS",
+      "to": "ENT-008",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "SATISFIES",
+      "to": "REQ-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "SATISFIES",
+      "to": "REQ-003",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "SATISFIES",
+      "to": "REQ-009",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "SATISFIES",
+      "to": "REQ-016",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "USES_RULE",
+      "to": "BR-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "USES_RULE",
+      "to": "BR-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "USES_RULE",
+      "to": "BR-008",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "USES_RULE",
+      "to": "BR-013",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "USES_RULE",
+      "to": "BR-014",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "USES_RULE",
+      "to": "BR-018",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "USES_RULE",
+      "to": "BR-021",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "WRITES",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-005",
+      "type": "WRITES",
+      "to": "ENT-008",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "BELONGS_TO",
+      "to": "BP-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "READS",
+      "to": "ENT-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "READS",
+      "to": "ENT-004",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "READS",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "SATISFIES",
+      "to": "REQ-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "USES_RULE",
+      "to": "BR-003",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "USES_RULE",
+      "to": "BR-004",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "USES_RULE",
+      "to": "BR-012",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "WRITES",
+      "to": "ENT-005",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-006",
+      "type": "WRITES",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "BELONGS_TO",
+      "to": "BP-003",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-007.md"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "READS",
+      "to": "ENT-004",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-007.md"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "SATISFIES",
+      "to": "REQ-007",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "USES_RULE",
+      "to": "BR-003",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-007.md"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "USES_RULE",
+      "to": "BR-004",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-007.md"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "USES_RULE",
+      "to": "BR-005",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-007.md"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "USES_SCREEN",
+      "to": "SCR-001",
+      "sources": [
+        "ui/screen-catalog.yaml",
+        "ui/markdown/UC-007.md"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "USES_SCREEN",
+      "to": "SCR-002",
+      "sources": [
+        "ui/screen-catalog.yaml",
+        "ui/markdown/UC-007.md"
+      ]
+    },
+    {
+      "from": "UC-007",
+      "type": "WRITES",
+      "to": "ENT-004",
+      "sources": [
+        "overview/use-cases.yaml",
+        "ui/markdown/UC-007.md"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "BELONGS_TO",
+      "to": "BP-004",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "READS",
+      "to": "ENT-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "READS",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "READS",
+      "to": "ENT-009",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "READS",
+      "to": "ENT-010",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "SATISFIES",
+      "to": "REQ-005",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "SATISFIES",
+      "to": "REQ-011",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "SATISFIES",
+      "to": "REQ-016",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "USES_RULE",
+      "to": "BR-010",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "USES_RULE",
+      "to": "BR-011",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-008",
+      "type": "USES_RULE",
+      "to": "BR-022",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "BELONGS_TO",
+      "to": "BP-005",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "READS",
+      "to": "ENT-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "READS",
+      "to": "ENT-002",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "READS",
+      "to": "ENT-004",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "READS",
+      "to": "ENT-005",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "READS",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "SATISFIES",
+      "to": "REQ-008",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "SATISFIES",
+      "to": "REQ-010",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "SATISFIES",
+      "to": "REQ-012",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-009",
+      "type": "USES_RULE",
+      "to": "BR-014",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-010",
+      "type": "BELONGS_TO",
+      "to": "BP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-010",
+      "type": "READS",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-010",
+      "type": "READS",
+      "to": "ENT-008",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-010",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-010",
+      "type": "SATISFIES",
+      "to": "REQ-018",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-010",
+      "type": "USES_RULE",
+      "to": "BR-016",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-010",
+      "type": "WRITES",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-011",
+      "type": "BELONGS_TO",
+      "to": "BP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-011",
+      "type": "READS",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-011",
+      "type": "RUNS_IN",
+      "to": "APP-001",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-011",
+      "type": "SATISFIES",
+      "to": "REQ-003",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-011",
+      "type": "USES_RULE",
+      "to": "BR-008",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    },
+    {
+      "from": "UC-011",
+      "type": "WRITES",
+      "to": "ENT-006",
+      "sources": [
+        "overview/use-cases.yaml"
+      ]
+    }
+  ]
 }
