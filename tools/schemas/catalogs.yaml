@@ -1,0 +1,170 @@
+schema_version: 1
+# Catalogs hold many items per file (addendum D-17). Every item has a stable ID (D-14).
+#   required:   fields that must be present and non-empty
+#   enums:      allowed values for a scalar field
+#   list_enums: allowed values for each entry of a list field
+#   refs:       field -> ID prefixes it may reference + the graph edge it creates.
+#               reverse: true means the edge points from the referenced ID to this item.
+catalogs:
+  requirements:
+    title: Business Requirements
+    path: requirements/requirements.yaml
+    prefix: REQ
+    node_type: Requirement
+    required: [id, name, description, source, priority]
+    enums:
+      priority: [HIGH, MEDIUM, LOW]
+
+  actors:
+    title: Actors
+    path: overview/actors.yaml
+    prefix: ACT
+    node_type: Actor
+    required: [id, name, type, description]
+    enums:
+      type: [HUMAN, SYSTEM]
+
+  applications:
+    title: Applications
+    path: overview/applications.yaml
+    prefix: APP
+    node_type: Application
+    required: [id, name, type, description]
+    enums:
+      type: [WEB, MOBILE, DESKTOP, BACKOFFICE]
+    refs:
+      actors: {targets: [ACT], edge: USES_APPLICATION, reverse: true}
+      services: {targets: [SVC], edge: USES}
+
+  business-processes:
+    title: Business Processes
+    path: overview/business-processes.yaml
+    prefix: BP
+    node_type: BusinessProcess
+    required: [id, name, objective, actors, trigger, steps]
+    refs:
+      actors: {targets: [ACT], edge: PARTICIPATES_IN, reverse: true}
+
+  business-rules:
+    title: Business Rules
+    path: overview/business-rules.yaml
+    prefix: BR
+    node_type: BusinessRule
+    required: [id, name, description, source]
+    refs:
+      requirements: {targets: [REQ], edge: DERIVED_FROM}
+      related_use_cases: {targets: [UC], edge: USES_RULE, reverse: true}
+      related_entities: {targets: [ENT], edge: APPLIES_TO}
+
+  entities:
+    title: Data Model — Entities
+    path: overview/data-model/entities.yaml
+    prefix: ENT
+    node_type: Entity
+    required: [id, name, description, owner, attributes]
+
+  integrations:
+    title: Integrations
+    path: overview/integrations.yaml
+    prefix: INT
+    node_type: Integration
+    required: [id, name, direction, purpose, owner]
+    enums:
+      direction: [INBOUND, OUTBOUND, BIDIRECTIONAL]
+    refs:
+      entities: {targets: [ENT], edge: EXCHANGES}
+
+  use-cases:
+    title: Use Case List
+    path: overview/use-cases.yaml
+    prefix: UC
+    node_type: UseCase
+    required: [id, name, business_process, actor, application, description, complexity, risk_level]
+    enums:
+      complexity: [LOW, MEDIUM, HIGH]
+      risk_level: [LOW, MEDIUM, HIGH, CRITICAL]
+    list_enums:
+      risk_flags: [FINANCIAL, IRREVERSIBLE, SECURITY, COMPLIANCE, PERSONAL_DATA]
+    refs:
+      business_process: {targets: [BP], edge: BELONGS_TO}
+      actor: {targets: [ACT], edge: PERFORMS, reverse: true}
+      application: {targets: [APP], edge: RUNS_IN}
+      requirements: {targets: [REQ], edge: SATISFIES}
+      business_rules: {targets: [BR], edge: USES_RULE}
+      entities_read: {targets: [ENT], edge: READS}
+      entities_written: {targets: [ENT], edge: WRITES}
+
+  repositories:
+    title: Repositories
+    path: workflow/repositories.yaml
+    prefix: REPO
+    node_type: Repository
+    required: [id, name, type, status]
+    enums:
+      status: [PLANNED, ACTIVE, ARCHIVED]
+
+  services:
+    title: Services
+    path: technical/architecture/services.yaml
+    prefix: SVC
+    node_type: Service
+    required: [id, name, responsibility]
+    refs:
+      repository: {targets: [REPO], edge: LOCATED_IN}
+      integrations: {targets: [INT], edge: INTEGRATES_WITH}
+      entities: {targets: [ENT], edge: OWNS}
+
+  apis:
+    title: API Catalog
+    path: technical/api/api-catalog.yaml
+    prefix: API
+    node_type: API
+    name_field: endpoint
+    required: [id, method, endpoint, purpose, service, change_type]
+    enums:
+      method: [GET, POST, PUT, PATCH, DELETE]
+      change_type: [EXISTING, NEW, MODIFIED]
+    refs:
+      service: {targets: [SVC], edge: IMPLEMENTED_BY}
+      calls: {targets: [API], edge: CALLS}
+      entities_read: {targets: [ENT], edge: READS}
+      entities_written: {targets: [ENT], edge: WRITES}
+      introduced_by: {targets: [UC], edge: INTRODUCES, reverse: true}
+
+  screens:
+    title: Screen Catalog
+    path: ui/screen-catalog.yaml
+    prefix: SCR
+    node_type: Screen
+    required: [id, name, application, purpose]
+    refs:
+      application: {targets: [APP], edge: CONTAINS, reverse: true}
+      actors: {targets: [ACT], edge: ACCESSES, reverse: true}
+      apis: {targets: [API], edge: CALLS}
+      use_cases: {targets: [UC], edge: USES_SCREEN, reverse: true}
+
+  open-questions:
+    title: Open Questions
+    path: requirements/clarification-log/open-questions.yaml
+    prefix: Q
+    node_type: OpenQuestion
+    name_field: question
+    required: [id, question, reason, impact_if_unanswered, target_stakeholder, priority, status]
+    enums:
+      target_stakeholder: [BUSINESS, OPERATIONS, SECURITY, DATA, INTEGRATION, COMPLIANCE, TECHNICAL, UX]
+      priority: [HIGH, MEDIUM, LOW]
+      status: [OPEN, ANSWERED, CLOSED]
+    refs:
+      related: {targets: ANY, edge: ABOUT}
+
+  assumptions:
+    title: Assumptions
+    path: requirements/assumptions/assumptions.yaml
+    prefix: ASM
+    node_type: Assumption
+    name_field: statement
+    required: [id, statement, reason, status]
+    enums:
+      status: [OPEN, CONFIRMED, REJECTED]
+    refs:
+      related: {targets: ANY, edge: ABOUT}

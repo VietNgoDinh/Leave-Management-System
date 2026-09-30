@@ -1,0 +1,8 @@
+meta:
+  artifact_type: catalog
+  catalog: repositories
+  title: Product repositories (D-02). Add each path to permissions.additionalDirectories in .claude/settings.json.
+  status: DRAFT
+  baseline: TO_BE
+  origin: AI
+items: []

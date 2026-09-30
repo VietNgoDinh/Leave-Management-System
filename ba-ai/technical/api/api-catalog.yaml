@@ -1,0 +1,8 @@
+meta:
+  artifact_type: catalog
+  catalog: apis
+  title: API Catalog
+  status: DRAFT
+  baseline: TO_BE
+  origin: AI
+items: []

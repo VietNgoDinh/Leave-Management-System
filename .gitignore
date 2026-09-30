@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.claude/settings.local.json
+ba-ai/.ba.lock
+ba-ai/workflow/context/
+ba-ai/**/.tmp-*

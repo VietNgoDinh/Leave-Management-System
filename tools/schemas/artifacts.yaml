@@ -1,0 +1,98 @@
+schema_version: 1
+
+# One status set per level (addendum D-07).
+enums:
+  artifact_status: [DRAFT, WAITING_FOR_REVIEW, CHANGES_REQUESTED, APPROVED, STALE, SUPERSEDED]
+  baseline: [AS_IS, TO_BE]
+  origin: [AI, HUMAN, CODE, FIXTURE]
+  run_status: [NOT_STARTED, IN_PROGRESS, WAITING_FOR_HUMAN, CHANGES_REQUESTED, BLOCKED, FAILED, COMPLETED]
+  backlog_item_status: [BACKLOG, READY, IN_PROGRESS, BLOCKED, DONE]
+  backlog_stage_status: [NOT_STARTED, IN_PROGRESS, WAITING_FOR_REVIEW, CHANGES_REQUESTED, APPROVED, DONE, BLOCKED, STALE]
+  gate_status: [NOT_REQUESTED, WAITING, APPROVED, CHANGES_REQUESTED, BLOCKED, INVALIDATED, OUTDATED]
+  priority: [HIGH, MEDIUM, LOW]
+
+# Every document (Markdown artifact) needs these frontmatter keys (D-18).
+required_frontmatter: [id, artifact_type, title, status, version, baseline, origin, updated_at]
+
+# Frontmatter `relations` keys → graph edge from the document's subject (D-21).
+relation_edges:
+  business_process: {edge: BELONGS_TO}
+  requirements: {edge: SATISFIES}
+  actors: {edge: PERFORMS, reverse: true}
+  business_rules: {edge: USES_RULE}
+  entities_read: {edge: READS}
+  entities_written: {edge: WRITES}
+  screens: {edge: USES_SCREEN}
+  apis: {edge: USES_API}
+  integrations: {edge: USES_INTEGRATION}
+
+# Catalog items `ba stamp` records in built_from. Only human-approved inputs:
+# screens and APIs are outputs of the spec engine itself, so they are excluded.
+stamp_ref_prefixes: [UC, BP, ACT, BR, ENT, REQ, INT, Q, ASM]
+
+artifact_types:
+  # ---- project-level documents
+  product-overview:
+    path: overview/product-overview.md
+    id: PRODUCT
+    headings: [Objective, Scope, Actors, Applications, System Boundaries, Integrations, High-Level Behavior]
+  technical-architecture:
+    path: technical/architecture/architecture.md
+    id: ARCH
+    headings: [Technology Stack, Application Architecture, Repository Structure, API Conventions,
+               Error Handling, Logging, Testing Conventions]
+  coding-rules:
+    path_regex: '^technical/coding-rules/[a-z0-9-]+\.md$'
+    id_regex: '^CODING-[A-Z0-9-]+$'
+    headings: [Conventions]
+  security-rules:
+    path: technical/security/security-rules.md
+    id: SECURITY
+    headings: [Authentication, Authorization, Data Protection, Audit]
+  design-system:
+    path: ui/design-system.md
+    id: DESIGN-SYSTEM
+    headings: [Principles, Layout, Components, Patterns]
+
+  # ---- per use case: BA Specification Engine outputs (master spec §13–21)
+  ui-markdown:
+    per_use_case: true
+    path: ui/markdown/{UC}.md
+    headings: [Purpose, Screens, Navigation, Permissions, Open Questions]
+    checks: [screen_sections]
+  ui-prototype:
+    per_use_case: true
+    path: ui/prototypes/{UC}/README.md
+    dir: ui/prototypes/{UC}/
+    headings: [How to Open, Screens Covered, Interactions, Limitations]
+    checks: [prototype_index]
+  sequence:
+    per_use_case: true
+    path: technical/sequence/{UC}.md
+    headings: [Participants, Main Flow, Alternate and Error Flows, Notes]
+    checks: [mermaid]
+  api-design:
+    per_use_case: true
+    path: technical/api/{UC}.md
+    headings: [API Summary, API Details, Unresolved Technical Decisions]
+    checks: [api_sections]
+  activity-validation:
+    per_use_case: true
+    path: specifications/analysis/{UC}-activity.md
+    headings: [Activity Flow, Validation Rules, Alternate Flows, Error Flows, Business Rule Execution]
+    scoped: [VR, AF, EF]
+    checks: [mermaid, validation_traced]
+  acceptance-criteria:
+    per_use_case: true
+    path: specifications/analysis/{UC}-acceptance.md
+    headings: [Acceptance Criteria, Coverage]
+    scoped: [AC]
+    checks: [gherkin]
+  use-case-specification:
+    per_use_case: true
+    path: specifications/use-cases/{UC}.md
+    headings: [Objective, Actor, Preconditions, Trigger, Business Context, User Flow, UI Specification,
+               Main Flow, Alternate Flows, Error Flows, Business Rules, Validation Rules, Data Entities,
+               Sequence Diagram, API Specification, Acceptance Criteria, Dependencies, Assumptions,
+               Open Questions, Traceability]
+    checks: [mermaid]

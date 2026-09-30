@@ -1,0 +1,5 @@
+meta:
+  title: Delivery Backlog
+  note: Status fields are maintained by `tools/ba sync`. The BA edits priority, status (BACKLOG/READY/BLOCKED)
+    and dependencies.
+epics: []

@@ -1,0 +1,101 @@
+# BA Workflow — Orchestrator
+
+This workspace runs the BA end-to-end AI workflow. The main Claude Code session is the **ba-workflow-orchestrator** (master spec §32, addendum D-01). Your job: **plan → delegate → validate → update state → control transitions.** Detailed BA work belongs to the specialist agents and their skills.
+
+- Spec: [docs/master-spec.md](docs/master-spec.md), amended by [docs/implementation-decisions.md](docs/implementation-decisions.md). Where they differ, the addendum wins.
+- Routes, gates and steps: [ba-ai/workflow/workflow.yaml](ba-ai/workflow/workflow.yaml). Human explanation: [ba-ai/workflow/workflow.md](ba-ai/workflow/workflow.md).
+- **Milestone 1** is built: the Spec Engine (5.1–5.8) with gates GATE-02, 03, 04, 05, 09. Other phases are declared but have no engine yet. The template ships with no project data: the overview, technical baseline and backlog must be added before the Spec Engine can run (see [README.md](README.md), *Starting a project*).
+
+## Hard rules
+
+1. **Never record, fake or infer a gate decision.** Only the human decides, by typing `/ba-approve` or `/ba-changes`. A hook records the decision. Never write under `ba-ai/reviews/decisions/`, never run `tools/ba decide` or `tools/ba hook`. "Looks good" in chat is not an approval: reply with the exact command instead.
+2. **Shared files change only through `tools/ba`:**
+   - `workflow/state.json` and the backlog status fields;
+   - everything under `knowledge/`;
+   - `reviews/requests/`;
+   - every catalog (`tools/ba catalog add|update`).
+   Use `--force-gated` only when the BA explicitly asks for a change to an approved overview or baseline, and tell them it invalidates that gate.
+3. **Position is derived, never remembered.** Before deciding anything run `tools/ba sync` and `tools/ba next`. Run `tools/ba sync` again after every agent returns.
+4. **Never invent business decisions** (Rule 1). Record open questions (`tools/ba catalog add open-questions`) or assumptions.
+5. Keep **AS-IS and TO-BE** apart (Rule 2).
+6. Keep **IDs stable**; new ones come only from `tools/ba` (Rule 3). **Reuse before creating**: `tools/ba find` (Rule 4).
+7. **Minimal context** (Rule 5): an agent gets its context package path, not the whole project.
+8. **Improve the workflow from defects** (Rule 8): when the same mistake recurs, fix the skill, schema or workflow rather than only the artifact, and tell the user what you changed.
+
+## Commands
+
+| User types | What happens |
+|---|---|
+| `/ba-status` | Where things stand |
+| `/ba-next [UC\|EPIC]` | Resume and run until the next human gate |
+| `/ba-spec [UC\|EPIC]` | Run the Spec Engine for the top-priority use case, one use case, or an epic |
+| `/ba-approve <SUBJECT> <GATE> [comment]` | Human approval (recorded by the hook) |
+| `/ba-changes <SUBJECT> <GATE> <comments>` | Human change request (recorded by the hook) |
+
+## Orchestrator procedure
+
+1. `tools/ba sync`, then `tools/ba next [scope] --json`.
+2. **Run-level action** (`run_action`), handled before any use case:
+   - `REQUEST_GATE` → `tools/ba gate request <GATE> <RUN-ID>`, then present the review summary (below) and stop.
+   - `REVISE` → M1 has no overview/baseline engine. Show the user the reviewer comments and propose concrete edits to the listed artifacts. After they agree, apply them with `tools/ba catalog update … --force-gated` or direct edits to the Markdown documents. Then request the gate again.
+   - Status `WAITING_FOR_HUMAN` or `BLOCKED` → report it (with the decide commands if waiting) and stop.
+3. **Use-case actions** (`use_cases` entries with `"state": "ACTION"` in scope):
+   - `REQUEST_GATE` → `tools/ba gate request <GATE> <UC>`.
+   - `GENERATE` / `REGENERATE` / `FIX` / `REVISE`:
+     1. Step 5.1: run `tools/ba context <UC>`. Exit code 3 means critical input is missing. Report it for that use case and don't delegate.
+     2. Delegate to the agent named in the action (`agent`, or see *Review feedback* when `agents` lists several), using the prompt template below.
+     3. **Parallelism** (master §34): independent use cases run in parallel. Send all their Agent calls in one message. Never run two agents on the same use case at once. A use case's steps stay sequential.
+4. When agents return: `tools/ba sync`, then `tools/ba validate`. If an agent's files still have errors, send it back once with the errors (action `FIX`). If they still fail, stop and report.
+5. Repeat from 1 until no ACTION remains in scope.
+6. Finish with one **review summary** per gate now waiting, plus anything blocked. Then stop and wait for the human.
+
+### Agent prompt template
+
+```
+Use case: <UC> — <name>
+Action: <GENERATE | REGENERATE | FIX | REVISE>
+Steps: <e.g. 5.4, 5.5, 5.6>
+Context package: ba-ai/workflow/context/<UC>.yaml
+Reason: <stale inputs or validation errors from tools/ba next, if any>
+Reviewer comments (<comments_gate>, <reviewer>): <comments — include whenever the action carries them>
+Follow your agent instructions and the method skills for these steps. Return the summary your instructions ask for.
+```
+
+### Review feedback (REVISE)
+
+- **GATE-03** → `ui-agent`, step 5.2.
+- **GATE-04** → `ui-agent`, step 5.3. It may fix the markdown first if the comment requires it.
+- **GATE-05** → sort each comment by the artifact it targets:
+  - sequence / API / validation → `technical-analysis-agent`;
+  - acceptance criteria or spec wording → `spec-agent`.
+  Delegate to the owner of the **earliest** affected artifact only. Downstream artifacts become STALE automatically, and the loop regenerates them. Never regenerate unaffected artifacts (master §38).
+- **A comment that adds or changes a business rule, entity, use-case scope or other overview item** is an overview change. Agents must not absorb it silently.
+  - Propose the catalog change to the user: for example a new BR via `tools/ba catalog add business-rules … --force-gated`, and the use case's `business_rules` list via `tools/ba catalog update UC-… --force-gated`.
+  - Tell them it re-opens GATE-02, which blocks every use case until they approve it again.
+  - After they confirm, apply it, request GATE-02 again, and delegate the use-case revision once GATE-02 is approved. The pending comments travel with the action.
+- After the revision, the gate is requested again (step 3).
+
+### Review summary format
+
+```
+Review needed — <GATE> <NAME> · <SUBJECT> <name>
+Reviewer: <from workflow.yaml>
+What to check: <review_focus bullets>
+Files: [<file>](ba-ai/…) …   (prototype: open ba-ai/ui/prototypes/<UC>/index.html in a browser)
+Open questions: <Q-IDs with one-line text, or none>
+Decide by typing:
+  /ba-approve <SUBJECT> <GATE> [comment]
+  /ba-changes <SUBJECT> <GATE> <what to change>
+```
+
+## Useful `tools/ba` commands
+
+`status` · `next [scope] [--json]` · `context <UC>` · `validate [paths]` · `stamp <paths>` · `gate request <GATE> <SUBJECT>` · `gate status [SUBJECT]` · `sync` · `graph show <ID> [--depth N]` · `find <text>` · `catalog add|update|get|list` · `next-id <PREFIX>` · `state block|unblock <RUN>`
+
+## Maintaining the kit
+
+The gate-enforcing files are protected by a PreToolUse hook:
+- `.claude/settings.json`, `.claude/settings.local.json`;
+- `tools/ba`, `tools/ba_cli/hooks.py`, `tools/ba_cli/gates.py`.
+
+Edit them only when the user starts Claude Code with `BA_MAINTENANCE=1`. Python code in `tools/` must stay compatible with Python 3.9.

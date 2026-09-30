@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# ba — deterministic bookkeeping for the BA workflow (addendum D-04).
+# Creates the project venv on first run, then runs the Python CLI.
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PY="$ROOT/.venv/bin/python"
+if [ ! -x "$PY" ]; then
+  echo "ba: first run — creating .venv and installing requirements…" >&2
+  python3 -m venv "$ROOT/.venv" >&2
+  "$ROOT/.venv/bin/pip" install --quiet --disable-pip-version-check -r "$ROOT/requirements.txt" >&2
+fi
+export BA_ROOT="$ROOT"
+export PYTHONPATH="$ROOT/tools${PYTHONPATH:+:$PYTHONPATH}"
+exec "$PY" -m ba_cli "$@"

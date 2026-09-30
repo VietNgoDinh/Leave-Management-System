@@ -1,0 +1,10 @@
+meta:
+  artifact_type: catalog
+  catalog: services
+  title: Services
+  status: DRAFT
+  baseline: TO_BE
+  origin: AI
+  review:
+    GATE-09: NOT_REQUESTED
+items: []

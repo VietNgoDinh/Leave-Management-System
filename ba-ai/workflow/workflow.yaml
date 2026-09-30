@@ -1,0 +1,238 @@
+schema_version: 1
+# The single route definition (addendum D-22). Read by tools/ba; explained in workflow.md.
+# implemented: false marks phases that have no engine yet (milestone 1).
+milestone: 1
+
+modes:
+  MODE_A:
+    name: Existing product / existing system
+    route:
+      - {id: BOOTSTRAP, kind: step, implemented: true, outputs: [workflow/state.json]}
+      - {id: REVERSE_ENGINEERING, kind: step, implemented: false, outputs: [current-state/architecture/system-landscape.md]}
+      - {id: GATE-01, kind: gate}
+      - {id: TECH_BASELINE, kind: step, implemented: false, outputs: [technical/architecture/architecture.md]}
+      - {id: GATE-09, kind: gate}
+      - {id: ELICITATION, kind: step, implemented: false, outputs: [requirements/requirements.yaml]}
+      - {id: OVERVIEW, kind: step, implemented: false,
+         outputs: [overview/product-overview.md, overview/use-cases.yaml, overview/business-rules.yaml,
+                   overview/data-model/entities.yaml]}
+      - {id: GATE-02, kind: gate}
+      - {id: PLANNING, kind: step, implemented: false, outputs: [planning/backlog.yaml]}
+      - {id: INFORMATION_ARCHITECTURE, kind: step, implemented: false, optional: true}
+      - {id: SPECIFICATION, kind: use_case_engine}
+      - {id: GATE-06, kind: gate}
+      - {id: CODING, kind: step, implemented: false}
+      - {id: GATE-10, kind: gate}
+      - {id: QA, kind: step, implemented: false}
+      - {id: GATE-07, kind: gate}
+      - {id: USER_GUIDE, kind: step, implemented: false}
+      - {id: GATE-08, kind: gate}
+
+  MODE_B:
+    name: New product / major new business capability
+    route:
+      - {id: BOOTSTRAP, kind: step, implemented: true, outputs: [workflow/state.json]}
+      - {id: ELICITATION, kind: step, implemented: false, outputs: [requirements/requirements.yaml]}
+      - {id: OVERVIEW, kind: step, implemented: false,
+         outputs: [overview/product-overview.md, overview/use-cases.yaml, overview/business-rules.yaml,
+                   overview/data-model/entities.yaml]}
+      - {id: GATE-02, kind: gate}
+      - {id: TECH_BASELINE, kind: step, implemented: false, outputs: [technical/architecture/architecture.md]}
+      - {id: GATE-09, kind: gate}
+      - {id: PLANNING, kind: step, implemented: false, outputs: [planning/backlog.yaml]}
+      - {id: INFORMATION_ARCHITECTURE, kind: step, implemented: false, optional: true}
+      - {id: SPECIFICATION, kind: use_case_engine}
+      - {id: GATE-06, kind: gate}
+      - {id: CODING, kind: step, implemented: false}
+      - {id: GATE-10, kind: gate}
+      - {id: QA, kind: step, implemented: false}
+      - {id: GATE-07, kind: gate}
+      - {id: USER_GUIDE, kind: step, implemented: false}
+      - {id: GATE-08, kind: gate}
+
+  MODE_C:
+    name: Small change request
+    route:
+      - {id: BOOTSTRAP, kind: step, implemented: true, outputs: [workflow/state.json]}
+      - {id: CR_INTAKE, kind: step, implemented: false}
+      - {id: IMPACT_ANALYSIS, kind: step, implemented: false}
+      - {id: SPEC_UPDATE, kind: use_case_engine}
+      - {id: GATE-06, kind: gate}
+      - {id: CODING, kind: step, implemented: false}
+      - {id: GATE-10, kind: gate}
+      - {id: QA, kind: step, implemented: false}
+      - {id: GATE-07, kind: gate}
+      - {id: DOCUMENTATION_UPDATE, kind: step, implemented: false}
+      - {id: GATE-08, kind: gate}
+
+# Human gates (master spec §37 + addendum D-08). Artifact paths are relative to ba-ai/;
+# {UC} is the use case, a trailing / means "the whole folder".
+gates:
+  GATE-01:
+    name: CURRENT_STATE_REVIEW
+    subject: RUN
+    reviewer: BA (processes, use cases) + SA/Developer (architecture)
+    implemented: false
+  GATE-02:
+    name: OVERVIEW_APPROVAL
+    subject: RUN
+    reviewer: BA
+    implemented: true
+    review_focus:
+      - Business process and its steps
+      - Use case list — including risk_level / risk_flags for each use case
+      - Data model (entities, attributes, relationships, lifecycle) — downstream UI and APIs depend on it
+      - Critical business rules
+      - Integrations and system boundaries
+    artifacts:
+      - overview/product-overview.md
+      - requirements/requirements.yaml
+      - overview/actors.yaml
+      - overview/applications.yaml
+      - overview/business-processes.yaml
+      - overview/business-rules.yaml
+      - overview/data-model/entities.yaml
+      - overview/integrations.yaml
+      - overview/use-cases.yaml
+  GATE-03:
+    name: UI_MARKDOWN_REVIEW
+    subject: USE_CASE
+    reviewer: BA
+    implemented: true
+    review_focus:
+      - Screen flow and navigation
+      - Missing information (fields, columns, states, messages)
+      - Business behaviour matches the use case and its rules
+      - Usability
+      - Alignment with the requirement
+    artifacts:
+      - ui/markdown/{UC}.md
+  GATE-04:
+    name: HTML_PROTOTYPE_REVIEW
+    subject: USE_CASE
+    reviewer: BA or stakeholder
+    implemented: true
+    review_focus:
+      - Open index.html in a browser and click through every path
+      - Navigation, controls, dialogs
+      - Validation messages and error/success behaviour
+      - States (empty, loading, error) via the prototype controls panel
+    artifacts:
+      - ui/prototypes/{UC}/
+  GATE-05:
+    name: BA_SPEC_APPROVAL
+    subject: USE_CASE
+    reviewer: BA
+    implemented: true
+    review_focus:
+      - The compiled specification reads as one consistent, code-ready story
+      - Every validation traces to a business rule or requirement
+      - Acceptance criteria are testable and cover rules, alternate and error flows
+      - Open questions and assumptions are acceptable to carry forward
+      - Sequence and API design match the approved UI (SA reviews them in depth at GATE-06)
+    artifacts:
+      - technical/sequence/{UC}.md
+      - technical/api/{UC}.md
+      - specifications/analysis/{UC}-activity.md
+      - specifications/analysis/{UC}-acceptance.md
+      - specifications/use-cases/{UC}.md
+  GATE-06:
+    name: TECHNICAL_APPROVAL
+    subject: USE_CASE
+    reviewer: SA / Developer
+    implemented: false
+  GATE-07:
+    name: CRITICAL_FLOW_TEST
+    subject: USE_CASE
+    reviewer: BA / QA
+    implemented: false
+  GATE-08:
+    name: USER_GUIDE_REVIEW
+    subject: USE_CASE
+    reviewer: BA
+    implemented: false
+  GATE-09:
+    name: TECH_BASELINE_APPROVAL
+    subject: RUN
+    reviewer: SA / Tech lead
+    implemented: true
+    review_focus:
+      - Technology stack and application architecture
+      - API conventions (the spec engine designs APIs against them)
+      - Security rules, error handling, logging, testing conventions
+      - Design system the prototypes will follow
+    artifacts:
+      - technical/architecture/architecture.md
+      - technical/architecture/services.yaml
+      - technical/coding-rules/frontend.md
+      - technical/coding-rules/backend.md
+      - technical/security/security-rules.md
+      - ui/design-system.md
+  GATE-10:
+    name: CODE_REVIEW
+    subject: USE_CASE
+    reviewer: Developer (pull request review)
+    implemented: false
+
+# BA Specification Engine (master spec Phase 5). Runs per use case.
+use_case_engine:
+  requires_gates: [GATE-02, GATE-09]   # run-level approvals needed before any use case starts
+  dependency_gate: GATE-05             # a dependency is satisfied when its spec is approved
+  steps:
+    - step: "5.1"
+      name: Context Discovery
+      executor: orchestrator
+      command: tools/ba context {UC}
+    - step: "5.2"
+      name: Functional Screen Design (Markdown)
+      agent: ui-agent
+      skills: [design-screen-markdown]
+      artifact_type: ui-markdown
+      built_from: []
+      gate: GATE-03
+    - step: "5.3"
+      name: Interactive HTML Prototype
+      agent: ui-agent
+      skills: [build-html-prototype]
+      artifact_type: ui-prototype
+      built_from: [ui-markdown]
+      gate: GATE-04
+    - step: "5.4"
+      name: Sequence Analysis
+      agent: technical-analysis-agent
+      skills: [generate-sequence-diagram]
+      artifact_type: sequence
+      built_from: [ui-markdown, ui-prototype]
+    - step: "5.5"
+      name: API Analysis and Design
+      agent: technical-analysis-agent
+      skills: [design-api]
+      artifact_type: api-design
+      built_from: [sequence]
+    - step: "5.6"
+      name: Activity and Validation Analysis
+      agent: technical-analysis-agent
+      skills: [analyze-validation]
+      artifact_type: activity-validation
+      built_from: [ui-markdown, api-design]
+    - step: "5.7"
+      name: Acceptance Criteria
+      agent: spec-agent
+      skills: [write-acceptance-criteria]
+      artifact_type: acceptance-criteria
+      built_from: [ui-markdown, api-design, activity-validation]
+    - step: "5.8"
+      name: Compile Code-Ready BA Specification
+      agent: spec-agent
+      skills: [compile-use-case-spec]
+      artifact_type: use-case-specification
+      built_from: [ui-markdown, ui-prototype, sequence, api-design, activity-validation, acceptance-criteria]
+      gate: GATE-05
+  # How backlog stage fields are derived.
+  stages:
+    ui_status:
+      artifact_types: [ui-markdown, ui-prototype]
+      gates: [GATE-03, GATE-04]
+    spec_status:
+      artifact_types: [sequence, api-design, activity-validation, acceptance-criteria, use-case-specification]
+      gates: [GATE-05]

@@ -1,0 +1,10 @@
+meta:
+  artifact_type: catalog
+  catalog: integrations
+  title: Integrations
+  status: DRAFT
+  baseline: TO_BE
+  origin: AI
+  review:
+    GATE-02: NOT_REQUESTED
+items: []
