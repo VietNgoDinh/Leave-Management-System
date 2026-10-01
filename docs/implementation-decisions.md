@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| Status | **APPROVED** (2026-09-30) |
+| Status | **APPROVED** (2026-09-30) — §1–§12. §13 (milestone 2, D-28 – D-44) is **PROPOSED** (2026-10-02); D-37 – D-44 were requested by the BA after the review of the master spec |
 | Amends | [master-spec.md](master-spec.md) |
-| Date | 2026-09-30 |
+| Date | 2026-09-30, extended 2026-10-02 |
 
 Where this addendum and the master spec disagree, **this addendum wins**. Each decision has an ID (D-nn), so you can approve or change any one of them on its own. §10 lists every place this document changes the master spec.
 
@@ -410,6 +410,20 @@ MODE_C (small change request)
 | §36 `source` / `dependencies` / free-text `version` | `relations`, `built_from`, integer `version` | D-12, D-18 |
 | §8–9 `use-cases.md`, `business-rules.md`, `integrations.md`, `open-questions.md`, `assumptions.md` | YAML catalogs | D-17, D-20 |
 | §3 routes; §23 baseline placement | Unified routes, with the baseline before the Spec Engine | D-22 |
+| §4 "status = WAITING_FOR_HUMAN" in step 2.5 | Derived from OPEN questions marked `blocking` | D-30 |
+| §9 3.4 state model as its own artifact | The entity's `lifecycle` in the data model | D-31 |
+| §12 information architecture "when required" | When an application is marked `information_architecture: REQUIRED` | D-32 |
+| §3, §43 run-level GATE-06 … GATE-08 after the Spec Engine | Per-use-case steps in one engine | D-33 |
+| §24 coding precondition | `tools/ba coding authorize`; hook pending | D-33, D-36 |
+| §25 step 8.4 retry limit; D-26 Playwright install method | Defects file + routing by classification; Playwright from the frontend repo | D-34 |
+| D-08 GATE-08 subject "Feature" | One guide per use case | D-35 |
+| D-22 order Coding → GATE-10 → QA | Acceptance tests → Coding → QA and fix loop → GATE-10 → GATE-07 | D-37, D-38 |
+| §25 tests generated after implementation | Acceptance tests written by the QA agent before coding | D-38 |
+| D-25 a branch per use case in each repo | A git worktree per use case per repo, plus a shared repository-setup step | D-39 |
+| §37 the human gates alone | An AI pre-review before each human gate (except GATE-07) | D-40 |
+| §41 Rule 5 "retrieve only the information necessary" | The context package is a map; agents may read further and say what | D-41 |
+| §8 2.5 / §41 Rule 1: unknowns only as logged questions | Blocking questions go to the BA live, in the session | D-42 |
+| §21 the agent compiles all 20 sections | `tools/ba compile` assembles 13; the agent writes 7 narrative sections | D-43 |
 
 ---
 
@@ -473,3 +487,196 @@ MODE_C (small change request)
 - Exporting the backlog and stories to Jira or Azure DevOps.
 - At what size to move from `ba-graph.json` to a graph database.
 - Splitting the reusable kit from each product's instance, for example a `ba init` command that sets up a fresh `ba-ai/` in a product workspace.
+
+---
+
+## 13. Milestone 2 — MODE_B end to end (PROPOSED, 2026-10-02)
+
+**Goal:** a new product runs the whole MODE_B route (D-22), from stakeholder material to an approved user guide. Every run-level phase and every per-use-case phase after GATE-05 now has an engine. MODE_A reverse engineering (D-24) and the MODE_C change-request engine are still to come.
+
+Three choices below were made by the BA on 2026-10-02:
+- no planning gate (D-32);
+- Playwright from the product toolchain (D-34);
+- one user guide per use case (D-35).
+
+**D-28 Run-level engines are declared in `workflow.yaml`.**
+- Each `run_steps` entry names:
+  - its agent and method skills;
+  - the inputs it requires;
+  - the documents it writes, with their `built_from` inputs;
+  - the catalogs it must fill.
+- An input ending in `?` is optional: it may still be empty. `tools/ba stamp` records an empty optional input with `hash: null`, and the document turns STALE once the input appears. That is how new meeting notes trigger consolidation (master §8 step 2.6).
+- The steps and their agents:
+
+| Step | Agent | Writes |
+|---|---|---|
+| ELICITATION (Phase 2) | elicitation-agent | elicitation summary, requirements, open questions, assumptions |
+| OVERVIEW (Phase 3) | overview-analysis-agent | product overview, actors, applications, processes, rules, entities, integrations, use cases |
+| TECH_BASELINE (Phase 6A, designed) | technical-baseline-agent | architecture, coding rules, security rules, design system, services, repositories |
+| PLANNING (Phase 4) | planning-agent | backlog, via `tools/ba backlog plan` |
+| INFORMATION_ARCHITECTURE (Phase 4A) | planning-agent | one IA document per application, planned screens |
+
+**D-29 When a run-level step is complete.**
+- **With a gate after it:** the step is complete once that gate (GATE-02 or GATE-09) is APPROVED. An approval freezes what came before it. Later changes go through the overview-change procedure (`--force-gated`, which re-opens the gate). They never come from silently regenerating upstream steps.
+- **Without a gate after it** (planning, IA): the step is complete when its outputs exist, are current, are valid and are stamped. For planning, that also means every use case in the catalog is in the backlog.
+- **The next action** is derived like a use case's: GENERATE (missing), REGENERATE (stale), FIX (invalid or unstamped).
+- Projects built by hand in milestone 1 keep their position: their GATE-02 and GATE-09 approvals mark the upstream steps complete.
+
+**D-30 The stakeholder wait (master §8 step 2.5) is derived.**
+- An open question with `blocking: true` must be answered before the overview can be written. While one is OPEN, the run is WAITING_FOR_HUMAN with the action WAIT_FOR_STAKEHOLDERS.
+- The BA holds the conversation and puts the notes in `requirements/meetings/`. This makes the elicitation summary STALE, and the elicitation agent consolidates them (2.6).
+- A question becomes ANSWERED only with an `answer_source` that points at stakeholder material. Neither the AI nor the orchestrator answers questions. When the BA answers in chat, the orchestrator saves their words verbatim as a meeting note.
+
+**D-31 The state model lives on the entity.** An entity's `lifecycle` holds three lists:
+- `states`;
+- `transitions`, written `FROM -> TO: event` (or as a mapping);
+- `invalid_transitions`.
+
+`tools/ba validate` checks that every transition uses listed states and names an event. GATE-02 reviews the lifecycle with the data model. This keeps GATE-02's artifact list unchanged, so existing approvals stay valid.
+
+**D-32 Planning and information architecture.**
+- **The backlog is written through `tools/ba backlog plan --file <plan>`.** A plan lists epics (new ones get IDs from the tool) with their use cases, priorities, dependencies and proposed status (BACKLOG, READY or BLOCKED).
+- **The tool rejects** a use case planned twice, an unknown use case, a dependency cycle, and dropping a use case whose work has started.
+- **A re-plan never undoes progress:** IN_PROGRESS and DONE stay, and so do derived fields.
+- **Phase 4A runs once per application with `information_architecture: REQUIRED`.** The overview analysis proposes that flag (a new application, or a major navigation change, master §12) and the BA confirms it at GATE-02. The IA registers the planned screens in the screen catalog, so step 5.2 reuses them.
+- **No new gate (BA decision).** The backlog and the IA are reviewed through each use case's GATE-03. The BA can edit priority, status and dependencies in `backlog.yaml` at any time.
+
+**D-33 Delivery steps run per use case, in one engine.**
+- The per-use-case engine continues after GATE-05, in this order (D-37, D-38):
+  - 6 GATE-06;
+  - 8.1 acceptance tests, written before any code;
+  - 7 implementation (7.0 repository setup first, when a repository doesn't exist yet);
+  - 8.2 test results, with the fix loop (8.3–8.4);
+  - GATE-10 code review, on the tested code;
+  - GATE-07 when D-23 requires it;
+  - 9 user guide, then GATE-08.
+- In the routes, the run-level GATE-06 … GATE-08 entries become one `DELIVERY` engine entry. The run is COMPLETED when every use case in scope has GATE-08 approved.
+- **GATE-06 covers only `technical/sequence/<UC>.md` and `technical/api/<UC>.md`.** A change that leaves them untouched keeps GATE-06 valid (D-11). An SA change makes the spec STALE, so GATE-05 is approved again before GATE-06 is re-requested.
+- **Coding precondition (master §24, D-13).**
+  - `tools/ba coding authorize <UC>` checks GATE-05 and GATE-06 for the use case and GATE-09 for the run. Only then does it add the use case to `state.json.coding_authorization`.
+  - Every action that writes in a product repository (7.0, 8.1, 7, 8.2, 8.4, 9) carries it as `pre_command`.
+  - `tools/ba sync` drops an authorization when a gate no longer holds, or when the use case is delivered (GATE-08).
+- **The implementation summary** (`technical/implementation/<UC>.md`) records the repositories, the branch `ba/<UC>-<slug>`, the commits and `code_refs` (`CODE:<repo>/<path>`). The graph turns these into `CodeRef IMPLEMENTS UseCase` and `CodeRef LOCATED_IN Repository`.
+- **Backlog stage statuses.**
+  - `technical_review_status` follows GATE-06.
+  - `coding_status` becomes DONE at GATE-10, which now comes after QA (D-37). D-07's "WAITING_FOR_QA" mapping no longer applies.
+  - `testing_status` becomes DONE only after QA passed and GATE-07, when required, is approved.
+  - `documentation_status` becomes DONE at GATE-08, and so does the item's `status`.
+
+**D-34 QA loop, defects and test tooling.**
+- **Test cases** (`qa/test-cases/<UC>.md`):
+  - IDs come from `tools/ba next-id TC`;
+  - each one says what it verifies (`<UC>-AC-nn`), its category and its steps and expected result;
+  - every acceptance criterion must be verified (validated);
+  - the graph adds `TestCase VERIFIES AcceptanceCriterion`.
+- **Test results** (`qa/test-results/<UC>.md`) carry `outcome` (PASSED, FAILED or BLOCKED) and `executed_at`.
+- **Defects** are in `qa/defects/<UC>.md`:
+  - each has an ID `<UC>-DEF-nn` with an expected-vs-actual section;
+  - the frontmatter list holds its classification (master §25 step 8.3), its status (OPEN, FIXED or UNRESOLVED) and its `fix_attempts`.
+- **Routing by classification:**
+  - TEST_ISSUE → the QA agent fixes the tests (FIX_TESTS).
+  - CODE_DEFECT under 3 attempts → the coding agent fixes it (FIX_DEFECT, step 8.4).
+  - SPECIFICATION_GAP, ENVIRONMENT_ISSUE, UNRESOLVED, or a CODE_DEFECT after 3 attempts → NEEDS_HUMAN. The run waits, and a human decides.
+- **After a human fix**, `tools/ba qa retest <UC>` asks for a new run.
+- **The fix loop runs before code review** (D-37): fix → retest → compare with no human in between, at most 3 attempts per defect. GATE-10 then reviews the final, tested code once.
+- **Playwright is installed in the product's frontend repository** with its own package manager (BA decision; this settles the open point in D-26). The technical baseline's *Testing Conventions* names the commands. The kit itself stays Python-only (D-03).
+
+**D-35 One user guide per use case** (BA decision; this settles D-08's "Feature").
+- The guide is `user-guide/<UC>/guide.md`, with its screenshots in `user-guide/<UC>/screenshots/`.
+- GATE-08 hashes the whole folder, so a changed screenshot needs re-approval.
+- Screenshots come from the implemented application, never the prototype. `tools/ba validate` checks that every referenced image exists.
+
+**D-36 Protected-file changes wait for maintenance mode.** Two changes need `BA_MAINTENANCE=1`:
+- wiring `coding.write_allowed()` into the PreToolUse hook;
+- listing the product repositories in `permissions.additionalDirectories`.
+
+[tools/patches/d13-coding-hook.md](../tools/patches/d13-coding-hook.md) holds both. Until they are applied, the orchestrator enforces the coding precondition (CLAUDE.md, hard rule 9).
+
+### Review changes (2026-10-02, requested by the BA)
+
+The BA asked for a review of the master spec's approach, which was drafted by another AI model, against how Claude works best. These decisions came out of it.
+
+**D-37 Automated QA runs before code review.**
+- Claude works best by iterating until the tests pass and then handing over for review.
+- With D-22's order (Coding → GATE-10 → QA), every automated fix invalidated GATE-10, so the developer re-reviewed after each fix.
+- Now:
+  - the fix loop (D-34) runs to green first;
+  - GATE-10 reviews the final code once, and covers the implementation summary and the test results;
+  - GATE-07 (human critical-flow test) follows, on reviewed code.
+- A GATE-10 change request goes to the coding agent, and the changed code is tested again before GATE-10 is re-requested.
+
+**D-38 Acceptance tests are written first, by the QA agent.**
+- Step 8.1 runs right after GATE-06, before any code. The QA agent turns the approved acceptance criteria, rules, validations and API design into executable tests:
+  - API tests against the designed contract;
+  - Playwright tests that find elements by role and label from the approved UI.
+- They are committed in the use case's worktree and listed in `test_files`, with `tests_commit`.
+- The coding agent makes them pass and may not edit them. QA verifies at 8.2 that they are unchanged.
+- The result is a precise, executable definition of done, while QA stays independent of the implementation.
+
+**D-39 One git worktree per use case, and a shared repository setup.**
+- D-25's branch per use case broke parallelism: two coding agents in one checkout switch branches under each other.
+- Each use case now works in `<repo>-worktrees/<UC>/` (branch `ba/<UC>-<slug>`). QA and the user guide use the same worktree, and servers start on a free port.
+- Before the first step that needs product repositories, a shared action SETUP_REPOSITORIES (step 7.0) creates the repositories the approved baseline lists and marks them ACTIVE. The orchestrator runs it once.
+- Coding authorization and the D-13 hook govern the repositories and their worktree folders.
+- Worktrees are removed by the human after merging.
+
+**D-40 AI pre-review before each human gate.**
+- Before a gate (all except GATE-07, which is human testing) is requested, a `review-agent` with a fresh context checks the artifacts. Its criteria are their inputs, the producing method skills' checklists and the gate's review focus.
+- It records PASS or FINDINGS with `tools/ba prereview record`. The record is hashed like a gate request and stored in `reviews/pre-review/`. It is never a gate decision.
+- FINDINGS go to the artifact's owner, who fixes them or records why they stay (`tools/ba prereview resolve`).
+- After at most 2 rounds the gate is requested anyway, and the remaining findings are shown to the human.
+- `tools/ba gate request` refuses while the pre-review is due, unless the BA asks for `--skip-pre-review`.
+
+**D-41 The context package is a map, not a fence** (Rule 5 reinterpreted).
+- Rule 5 was written for small context windows. Agents start from the package, which keeps the missing-input check deterministic.
+- They may read further, with `tools/ba find`, `graph show` and Grep, when the task needs it. The coding agent explores the codebase as much as the change needs.
+- They name the extra files in their summary, so the package can be improved (Rule 8).
+
+**D-42 Blocking questions go to the BA live.**
+- An agent that can't do its step responsibly without a human answer returns `QUESTION FOR THE BA:` with options. Subagents can't ask the user themselves.
+- The orchestrator asks the BA in the session and records the answer with its source "BA (<name>) in the session, <date>". For elicitation, the answer is saved verbatim as a meeting note.
+- Non-blocking unknowns are still logged as open questions (Rule 1). Stakeholder decisions are never simulated: the BA says on whose behalf they answer.
+
+**D-43 The compiled spec is assembled by the tool.**
+- `tools/ba compile <UC>` builds the 20-section specification (master §21). It copies or derives 13 sections from their sources: actor, UI screens, AF, EF, rules, VR, entities, sequence, API summary, AC, assumptions, open questions, traceability.
+- The spec agent writes only the 7 narrative sections. A recompile keeps them.
+- `tools/ba validate` rejects a hand-edited generated section, and a narrative section left as a TODO.
+- A model re-typing six documents invites paraphrase drift and costs tokens; the tool can't drift. A section that doesn't apply says "Not applicable."
+
+**D-44 Notes on the master spec itself.**
+- The master spec was drafted by another AI model. Its statements about what "the workshop" said ("the workshop explicitly describes…") are unverified: check them against the workshop's own notes before relying on them.
+- Instructions in CLAUDE.md, the agents and the skills give the reason for each hard rule rather than bare absolutes. Claude follows instructions literally, and a reason lets it handle the edge cases a rule didn't foresee.
+- Found while building: a product with no external integrations could never pass GATE-02, because the gate requires `overview/integrations.yaml` to exist. `tools/ba catalog init <catalog>` now creates an empty catalog, and the engine sends the producing step back when a gate artifact is missing.
+
+**Built in milestone 2**
+- `workflow.yaml` holds the run steps and the delivery steps, with GATE-06, 07, 08 and 10 implemented.
+- `tools/ba` gains:
+  - `context <STEP>` (a run-level context package);
+  - `backlog plan`;
+  - `coding authorize|revoke|status`;
+  - `qa retest`;
+  - optional inputs, staleness of run-level documents, the QA routing, and the new checks.
+- `catalog add business-processes` numbers steps given without an ID (`<BP>-S01`, …).
+- Agents: `elicitation-agent`, `overview-analysis-agent`, `technical-baseline-agent`, `planning-agent`, `coding-agent`, `qa-agent`, `documentation-agent`, `review-agent`.
+- From the review changes: `tools/ba compile`, `tools/ba prereview brief|record|resolve|status`, `tools/ba catalog init`, worktree paths in the context package, the SETUP_REPOSITORIES action, and the skills `pre-review-gate` and `set-up-repositories`.
+- Method skills:
+  - `elicit-requirements`, `generate-clarification-questions`;
+  - `write-product-overview`, `model-business-processes`, `extract-business-rules`, `build-data-model`, `define-use-cases`;
+  - `design-technical-baseline`;
+  - `plan-backlog`, `design-information-architecture`;
+  - `implement-use-case`, `fix-defects`;
+  - `generate-test-cases`, `execute-tests`;
+  - `write-user-guide`;
+  - `pre-review-gate`, `set-up-repositories`.
+- Regression tests: `tools/tests/test_mode_b.py` walks a fixture product through every MODE_B step. Gate states are stubbed in memory, so no decision record is ever written.
+
+**Acceptance tests (milestone 2).** Claude runs 1–4 and 8. Tests 5–7 need a product with stakeholder material and someone to type the approvals.
+1. On a fresh template, `/ba-status` shows RUN-001 NOT_STARTED, waiting for material in `requirements/raw/`.
+2. With material in `raw/` and a blocking question open, the run waits for stakeholders. Adding a meeting note in `meetings/` triggers consolidation.
+3. A use case added after planning re-opens PLANNING. Raising a use case's risk to HIGH makes GATE-07 mandatory.
+4. A CODE_DEFECT goes to the fix loop at most 3 times, then waits for a human. A TEST_ISSUE goes to the QA agent. Neither involves GATE-10, which comes only after QA passed. Each gate is preceded by an AI pre-review of at most 2 rounds.
+5. From stakeholder material to GATE-02, GATE-09, a planned backlog and IA, then the Spec Engine (milestone-1 tests 3–5).
+6. After GATE-05 and GATE-06, `tools/ba coding authorize` succeeds. The QA agent commits failing acceptance tests in `<repo>-worktrees/<UC>`, and the coding agent makes them pass in the same worktree without editing them or pushing. Two use cases coded in parallel don't interfere.
+7. QA passes, then GATE-10, GATE-07 (if risky), the user guide, GATE-08 and `status: DONE`.
+8. The milestone-1 Leave Management run keeps its exact position and every gate status after the upgrade.
+

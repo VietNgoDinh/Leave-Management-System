@@ -10,6 +10,11 @@ enums:
   backlog_stage_status: [NOT_STARTED, IN_PROGRESS, WAITING_FOR_REVIEW, CHANGES_REQUESTED, APPROVED, DONE, BLOCKED, STALE]
   gate_status: [NOT_REQUESTED, WAITING, APPROVED, CHANGES_REQUESTED, BLOCKED, INVALIDATED, OUTDATED]
   priority: [HIGH, MEDIUM, LOW]
+  test_outcome: [PASSED, FAILED, BLOCKED]
+  defect_classification: [CODE_DEFECT, SPECIFICATION_GAP, TEST_ISSUE, ENVIRONMENT_ISSUE, UNRESOLVED]
+  defect_status: [OPEN, FIXED, UNRESOLVED]
+  test_category: [FUNCTIONAL, VALIDATION, API, INTEGRATION, REGRESSION, PERMISSION, STATE_TRANSITION,
+                  NEGATIVE, BOUNDARY]
 
 # Every document (Markdown artifact) needs these frontmatter keys (D-18).
 required_frontmatter: [id, artifact_type, title, status, version, baseline, origin, updated_at]
@@ -32,6 +37,17 @@ stamp_ref_prefixes: [UC, BP, ACT, BR, ENT, REQ, INT, Q, ASM]
 
 artifact_types:
   # ---- project-level documents
+  elicitation-summary:
+    path: requirements/elicitation/elicitation-summary.md
+    id: ELICITATION
+    headings: [Sources, Current Need, Future Need, Gap Analysis, Clarification Questions, Decisions,
+               Requirements Summary]
+  information-architecture:
+    path: planning/information-architecture/{APP}.md
+    per_application: true
+    headings: [Application Structure, Navigation Hierarchy, Menu, Screen Grouping, Entry Points,
+               Role-Based Visibility]
+    checks: [mermaid]
   product-overview:
     path: overview/product-overview.md
     id: PRODUCT
@@ -95,4 +111,35 @@ artifact_types:
                Main Flow, Alternate Flows, Error Flows, Business Rules, Validation Rules, Data Entities,
                Sequence Diagram, API Specification, Acceptance Criteria, Dependencies, Assumptions,
                Open Questions, Traceability]
-    checks: [mermaid]
+    checks: [mermaid, compiled_spec]       # assembled by `tools/ba compile` (D-43)
+
+  # ---- per use case: delivery (master spec Phases 7–9)
+  implementation:
+    per_use_case: true
+    path: technical/implementation/{UC}.md
+    headings: [Implementation Plan, Repositories and Branch, Changed Files, Automated Test Results,
+               Traceability, Deviations and Open Points]
+    checks: [implementation_refs]
+  test-cases:
+    per_use_case: true
+    path: qa/test-cases/{UC}.md
+    headings: [Test Cases, Coverage]
+    checks: [test_cases]
+  test-results:
+    per_use_case: true
+    path: qa/test-results/{UC}.md
+    headings: [Summary, Environment, Results, Requirement Comparison]
+    checks: [test_results]
+  defects:
+    per_use_case: true
+    path: qa/defects/{UC}.md
+    headings: [Defects]
+    scoped: [DEF]
+    checks: [defects]
+  user-guide:
+    per_use_case: true
+    path: user-guide/{UC}/guide.md
+    dir: user-guide/{UC}/
+    headings: [Purpose, Who Can Use This Feature, Preconditions, Process Overview, Expected Result,
+               Common Errors, Troubleshooting]
+    checks: [user_guide]

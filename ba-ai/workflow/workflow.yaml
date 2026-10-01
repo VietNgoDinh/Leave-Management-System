@@ -1,7 +1,9 @@
 schema_version: 1
 # The single route definition (addendum D-22). Read by tools/ba; explained in workflow.md.
-# implemented: false marks phases that have no engine yet (milestone 1).
-milestone: 1
+# implemented: false marks phases that have no engine yet.
+# Milestone 2 (addendum §13) adds every MODE_B engine: elicitation, overview, technical baseline,
+# planning, information architecture, and per use case technical review, coding, QA and user guide.
+milestone: 2
 
 modes:
   MODE_A:
@@ -12,43 +14,27 @@ modes:
       - {id: GATE-01, kind: gate}
       - {id: TECH_BASELINE, kind: step, implemented: false, outputs: [technical/architecture/architecture.md]}
       - {id: GATE-09, kind: gate}
-      - {id: ELICITATION, kind: step, implemented: false, outputs: [requirements/requirements.yaml]}
-      - {id: OVERVIEW, kind: step, implemented: false,
-         outputs: [overview/product-overview.md, overview/use-cases.yaml, overview/business-rules.yaml,
-                   overview/data-model/entities.yaml]}
+      - {id: ELICITATION, kind: run_step}
+      - {id: OVERVIEW, kind: run_step}
       - {id: GATE-02, kind: gate}
-      - {id: PLANNING, kind: step, implemented: false, outputs: [planning/backlog.yaml]}
-      - {id: INFORMATION_ARCHITECTURE, kind: step, implemented: false, optional: true}
-      - {id: SPECIFICATION, kind: use_case_engine}
-      - {id: GATE-06, kind: gate}
-      - {id: CODING, kind: step, implemented: false}
-      - {id: GATE-10, kind: gate}
-      - {id: QA, kind: step, implemented: false}
-      - {id: GATE-07, kind: gate}
-      - {id: USER_GUIDE, kind: step, implemented: false}
-      - {id: GATE-08, kind: gate}
+      - {id: PLANNING, kind: run_step}
+      - {id: INFORMATION_ARCHITECTURE, kind: run_step}
+      - {id: DELIVERY, kind: use_case_engine}
 
   MODE_B:
     name: New product / major new business capability
     route:
       - {id: BOOTSTRAP, kind: step, implemented: true, outputs: [workflow/state.json]}
-      - {id: ELICITATION, kind: step, implemented: false, outputs: [requirements/requirements.yaml]}
-      - {id: OVERVIEW, kind: step, implemented: false,
-         outputs: [overview/product-overview.md, overview/use-cases.yaml, overview/business-rules.yaml,
-                   overview/data-model/entities.yaml]}
+      - {id: ELICITATION, kind: run_step}
+      - {id: OVERVIEW, kind: run_step}
       - {id: GATE-02, kind: gate}
-      - {id: TECH_BASELINE, kind: step, implemented: false, outputs: [technical/architecture/architecture.md]}
+      - {id: TECH_BASELINE, kind: run_step}
       - {id: GATE-09, kind: gate}
-      - {id: PLANNING, kind: step, implemented: false, outputs: [planning/backlog.yaml]}
-      - {id: INFORMATION_ARCHITECTURE, kind: step, implemented: false, optional: true}
-      - {id: SPECIFICATION, kind: use_case_engine}
-      - {id: GATE-06, kind: gate}
-      - {id: CODING, kind: step, implemented: false}
-      - {id: GATE-10, kind: gate}
-      - {id: QA, kind: step, implemented: false}
-      - {id: GATE-07, kind: gate}
-      - {id: USER_GUIDE, kind: step, implemented: false}
-      - {id: GATE-08, kind: gate}
+      - {id: PLANNING, kind: run_step}
+      - {id: INFORMATION_ARCHITECTURE, kind: run_step}
+      # Per use case: Spec Engine → GATE-05 → GATE-06 → acceptance tests → coding → QA + fix loop → GATE-10
+      # → [GATE-07] → user guide → GATE-08 (D-37, D-38)
+      - {id: DELIVERY, kind: use_case_engine}
 
   MODE_C:
     name: Small change request
@@ -56,17 +42,79 @@ modes:
       - {id: BOOTSTRAP, kind: step, implemented: true, outputs: [workflow/state.json]}
       - {id: CR_INTAKE, kind: step, implemented: false}
       - {id: IMPACT_ANALYSIS, kind: step, implemented: false}
-      - {id: SPEC_UPDATE, kind: use_case_engine}
-      - {id: GATE-06, kind: gate}
-      - {id: CODING, kind: step, implemented: false}
-      - {id: GATE-10, kind: gate}
-      - {id: QA, kind: step, implemented: false}
-      - {id: GATE-07, kind: gate}
-      - {id: DOCUMENTATION_UPDATE, kind: step, implemented: false}
-      - {id: GATE-08, kind: gate}
+      - {id: DELIVERY, kind: use_case_engine}
+
+# Run-level engines (master spec Phases 2, 3, 4, 4A, 6A). Each step:
+#   agent / skills   who does the work and which method skills it follows
+#   requires_input   folders that must hold material before the step can run
+#   outputs          documents it writes; built_from = the inputs `tools/ba stamp` records (a trailing ?
+#                    marks an optional input that may still be empty)
+#   catalogs         catalogs it fills (through `tools/ba catalog`); each must end up with at least one item
+#   per_application  one document per application whose information_architecture is REQUIRED
+# A step is complete once the next gate on the route approves its outputs, or — with no gate after it —
+# once its outputs exist, are current and are valid (see `tools/ba next`).
+run_steps:
+  ELICITATION:
+    phase: "2"
+    name: Requirement Elicitation
+    agent: elicitation-agent
+    skills: [elicit-requirements, generate-clarification-questions]
+    requires_input: [requirements/raw/]
+    outputs:
+      - path: requirements/elicitation/elicitation-summary.md
+        built_from: [requirements/raw/, "requirements/meetings/?"]
+    catalogs: [requirements]
+    stakeholder_wait: true        # OPEN questions marked blocking → WAITING_FOR_HUMAN (master §8 step 2.5)
+  OVERVIEW:
+    phase: "3"
+    name: Overview Analysis
+    agent: overview-analysis-agent
+    skills: [write-product-overview, model-business-processes, extract-business-rules, build-data-model,
+             define-use-cases]
+    outputs:
+      - path: overview/product-overview.md
+        built_from: ["requirements/elicitation/elicitation-summary.md?", requirements/requirements.yaml]
+    catalogs: [actors, applications, business-processes, business-rules, entities, use-cases]
+  TECH_BASELINE:
+    phase: "6A"
+    name: Technical Architecture Baseline (designed)
+    agent: technical-baseline-agent
+    skills: [design-technical-baseline]
+    outputs:
+      - path: technical/architecture/architecture.md
+        built_from: [overview/product-overview.md, overview/applications.yaml, "overview/integrations.yaml?",
+                     overview/data-model/entities.yaml]
+      - path: technical/coding-rules/frontend.md
+        built_from: [technical/architecture/architecture.md]
+      - path: technical/coding-rules/backend.md
+        built_from: [technical/architecture/architecture.md]
+      - path: technical/security/security-rules.md
+        built_from: [technical/architecture/architecture.md]
+      - path: ui/design-system.md
+        built_from: [overview/product-overview.md, overview/applications.yaml]
+    catalogs: [services, repositories]
+  PLANNING:
+    phase: "4"
+    name: BA Planning
+    agent: planning-agent
+    skills: [plan-backlog]
+    backlog: true                 # every use case in the catalog must be planned into an epic
+  INFORMATION_ARCHITECTURE:
+    phase: 4A
+    name: Information Architecture
+    agent: planning-agent
+    skills: [design-information-architecture]
+    per_application:
+      path: planning/information-architecture/{APP}.md
+      built_from: [overview/product-overview.md, overview/actors.yaml, overview/applications.yaml,
+                   overview/use-cases.yaml]
 
 # Human gates (master spec §37 + addendum D-08). Artifact paths are relative to ba-ai/;
 # {UC} is the use case, a trailing / means "the whole folder".
+# revise_agent: who applies reviewer comments (run-level gates; on a use-case gate it narrows the owners).
+# pre_review: an AI reviewer with a fresh context checks the artifacts before the human sees them (D-40).
+pre_review:
+  max_rounds: 2                 # after two rounds the gate is requested anyway, with any findings left listed
 gates:
   GATE-01:
     name: CURRENT_STATE_REVIEW
@@ -74,10 +122,12 @@ gates:
     reviewer: BA (processes, use cases) + SA/Developer (architecture)
     implemented: false
   GATE-02:
+    pre_review: true
     name: OVERVIEW_APPROVAL
     subject: RUN
     reviewer: BA
     implemented: true
+    revise_agent: overview-analysis-agent
     review_focus:
       - Business process and its steps
       - Use case list — including risk_level / risk_flags for each use case
@@ -95,6 +145,7 @@ gates:
       - overview/integrations.yaml
       - overview/use-cases.yaml
   GATE-03:
+    pre_review: true
     name: UI_MARKDOWN_REVIEW
     subject: USE_CASE
     reviewer: BA
@@ -108,6 +159,7 @@ gates:
     artifacts:
       - ui/markdown/{UC}.md
   GATE-04:
+    pre_review: true
     name: HTML_PROTOTYPE_REVIEW
     subject: USE_CASE
     reviewer: BA or stakeholder
@@ -120,6 +172,7 @@ gates:
     artifacts:
       - ui/prototypes/{UC}/
   GATE-05:
+    pre_review: true
     name: BA_SPEC_APPROVAL
     subject: USE_CASE
     reviewer: BA
@@ -137,30 +190,61 @@ gates:
       - specifications/analysis/{UC}-acceptance.md
       - specifications/use-cases/{UC}.md
   GATE-06:
+    pre_review: true
     name: TECHNICAL_APPROVAL
     subject: USE_CASE
     reviewer: SA / Developer
-    implemented: false
+    implemented: true
+    review_focus:
+      - API design — methods, paths, payloads, status codes, conventions of the baseline
+      - Service boundaries and cross-service calls in the sequence
+      - Security — authentication, authorization, data protection
+      - Integration approach and database impact
+      - Performance concerns and technical feasibility
+      - TECHNICAL open questions the analysis left for you
+    # D-11: only the technical artifacts. A change that leaves them untouched keeps GATE-06 valid.
+    artifacts:
+      - technical/sequence/{UC}.md
+      - technical/api/{UC}.md
   GATE-07:
     name: CRITICAL_FLOW_TEST
     subject: USE_CASE
     reviewer: BA / QA
-    implemented: false
+    implemented: true
+    required_when: risk           # D-23: risk_level HIGH/CRITICAL, or any risk flag
+    review_focus:
+      - Run the critical journeys yourself in the test environment (test-results lists how)
+      - Financial, irreversible, security- or compliance-sensitive behaviour
+      - Automated results and the defects fixed along the way
+    artifacts:
+      - qa/test-cases/{UC}.md
+      - qa/test-results/{UC}.md
   GATE-08:
+    pre_review: true
     name: USER_GUIDE_REVIEW
-    subject: USE_CASE
+    subject: USE_CASE             # one guide per use case (addendum D-35)
     reviewer: BA
-    implemented: false
+    implemented: true
+    review_focus:
+      - Terminology matches the product and the business
+      - Screenshots show the implemented application, step by step
+      - Process accuracy against the approved flow
+      - Clarity for the actor who uses the feature
+    artifacts:
+      - user-guide/{UC}/
   GATE-09:
+    pre_review: true
     name: TECH_BASELINE_APPROVAL
     subject: RUN
     reviewer: SA / Tech lead
     implemented: true
+    revise_agent: technical-baseline-agent
     review_focus:
       - Technology stack and application architecture
       - API conventions (the spec engine designs APIs against them)
       - Security rules, error handling, logging, testing conventions
       - Design system the prototypes will follow
+      - TECHNICAL open questions — choices only the SA can make
     artifacts:
       - technical/architecture/architecture.md
       - technical/architecture/services.yaml
@@ -169,22 +253,36 @@ gates:
       - technical/security/security-rules.md
       - ui/design-system.md
   GATE-10:
+    pre_review: true
     name: CODE_REVIEW
     subject: USE_CASE
     reviewer: Developer (pull request review)
-    implemented: false
+    implemented: true
+    revise_agent: coding-agent
+    review_focus:
+      - Review the branch named in the implementation summary (diff against the main branch)
+      - Every change traces to the use case or an acceptance criterion
+      - No unrelated modules rewritten; project conventions followed
+      - The acceptance tests are green (test results) and were not edited by the implementation
+    # D-37: requested after automated QA passed, so the developer reviews the final, tested code once.
+    artifacts:
+      - technical/implementation/{UC}.md
+      - qa/test-results/{UC}.md
 
-# BA Specification Engine (master spec Phase 5). Runs per use case.
+# Per-use-case engine (master spec Phases 5–9). Runs for each use case in the run's scope.
 use_case_engine:
   requires_gates: [GATE-02, GATE-09]   # run-level approvals needed before any use case starts
   dependency_gate: GATE-05             # a dependency is satisfied when its spec is approved
+  max_fix_attempts: 3                  # D-26: automated fix attempts per defect
   steps:
     - step: "5.1"
       name: Context Discovery
+      phase: SPECIFICATION
       executor: orchestrator
       command: tools/ba context {UC}
     - step: "5.2"
       name: Functional Screen Design (Markdown)
+      phase: SPECIFICATION
       agent: ui-agent
       skills: [design-screen-markdown]
       artifact_type: ui-markdown
@@ -192,6 +290,7 @@ use_case_engine:
       gate: GATE-03
     - step: "5.3"
       name: Interactive HTML Prototype
+      phase: SPECIFICATION
       agent: ui-agent
       skills: [build-html-prototype]
       artifact_type: ui-prototype
@@ -199,36 +298,96 @@ use_case_engine:
       gate: GATE-04
     - step: "5.4"
       name: Sequence Analysis
+      phase: SPECIFICATION
       agent: technical-analysis-agent
       skills: [generate-sequence-diagram]
       artifact_type: sequence
       built_from: [ui-markdown, ui-prototype]
     - step: "5.5"
       name: API Analysis and Design
+      phase: SPECIFICATION
       agent: technical-analysis-agent
       skills: [design-api]
       artifact_type: api-design
       built_from: [sequence]
     - step: "5.6"
       name: Activity and Validation Analysis
+      phase: SPECIFICATION
       agent: technical-analysis-agent
       skills: [analyze-validation]
       artifact_type: activity-validation
       built_from: [ui-markdown, api-design]
     - step: "5.7"
       name: Acceptance Criteria
+      phase: SPECIFICATION
       agent: spec-agent
       skills: [write-acceptance-criteria]
       artifact_type: acceptance-criteria
       built_from: [ui-markdown, api-design, activity-validation]
     - step: "5.8"
       name: Compile Code-Ready BA Specification
+      phase: SPECIFICATION
       agent: spec-agent
       skills: [compile-use-case-spec]
       artifact_type: use-case-specification
       built_from: [ui-markdown, ui-prototype, sequence, api-design, activity-validation, acceptance-criteria]
       gate: GATE-05
-  # How backlog stage fields are derived.
+    - step: "6"
+      name: Technical / SA Review
+      phase: TECHNICAL_REVIEW
+      executor: orchestrator
+      gate: GATE-06
+    # needs_repositories: the product repositories must exist first (SETUP_REPOSITORIES, D-39).
+    # pre_command: D-13 — `tools/ba coding authorize` checks GATE-05, GATE-06 and GATE-09 before repo writes.
+    - step: "8.1"
+      name: Acceptance Tests First
+      phase: TEST_DESIGN           # D-38: written by the QA agent before any code, from the approved spec
+      agent: qa-agent
+      skills: [generate-test-cases]
+      artifact_type: test-cases
+      built_from: [use-case-specification, acceptance-criteria, activity-validation, api-design, ui-prototype]
+      needs_repositories: true
+      pre_command: tools/ba coding authorize {UC}
+    - step: "7"
+      name: Implementation
+      phase: CODING
+      agent: coding-agent
+      skills: [implement-use-case]
+      artifact_type: implementation
+      built_from: [use-case-specification, api-design, ui-prototype]
+      needs_repositories: true
+      pre_command: tools/ba coding authorize {UC}
+    - step: "8.2"
+      name: Execute Tests and Compare with Requirements
+      phase: QA
+      agent: qa-agent
+      skills: [execute-tests]
+      artifact_type: test-results
+      built_from: [test-cases, implementation, "defects?"]
+      qa_loop: true                # steps 8.3–8.4: classify failures, fix loop, hand-off to a human
+      needs_repositories: true
+      pre_command: tools/ba coding authorize {UC}
+    - step: CODE_REVIEW
+      name: Code Review (after QA passed)
+      phase: CODE_REVIEW
+      executor: orchestrator
+      gate: GATE-10
+    - step: CRITICAL_FLOW_TEST
+      name: Critical Flow Test
+      phase: CRITICAL_FLOW_TEST
+      executor: orchestrator
+      gate: GATE-07                # only when required (D-23)
+    - step: "9"
+      name: User Guide
+      phase: USER_GUIDE
+      agent: documentation-agent
+      skills: [write-user-guide]
+      artifact_type: user-guide
+      built_from: [use-case-specification, implementation, test-results]
+      needs_repositories: true
+      pre_command: tools/ba coding authorize {UC}     # the screenshot script is committed in the frontend worktree
+      gate: GATE-08
+  # How backlog stage fields are derived. approved_as: the value once every gate of the stage is approved.
   stages:
     ui_status:
       artifact_types: [ui-markdown, ui-prototype]
@@ -236,3 +395,19 @@ use_case_engine:
     spec_status:
       artifact_types: [sequence, api-design, activity-validation, acceptance-criteria, use-case-specification]
       gates: [GATE-05]
+    technical_review_status:
+      artifact_types: []
+      gates: [GATE-06]
+    coding_status:
+      artifact_types: [implementation]
+      gates: [GATE-10]
+      approved_as: DONE
+    testing_status:
+      artifact_types: [test-cases, test-results]
+      gates: [GATE-07]
+      approved_as: DONE
+      qa: true
+    documentation_status:
+      artifact_types: [user-guide]
+      gates: [GATE-08]
+      approved_as: DONE

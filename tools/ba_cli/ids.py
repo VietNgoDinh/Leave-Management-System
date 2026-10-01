@@ -11,9 +11,12 @@ GLOBAL_PREFIXES = ("REQ", "EPIC", "BP", "ACT", "UC", "SCR", "BR", "ENT", "API", 
                    "APP", "INT", "REPO", "TC", "Q", "ASM", "CR", "RUN")
 _ALT = "|".join(sorted(GLOBAL_PREFIXES, key=len, reverse=True))
 GLOBAL_RE = re.compile(r"\b(" + _ALT + r")-(\d{3,4})\b")
-SCOPED_RE = re.compile(r"\b(UC-\d{3,4})-(AC|VR|AF|EF)-(\d{2})\b")
+SCOPED_KINDS = "AC|VR|AF|EF|DEF"
+SCOPED_RE = re.compile(r"\b(UC-\d{3,4})-(" + SCOPED_KINDS + r")-(\d{2})\b")
 STEP_RE = re.compile(r"\b(BP-\d{3,4})-S(\d{2})\b")
-SCOPED_HEADING_RE = re.compile(r"^((UC-\d{3,4})-(AC|VR|AF|EF)-\d{2})\b[\s—–:\-]*(.*)$")
+SCOPED_HEADING_RE = re.compile(r"^((UC-\d{3,4})-(" + SCOPED_KINDS + r")-\d{2})\b[\s—–:\-]*(.*)$")
+TC_HEADING_RE = re.compile(r"^(TC-\d{3,4})\b[\s—–:\-]*(.*)$")
+CODE_REF_RE = re.compile(r"^CODE:([A-Za-z0-9._-]+)/(\S+)$")
 GATE_RE = re.compile(r"^GATE-\d{2}$")
 
 
@@ -34,7 +37,7 @@ def id_format_ok(i: Any, prefix: str) -> bool:
 def normalize_id(s: str) -> str:
     """UC-7 / uc-07 → UC-007, UC-1-AC-1 → UC-001-AC-01, GATE-3 → GATE-03."""
     s = (s or "").strip().upper()
-    m = re.fullmatch(r"([A-Z]+)-(\d+)(?:-(AC|VR|AF|EF)-(\d+)|-S(\d+))?", s)
+    m = re.fullmatch(r"([A-Z]+)-(\d+)(?:-(" + SCOPED_KINDS + r")-(\d+)|-S(\d+))?", s)
     if not m:
         return s
     p, n, sp, sn, step = m.groups()
@@ -114,11 +117,19 @@ def catalog_add(cname: str, data: dict, force_gated: bool = False) -> str:
             probe_id = f"{cdef['prefix']}-000"
             item = {"id": probe_id, **item}
         item.setdefault("baseline", "TO_BE")
+        if cname == "business-processes":
+            # Steps given without an id are numbered <BP>-S01, -S02, … once the BP ID is known.
+            for n, st in enumerate(as_list(item.get("steps")), 1):
+                if isinstance(st, dict) and not st.get("id"):
+                    st["id"] = f"{probe_id}-S{n:02d}"
         msgs = validate_item(ws, cname, item, ws.known_ids() | {probe_id})
         if msgs:
             raise BAError("item rejected:\n  " + "\n  ".join(msgs))
         if probe_id.endswith("-000"):
             item["id"] = next_id(cdef["prefix"])
+            for st in as_list(item.get("steps")):
+                if isinstance(st, dict) and str(st.get("id", "")).startswith(probe_id + "-S"):
+                    st["id"] = item["id"] + st["id"][len(probe_id):]
         cat = ws.catalog_data.get(cname) or {
             "meta": {"artifact_type": "catalog", "catalog": cname,
                      "title": cdef.get("title", cname), "status": "DRAFT",
@@ -128,6 +139,25 @@ def catalog_add(cname: str, data: dict, force_gated: bool = False) -> str:
         cat["items"].append(item)
         store.save_yaml(paths.BA / cdef["path"], cat)
     return item["id"]
+
+
+def catalog_init(cname: str) -> str:
+    """Create an empty catalog file, so a gate can record that there are no items (e.g. no integrations)."""
+    from .workspace import Workspace
+    cdefs = schema.catalogs()
+    if cname not in cdefs:
+        raise BAError(f"unknown catalog '{cname}'; one of: {', '.join(cdefs)}")
+    cdef = cdefs[cname]
+    with store.locked():
+        ws = Workspace()
+        if cname in ws.catalog_data:
+            return f"ba-ai/{cdef['path']} already exists ({len(ws.items_in(cname))} items)"
+        _gated_catalog_check(ws, cname, False)
+        store.save_yaml(paths.BA / cdef["path"], {
+            "meta": {"artifact_type": "catalog", "catalog": cname, "title": cdef.get("title", cname),
+                     "status": "DRAFT", "baseline": "TO_BE", "origin": "AI"},
+            "items": []})
+    return f"created ba-ai/{cdef['path']} with no items"
 
 
 def catalog_update(iid: str, data: dict, force_gated: bool = False) -> str:

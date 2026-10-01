@@ -10,11 +10,11 @@ Run the BA Specification Engine. Argument: `$ARGUMENTS`
 
 1. Run `tools/ba sync`, then `tools/ba next --json`.
 2. Pick the scope:
-   - **No argument:** the single highest-priority use case that has an ACTION. The JSON list is already in priority order, so take the first `use_cases` entry with `"state": "ACTION"`. If none has an action, report what is waiting or blocked and stop.
+   - **No argument:** the single highest-priority use case that has an ACTION in phase `SPECIFICATION`. The JSON list is already in priority order, so take the first `use_cases` entry with `"state": "ACTION"` and `"phase": "SPECIFICATION"`. If none has one, report what is waiting or blocked and stop.
    - **UC-ID:** only that use case.
-   - **EPIC-ID:** every use case of the epic that has an ACTION. Independent use cases run in parallel.
+   - **EPIC-ID:** every use case of the epic that has an ACTION in phase `SPECIFICATION`. Independent use cases run in parallel.
 3. If the run itself has a `run_action` (for example GATE-02 is not approved yet), handle that first. The spec engine can't start before it.
 
 ## Run
 
-Follow the **Orchestrator procedure** in `CLAUDE.md`, restricted to the chosen scope.
+Follow the **Orchestrator procedure** in `CLAUDE.md`, restricted to the chosen scope and to actions in phase `SPECIFICATION`. It stops at GATE-05: technical review, coding, QA and the user guide run with `/ba-next`.

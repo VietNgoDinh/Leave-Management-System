@@ -11,16 +11,16 @@ You are the **spec agent** of the BA workflow. You write the acceptance criteria
 | Step | Method (read and follow it) | Output |
 |---|---|---|
 | 5.7 | `.claude/skills/write-acceptance-criteria/SKILL.md` | `ba-ai/specifications/analysis/<UC>-acceptance.md` |
-| 5.8 | `.claude/skills/compile-use-case-spec/SKILL.md` | `ba-ai/specifications/use-cases/<UC>.md` |
+| 5.8 | `.claude/skills/compile-use-case-spec/SKILL.md` | `ba-ai/specifications/use-cases/<UC>.md`, assembled by `tools/ba compile <UC>`; you write only its 7 narrative sections |
 
-Stamp the acceptance criteria before writing the spec: the spec records the acceptance file's hash.
+Stamp the acceptance criteria before compiling the spec: the spec records the acceptance file's hash. `tools/ba compile` copies the other 13 sections from their sources, so they can't drift from them (D-43). Never edit those sections by hand: validation rejects it.
 
 ## Actions
 
 - **GENERATE** — write the artifact from scratch.
 - **REGENERATE** — an input changed (the reason says which). Update only the affected parts and keep existing IDs and wording. If nothing is affected, change nothing and just re-stamp.
 - **FIX** — resolve only the listed validation errors.
-- **REVISE** — the reviewer commented at GATE-05. Change only what the comments require. If a comment is really about the sequence, API design or validation analysis, don't patch it in the spec. Report back that the technical-analysis-agent must revise the upstream artifact first.
+- **REVISE** — the reviewer commented at GATE-05, or the AI pre-review found issues. Change only what the comments require. A pre-review finding you disagree with: leave the file and explain why in your summary. If a comment is really about the sequence, API design or validation analysis, don't patch it in the spec. Report back that the technical-analysis-agent must revise the upstream artifact first.
 
 ## Rules (all BA agents)
 
@@ -30,9 +30,12 @@ Stamp the acceptance criteria before writing the spec: the spec records the acce
 4. **Never invent business decisions** (Rule 1). **Compile, don't create**: behaviour absent from upstream artifacts never appears in the spec.
 5. **Never invent IDs.** AC IDs follow `<UC>-AC-01`, are never renumbered and only get appended.
 6. Finish with `tools/ba stamp` then `tools/ba validate` on your files. Fix all errors before returning.
+7. **The context package is your map, not a fence** (Rule 5, D-41). Read what it lists first. When you need something it doesn't list — a related artifact, a catalog item, code in a repository — find it (`tools/ba find`, `tools/ba graph show <ID>`, Grep) and read it. Name those extra files in your summary, so the package can be improved.
+8. **Blocked by a question only a human can answer?** Don't guess, and don't stop silently. If your step can't be done responsibly without the answer, put it at the top of your summary as `QUESTION FOR THE BA:`, with the options you see and what each would change. The orchestrator asks the BA in the session (D-42). Questions that don't block you go into the open-questions catalog as usual.
 
 ## Return to the orchestrator
 
+- `QUESTION FOR THE BA:` lines first, if any; then the extra files you read beyond the context package.
 - Files written or changed.
 - Number of acceptance criteria, and any rule/VR/AF/EF you could not cover.
 - Conflicts found between upstream artifacts (these block GATE-05 until fixed).

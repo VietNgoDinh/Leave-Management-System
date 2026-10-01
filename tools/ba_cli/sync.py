@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from typing import Callable, Dict, List, Optional
 
-from . import gates, graph, paths, schema, store, views
-from .engine import GateCache, derive_run, derive_uc
+from . import coding, gates, graph, paths, schema, store, views
+from .engine import GateCache, derive_run, derive_uc, gate_required, qa_passed
 from .ids import as_list, prefix_of
 from .store import BAError
 from .validate import errors_by_rel, validate
@@ -20,12 +20,18 @@ def stamp_doc(ws: Workspace, doc: Doc) -> List[dict]:
     entries: List[dict] = []
     step = schema.step_for_type(doc.type)
     if step:
+        inputs = []
         for t in step.get("built_from", []):
-            irel = ws.input_rel(t, doc.id)
-            h = ws.hash_rel(irel)
-            if h is None:
-                raise BAError(f"cannot stamp ba-ai/{doc.rel}: its input ba-ai/{irel} does not exist yet")
-            entries.append({"path": irel, "hash": h})
+            t, optional = schema.optional_input(t)
+            inputs.append((ws.input_rel(t, doc.id), optional))
+    else:
+        out = schema.run_output_for(doc.rel)
+        inputs = [schema.optional_input(i) for i in (out or {}).get("built_from", [])]
+    for irel, optional in inputs:
+        h = ws.hash_rel(irel)
+        if h is None and not optional:
+            raise BAError(f"cannot stamp ba-ai/{doc.rel}: its input ba-ai/{irel} does not exist yet")
+        entries.append({"path": irel, "hash": h, **({"optional": True} if optional else {})})
     prefixes = set(schema.artifacts()["stamp_ref_prefixes"])
     refs = [doc.id]
     for vals in (doc.fm.get("relations") or {}).values():
@@ -76,15 +82,26 @@ def _artifact_status(gs: Callable, entries: List[tuple], stale: bool, current: O
     return "DRAFT"
 
 
-def stage_status(ws: Workspace, gs: Callable, uc: str, types: List[str], gate_ids: List[str]) -> str:
-    docs = [ws.docs.get(ws.doc_rel(t, uc)) for t in types]
-    if all(d is None for d in docs):
-        return "NOT_STARTED"
-    if any(d is not None and ws.stale_reasons(d) for d in docs):
-        return "STALE"
+def stage_status(ws: Workspace, gs: Callable, uc: str, sdef: dict, r: Optional[dict] = None) -> str:
+    """One backlog stage field (ui_status, …, documentation_status), derived from artifacts and gates."""
+    types = sdef.get("artifact_types") or []
+    gate_ids = [g for g in sdef.get("gates") or [] if gate_required(ws, uc, g)]
     ss = [gs(g, uc)["status"] for g in gate_ids]
+    if types:
+        docs = [ws.docs.get(ws.doc_rel(t, uc)) for t in types]
+        if all(d is None for d in docs):
+            return "NOT_STARTED"
+        if any(d is not None and ws.stale_reasons(d) for d in docs):
+            return "STALE"
+    elif all(s == "NOT_REQUESTED" for s in ss):
+        return "NOT_STARTED"
+    if sdef.get("qa"):
+        if r and r.get("state") == "NEEDS_HUMAN" and r.get("phase") == "QA":
+            return "BLOCKED"
+        if not qa_passed(ws, uc):
+            return "IN_PROGRESS"
     if all(s == "APPROVED" for s in ss):
-        return "APPROVED"
+        return sdef.get("approved_as") or "APPROVED"
     for s, label in (("WAITING", "WAITING_FOR_REVIEW"), ("CHANGES_REQUESTED", "CHANGES_REQUESTED"),
                      ("BLOCKED", "BLOCKED")):
         if s in ss:
@@ -93,8 +110,8 @@ def stage_status(ws: Workspace, gs: Callable, uc: str, types: List[str], gate_id
 
 
 def step_label(r: dict) -> str:
-    return {"ACTION": r.get("step"), "WAITING": r.get("gate"), "DONE": "SPEC_APPROVED",
-            "NOT_READY": "NOT_STARTED"}.get(r["state"], "BLOCKED")
+    return {"ACTION": r.get("step"), "WAITING": r.get("gate"), "DONE": "DELIVERED",
+            "NOT_READY": "NOT_STARTED", "NEEDS_HUMAN": r.get("step")}.get(r["state"], "BLOCKED")
 
 
 def step_note(r: dict) -> str:
@@ -105,7 +122,9 @@ def step_note(r: dict) -> str:
     if r["state"] == "WAITING":
         return f"waiting for human review ({r['gate']})"
     if r["state"] == "DONE":
-        return "BA spec approved (GATE-05); technical review is not in milestone 1"
+        return "delivered — user guide approved (GATE-08)"
+    if r["state"] == "NEEDS_HUMAN":
+        return "needs you: " + (r.get("reason") or "")
     return r.get("reason") or ""
 
 
@@ -157,18 +176,23 @@ def run_sync() -> dict:
             upd["current_step"] = step_label(r)
             upd["workflow_note"] = step_note(r)
             for field, sdef in stages.items():
-                upd[field] = stage_status(ws, gs, uc, sdef["artifact_types"], sdef["gates"])
+                upd[field] = stage_status(ws, gs, uc, sdef, r)
             # Stages with no engine yet: give a new backlog item their starting value, never overwrite one.
             for field in LATER_STAGE_FIELDS:
                 if field not in stages and item.get(field) is None:
                     upd[field] = "NOT_STARTED"
             for field, t in (("ui_artifact", "ui-markdown"), ("spec_artifact", "use-case-specification"),
-                             ("technical_artifact", "api-design")):
+                             ("technical_artifact", "api-design"), ("test_artifact", "test-cases")):
                 rel = ws.doc_rel(t, uc)
-                upd[field] = paths.show(rel) if rel in ws.docs else None
+                if rel in ws.docs or field in item:
+                    upd[field] = paths.show(rel) if rel in ws.docs else None
             started = any(ws.doc_rel(s["artifact_type"], uc) in ws.docs for s in schema.engine_steps())
             if item.get("status") == "READY" and started:
                 upd["status"] = "IN_PROGRESS"
+            if r["state"] == "DONE" and item.get("status") in ("READY", "IN_PROGRESS"):
+                upd["status"] = "DONE"
+            elif r["state"] != "DONE" and item.get("status") == "DONE":
+                upd["status"] = "IN_PROGRESS"       # an approved artifact changed after delivery
             for k, v in upd.items():
                 if item.get(k) != v:
                     item[k] = v
@@ -186,6 +210,8 @@ def run_sync() -> dict:
                 run_.update(diff)
                 run_["updated_at"] = store.now()
                 changed["state"] = True
+        if coding.prune(ws, gs):
+            changed["state"] = True
         if changed["state"]:
             ws.state["updated_at"] = store.now()
             store.save_json(paths.STATE, ws.state)

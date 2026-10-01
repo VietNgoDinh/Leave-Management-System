@@ -8,7 +8,7 @@ from typing import List, Optional
 
 import yaml
 
-from . import context, gates, graph, hooks, ids, paths, schema, store
+from . import coding, compile as spec_compile, context, gates, graph, hooks, ids, paths, planning, prereview, schema, store
 from .engine import GateCache, derive_run, derive_uc
 from .ids import as_list, normalize_id
 from .store import BAError
@@ -81,7 +81,14 @@ def cmd_status(args) -> int:
         print(f"{run['run_id']}{active}  {run['workflow_type']}  {d['status']}  phase: {d['phase']}")
         if d["next_step"]:
             print(f"  next:    {d['next_step']}")
-        if d["status"] == "BLOCKED" and d["blocked_reason"]:
+        ra = d.get("run_action")
+        if ra and ra.get("action") not in ("REQUEST_GATE", "WAIT_FOR_STAKEHOLDERS"):
+            print(f"  action:  {ra['action']} {ra.get('step') or ra.get('gate')} — agent {ra.get('agent')}"
+                  + (f"\n           {ra['reason']}" if ra.get("reason") else ""))
+        if ra and ra.get("action") == "WAIT_FOR_STAKEHOLDERS":
+            for q in ra["questions"]:
+                print(f"  waiting: {q['id']} [{q.get('target_stakeholder')}] {q.get('question')}")
+        if d["status"] in ("BLOCKED", "NOT_STARTED") and d["blocked_reason"]:
             print(f"  blocked: {d['blocked_reason']}")
 
     print("\nGates")
@@ -105,9 +112,13 @@ def cmd_status(args) -> int:
         for u in as_list(epic.get("use_cases")):
             uc = u.get("use_case_id")
             r = derive_uc(ws, uc, run, gs, errs)
-            st = {f: stage_status(ws, gs, uc, s["artifact_types"], s["gates"]) for f, s in stages.items()}
+            st = {f: stage_status(ws, gs, uc, s, r) for f, s in stages.items()}
+            later = "".join(f" {k}:{st[f]}" for f, k in (("technical_review_status", "tech"),
+                                                          ("coding_status", "code"), ("testing_status", "test"),
+                                                          ("documentation_status", "docs"))
+                            if st.get(f) not in (None, "NOT_STARTED"))
             print(f"  {uc}  {ws.label(uc):<30} {u.get('status', ''):<11} ui:{st['ui_status']:<18} "
-                  f"spec:{st['spec_status']:<18} → {step_label(r)}: {step_note(r)}")
+                  f"spec:{st['spec_status']:<18}{later} → {step_label(r)}: {step_note(r)}")
 
     stale = [(d.rel, ws.stale_reasons(d)) for d in ws.docs.values() if ws.stale_reasons(d)]
     print("\nStale artifacts: " + ("none" if not stale else ""))
@@ -118,6 +129,8 @@ def cmd_status(args) -> int:
     print(f"Validation: {n_err} errors, {n_warn} warnings" + ("  (tools/ba validate)" if n_err or n_warn else ""))
     open_q = [q["id"] for q in ws.items_in("open-questions") if q.get("status") == "OPEN"]
     print(f"Open questions: {len(open_q)}" + (f" ({', '.join(open_q)})" if open_q else ""))
+    if coding.authorized(ws):
+        print("Coding authorized for: " + ", ".join(coding.authorized(ws)))
     return 0
 
 
@@ -141,24 +154,44 @@ def cmd_next(args) -> int:
     print(f"{d['run_id']}  {d['workflow_type']}  phase: {d['phase']}  status: {d['status']}")
     if d["run_action"]:
         ra = d["run_action"]
-        print(f"\nRUN ACTION  {ra['action']} {ra['gate']} on {ra['subject']}"
-              + (f"\n  comments: {ra['comments']}" if ra.get("comments") else ""))
-    if d["status"] == "BLOCKED" and not ordered:
-        print(f"\nBLOCKED  {d['blocked_reason']}")
-    groups = {"ACTION": [], "WAITING": [], "BLOCKED": [], "NOT_READY": [], "DONE": []}
+        if ra["action"] in ("REQUEST_GATE", "REVISE"):
+            print(f"\nRUN ACTION  {ra['action']} {ra['gate']} on {ra['subject']}"
+                  + (f"  agent={ra['agent']}" if ra.get("agent") else "")
+                  + (f"\n  comments: {ra['comments']}" if ra.get("comments") else ""))
+        elif ra["action"] == "PRE_REVIEW":
+            print(f"\nRUN ACTION  PRE_REVIEW {ra['gate']} on {ra['subject']} (round {ra['round']})  agent=review-agent"
+                  f"\n  brief: {ra['brief_command']}")
+        elif ra["action"] == "WAIT_FOR_STAKEHOLDERS":
+            print("\nWAITING FOR STAKEHOLDERS (master §8 step 2.5)")
+            for q in ra["questions"]:
+                print(f"  {q['id']} [{q.get('target_stakeholder')}, {q.get('priority')}] {q.get('question')}")
+        else:
+            print(f"\nRUN ACTION  {ra['action']} {ra['step']} ({ra['step_name']})  agent={ra['agent']}"
+                  f"\n  context: {ra['context_command']}\n  reason: {ra['reason']}")
+    if d["status"] in ("BLOCKED", "NOT_STARTED") and not ordered and d["blocked_reason"]:
+        print(f"\n{d['status']}  {d['blocked_reason']}")
+    groups = {"ACTION": [], "WAITING": [], "NEEDS_HUMAN": [], "BLOCKED": [], "NOT_READY": [], "DONE": []}
     for r in ordered:
         groups[r["state"]].append(r)
     for state, title in (("ACTION", "ACTIONS"), ("WAITING", "WAITING FOR HUMAN"),
-                         ("BLOCKED", "BLOCKED"), ("NOT_READY", "NOT READY"), ("DONE", "DONE")):
+                         ("NEEDS_HUMAN", "NEEDS A HUMAN DECISION"), ("BLOCKED", "BLOCKED"),
+                         ("NOT_READY", "NOT READY"), ("DONE", "DONE")):
         if not groups[state]:
             continue
         print(f"\n{title}")
         for r in groups[state]:
             if state == "ACTION" and r["action"] == "REQUEST_GATE":
                 print(f"  {r['uc']}  {r['gate']}  REQUEST_GATE  (orchestrator: tools/ba gate request {r['gate']} {r['uc']})")
+                if r.get("pre_review_findings"):
+                    print(f"        AI pre-review findings left for the human: {r['pre_review_findings']}")
+            elif state == "ACTION" and r["action"] == "PRE_REVIEW":
+                print(f"  {r['uc']}  {r['gate']}  PRE_REVIEW  round {r['round']}  agent=review-agent"
+                      f"  (brief: {r['brief_command']})")
             elif state == "ACTION":
                 who = r["agent"] or "/".join(r.get("agents", []))
                 print(f"  {r['uc']}  {r['step']}  {r['action']:<10} steps {','.join(r['steps'])}  agent={who}")
+                if r.get("pre_command"):
+                    print(f"        first: {r['pre_command']}")
                 if r.get("reason"):
                     print(f"        reason: {r['reason']}")
                 if r.get("comments"):
@@ -166,17 +199,20 @@ def cmd_next(args) -> int:
             elif state == "WAITING":
                 print(f"  {r['uc']}  {r['gate']}  requested {r['requested_at']}")
             elif state == "DONE":
-                print(f"  {r['uc']}  spec approved")
+                print(f"  {r['uc']}  delivered")
             else:
                 print(f"  {r['uc']}  {r['reason']}")
     return 0
 
 
 def cmd_context(args) -> int:
-    out, missing = context.build(args.use_case)
+    if schema.run_step(args.use_case.strip().upper()):
+        out, missing = context.build_run(args.use_case)
+    else:
+        out, missing = context.build(args.use_case)
     print(f"context package: {out}")
     if missing:
-        print("MISSING INPUT — stop and report (Step 5.1):")
+        print("MISSING INPUT — stop and report:")
         for m in missing:
             print(f"  - {m}")
         return 3
@@ -219,6 +255,12 @@ def cmd_validate(args) -> int:
 def cmd_gate_request(args) -> int:
     ws = Workspace()
     gid, subject = normalize_id(args.gate), normalize_id(args.subject)
+    pr = prereview.state(ws, gid, subject, gates.status(ws, gid, subject))
+    if pr["status"] != "OK" and not args.skip_pre_review:
+        what = ("run the AI pre-review first (review-agent; `tools/ba prereview brief`)" if pr["status"] == "NEEDED"
+                else "address the AI pre-review findings, or record why they stay (`tools/ba prereview resolve`)")
+        raise BAError(f"{gid} on {subject} needs its AI pre-review (D-40): {what}. "
+                      f"Only on the BA's instruction: --skip-pre-review")
     res = gates.request(ws, gid, subject, args.summary)
     g = gates.gate_def(gid)
     req = res["request"]
@@ -233,6 +275,12 @@ def cmd_gate_request(args) -> int:
         print("\nWhat to check:")
         for f in g["review_focus"]:
             print(f"  - {f}")
+    if pr.get("carried"):
+        print("\nAI pre-review findings not applied (decide whether they matter):")
+        for f in pr["carried"]:
+            print(f"  [{f['severity']}] ba-ai/{f['artifact']}: {f['issue']}")
+        if pr.get("resolved_note"):
+            print(f"  owner's reason: {pr['resolved_note']}")
     qs = _related_questions(ws, subject, list(req["artifacts"]))
     if qs:
         print("\nOpen questions to be aware of:")
@@ -321,6 +369,8 @@ def cmd_catalog(args) -> int:
         print(ids.catalog_add(args.catalog, _parse_data(args), args.force_gated))
     elif args.action == "update":
         print(ids.catalog_update(args.id, _parse_data(args), args.force_gated))
+    elif args.action == "init":
+        print(ids.catalog_init(args.catalog))
     elif args.action == "get":
         ws = Workspace()
         item = ws.item(normalize_id(args.id))
@@ -353,6 +403,80 @@ def cmd_state(args) -> int:
     return 0
 
 
+def cmd_backlog(args) -> int:
+    res = planning.apply_plan(_parse_data(args))
+    print(f"backlog planned: {len(res['epics'])} epics ({', '.join(res['epics'])}), {res['use_cases']} use cases"
+          + (f"; removed from the backlog: {', '.join(res['dropped'])}" if res["dropped"] else ""))
+    run_sync()
+    return 0
+
+
+def cmd_coding(args) -> int:
+    if args.action == "authorize":
+        res = coding.authorize(args.use_case)
+        print(f"coding authorized for {res['use_case']} (now: {', '.join(res['authorized'])})")
+        for r in res["repositories"]:
+            print(f"  {r['id']} {r['name']}: {r['path']}" + ("" if r["exists"] else "  (does not exist yet)"))
+    elif args.action == "revoke":
+        left = coding.revoke(args.use_case)
+        print("coding authorization " + (f"now: {', '.join(left)}" if left else "cleared"))
+    else:
+        ws = Workspace()
+        gs = GateCache(ws)
+        ucs = coding.authorized(ws)
+        print("authorized: " + (", ".join(ucs) if ucs else "none"))
+        for uc in ([normalize_id(args.use_case)] if args.use_case else ucs):
+            probs = coding.problems(ws, gs, uc)
+            print(f"  {uc}: " + ("gates OK" if not probs else "; ".join(probs)))
+    return 0
+
+
+def cmd_qa(args) -> int:
+    uc = normalize_id(args.use_case)
+    with store.locked():
+        ws = Workspace()
+        doc = ws.docs.get(ws.doc_rel("test-results", uc))
+        if not doc:
+            raise BAError(f"{uc} has no test results yet — nothing to retest")
+        doc.write_fm({"retest_requested_at": store.now()})
+    print(f"retest requested for {uc}; /ba-next runs the tests again")
+    run_sync()
+    return 0
+
+
+def cmd_compile(args) -> int:
+    res = spec_compile.compile_spec(args.use_case)
+    print(f"compiled {res['path']}")
+    if res["narrative_todo"]:
+        print("narrative sections to write (spec-agent): " + "; ".join(res["narrative_todo"]))
+    return 0
+
+
+def cmd_prereview(args) -> int:
+    if args.action == "brief":
+        print(f"pre-review brief: {prereview.brief(args.gate, args.subject)}")
+    elif args.action == "record":
+        findings = []
+        if args.file:
+            data = store.load_yaml(store.resolve_user_path(args.file))
+            findings = data.get("findings", data) if isinstance(data, dict) else data
+        e = prereview.record(args.gate, args.subject, args.verdict, findings)
+        print(f"pre-review #{e['n']} recorded: {e['verdict']} ({len(e['findings'])} findings)")
+        run_sync()
+    elif args.action == "resolve":
+        prereview.resolve(args.gate, args.subject, args.note)
+        print("findings kept as they are, with the reason; the gate can be requested")
+        run_sync()
+    else:
+        ws = Workspace()
+        gid, subject = normalize_id(args.gate), normalize_id(args.subject)
+        st = prereview.state(ws, gid, subject, gates.status(ws, gid, subject))
+        print(f"{gid} {subject}: {st['status']}" + (f" (round {st.get('round')})" if st.get("round") else ""))
+        for f in st.get("findings") or st.get("carried") or []:
+            print(f"  [{f['severity']}] ba-ai/{f['artifact']}: {f['issue']}")
+    return 0
+
+
 def cmd_hook(args) -> int:
     return hooks.user_prompt_submit() if args.event == "user-prompt" else hooks.pre_tool_use()
 
@@ -372,8 +496,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--json", action="store_true")
     s.set_defaults(func=cmd_next)
 
-    s = sub.add_parser("context", help="build the context package for a use case (Step 5.1)")
-    s.add_argument("use_case")
+    s = sub.add_parser("context", help="build the context package for a use case (Step 5.1) or a run step")
+    s.add_argument("use_case", help="UC-ID, or a run step: " + ", ".join(schema.run_steps()))
     s.set_defaults(func=cmd_context)
 
     s = sub.add_parser("stamp", help="record the inputs a document was built from")
@@ -390,6 +514,8 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("gate")
     r.add_argument("subject")
     r.add_argument("--summary")
+    r.add_argument("--skip-pre-review", action="store_true",
+                   help="request without the AI pre-review (BA instruction only)")
     r.set_defaults(func=cmd_gate_request)
     r = gsub.add_parser("status")
     r.add_argument("subject", nargs="?")
@@ -431,6 +557,7 @@ def build_parser() -> argparse.ArgumentParser:
         r.add_argument("--file")
         r.add_argument("--force-gated", action="store_true",
                        help="allow editing a catalog under an APPROVED run gate (BA instruction only)")
+    csub.add_parser("init", help="create an empty catalog (e.g. a product with no integrations)").add_argument("catalog")
     csub.add_parser("get").add_argument("id")
     csub.add_parser("list").add_argument("catalog")
     s.set_defaults(func=cmd_catalog)
@@ -443,6 +570,46 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("reason", nargs="+")
     ssub.add_parser("unblock").add_argument("run")
     s.set_defaults(func=cmd_state)
+
+    s = sub.add_parser("backlog", help="write the delivery backlog from a plan (Phase 4)")
+    bsub = s.add_subparsers(dest="action", required=True)
+    r = bsub.add_parser("plan")
+    r.add_argument("--data")
+    r.add_argument("--file")
+    s.set_defaults(func=cmd_backlog)
+
+    s = sub.add_parser("coding", help="coding authorization for product repositories (D-13)")
+    csub = s.add_subparsers(dest="action", required=True)
+    csub.add_parser("authorize").add_argument("use_case")
+    csub.add_parser("revoke").add_argument("use_case", nargs="?")
+    csub.add_parser("status").add_argument("use_case", nargs="?")
+    s.set_defaults(func=cmd_coding)
+
+    s = sub.add_parser("qa", help="QA helpers (Phase 8)")
+    qsub = s.add_subparsers(dest="action", required=True)
+    qsub.add_parser("retest", help="run a use case's tests again after a human fixed the cause").add_argument("use_case")
+    s.set_defaults(func=cmd_qa)
+
+    s = sub.add_parser("compile", help="assemble the use-case specification from its upstream artifacts (5.8)")
+    s.add_argument("use_case")
+    s.set_defaults(func=cmd_compile)
+
+    s = sub.add_parser("prereview", help="AI pre-review before a human gate (D-40)")
+    psub = s.add_subparsers(dest="action", required=True)
+    for name in ("brief", "status"):
+        r = psub.add_parser(name)
+        r.add_argument("gate")
+        r.add_argument("subject")
+    r = psub.add_parser("record")
+    r.add_argument("gate")
+    r.add_argument("subject")
+    r.add_argument("--verdict", required=True, choices=["PASS", "FINDINGS", "pass", "findings"])
+    r.add_argument("--file", help="YAML list of findings: artifact, severity (MAJOR|MINOR), issue, suggestion")
+    r = psub.add_parser("resolve")
+    r.add_argument("gate")
+    r.add_argument("subject")
+    r.add_argument("--note", required=True)
+    s.set_defaults(func=cmd_prereview)
 
     s = sub.add_parser("hook", help="Claude Code hook entry points")
     s.add_argument("event", choices=["user-prompt", "pre-tool-use"])

@@ -5,7 +5,7 @@ from collections import deque
 from typing import Dict, List
 
 from . import paths, schema, store
-from .ids import as_list, find_refs, prefix_of
+from .ids import CODE_REF_RE, as_list, find_refs, prefix_of
 from .workspace import Workspace
 
 SCOPED_NODES = {
@@ -13,6 +13,7 @@ SCOPED_NODES = {
     "VR": ("ValidationRule", "HAS_VALIDATION"),
     "AF": ("AlternateFlow", "HAS_ALTERNATE_FLOW"),
     "EF": ("ErrorFlow", "HAS_ERROR_FLOW"),
+    "DEF": ("Defect", "HAS_DEFECT"),
 }
 
 
@@ -106,9 +107,50 @@ def build(ws: Workspace) -> dict:
             else:
                 edge(sid, "REFERENCES", ref, s["doc"])
 
+    # QA: TestCase VERIFIES AcceptanceCriterion (master §31)
+    for tc, t in ws.test_cases.items():
+        doc = ws.docs[t["doc"]]
+        node(tc, "TestCase", t["title"], baseline=doc.fm.get("baseline", "TO_BE"))
+        attach(tc, doc.fm.get("baseline", "TO_BE"), t["doc"])
+        for ref in sorted(find_refs(t["text"]) - {tc, t["uc"]}):
+            if prefix_of(ref) == "UC" and "-AC-" in ref:
+                edge(tc, "VERIFIES", ref, t["doc"])
+            else:
+                edge(tc, "COVERS", ref, t["doc"])
+    for doc in ws.docs.values():
+        if doc.type == "defects":
+            for d in as_list(doc.fm.get("defects")):
+                if isinstance(d, dict) and d.get("id") in nodes:
+                    nodes[d["id"]].update({k: d.get(k) for k in ("classification", "status") if d.get(k)})
+                    if d.get("test_case"):
+                        edge(d["id"], "FOUND_BY", d["test_case"], doc.rel)
+
+    # Implementation: CodeRef IMPLEMENTS UseCase, CodeRef LOCATED_IN Repository (D-21, D-25);
+    # acceptance test files: CodeRef TESTS UseCase (D-38)
+    repo_by_name = {r.get("name"): r["id"] for r in ws.items_in("repositories")}
+    for doc in ws.docs.values():
+        field, etype = {"implementation": ("code_refs", "IMPLEMENTS"),
+                        "test-cases": ("test_files", "TESTS")}.get(doc.type, (None, None))
+        if not field:
+            continue
+        for ref in as_list(doc.fm.get(field)):
+            m = CODE_REF_RE.match(str(ref))
+            if not m:
+                continue
+            node(ref, "CodeRef", m.group(2), repository=m.group(1))
+            attach(ref, doc.fm.get("baseline", "TO_BE"), doc.rel)
+            edge(ref, etype, doc.id, doc.rel)
+            if m.group(1) in repo_by_name:
+                edge(ref, "LOCATED_IN", repo_by_name[m.group(1)], doc.rel)
+
     for uc, rec in ws.backlog_ucs.items():
         if uc in nodes:
-            nodes[uc]["spec_status"] = rec["item"].get("spec_status")
+            for f in ("spec_status", "technical_review_status", "coding_status", "testing_status",
+                      "documentation_status"):
+                if rec["item"].get(f) not in (None, "NOT_STARTED"):
+                    nodes[uc][f] = rec["item"][f]
+            if rec["item"].get("spec_status") is not None:
+                nodes[uc]["spec_status"] = rec["item"]["spec_status"]
 
     known = set(nodes)
     return {

@@ -3,8 +3,9 @@ from __future__ import annotations
 
 from typing import List, Tuple
 
-from . import paths, schema, store
-from .engine import GateCache
+from . import coding, paths, schema, store
+from .engine import (GateCache, blocking_questions, gate_required, run_step_outputs,
+                     unplanned_use_cases)
 from .ids import as_list, normalize_id
 from .store import BAError
 from .workspace import Workspace
@@ -105,8 +106,29 @@ def build(uc_arg: str) -> Tuple[str, List[str]]:
         if g.get("subject") == "USE_CASE" and g.get("implemented"):
             st = gs(gid, uc)
             gate_info[gid] = {"status": st["status"]}
+            if not gate_required(ws, uc, gid):
+                gate_info[gid]["required"] = False
             if st["comments"]:
                 gate_info[gid]["latest_comments"] = st["comments"]
+    app_id = item.get("application")
+    ia_rel = f"planning/information-architecture/{app_id}.md"
+    if (paths.BA / ia_rel).exists():
+        design["information_architecture"] = paths.show(ia_rel)
+    delivery = {
+        "repositories": [{"id": i, "name": n, "path": str(pth), "exists": pth.exists(),
+                          "status": (ws.item(i) or {}).get("status"),
+                          "worktree": str(coding.worktree_path(pth, uc)),
+                          "worktree_exists": coding.worktree_path(pth, uc).exists()}
+                         for i, n, pth in coding.repositories(ws)],
+        "coding_authorized": uc in coding.authorized(ws),
+        "branch_convention": f"ba/{uc}-<slug> (D-25), checked out in the use case's worktree (D-39)",
+        "risk_level": item.get("risk_level"),
+        "risk_flags": as_list(item.get("risk_flags")),
+        "critical_flow_test_required": gate_required(ws, uc, "GATE-07"),
+        "max_fix_attempts": schema.engine().get("max_fix_attempts", 3),
+        "defects": ws.defects(uc),
+        "test_cases": sorted(tc for tc, t in ws.test_cases.items() if t["uc"] == uc),
+    }
 
     epic = ws.epics.get(bl["epic"]) if bl else None
     pkg = {
@@ -133,8 +155,124 @@ def build(uc_arg: str) -> Tuple[str, List[str]]:
         "design_constraints": design,
         "artifacts": artifacts,
         "gates": gate_info,
+        "delivery": delivery,
         "missing": missing,
     }
     out = paths.CONTEXT_DIR / f"{uc}.yaml"
+    store.save_yaml(out, pkg)
+    return paths.show(paths.rel(out)), missing
+
+
+# ------------------------------------------------------------------ run-level steps
+
+def _listing(rel: str) -> List[str]:
+    p = paths.BA / rel.rstrip("/")
+    if p.is_dir():
+        return sorted(paths.show(paths.rel(f)) for f in p.rglob("*")
+                      if f.is_file() and not any(x.startswith(".") for x in f.relative_to(p).parts))
+    return [paths.show(rel)] if p.exists() else []
+
+
+def _items(ws: Workspace, cname: str, fields) -> List[dict]:
+    return [{k: i.get(k) for k in ("id",) + tuple(fields) if i.get(k) is not None} for i in ws.items_in(cname)]
+
+
+def build_run(step_arg: str) -> Tuple[str, List[str]]:
+    """Context package for a run-level step (ELICITATION, OVERVIEW, TECH_BASELINE, PLANNING, …)."""
+    sid = step_arg.strip().upper()
+    sdef = schema.run_step(sid)
+    if not sdef:
+        raise BAError(f"{step_arg} is neither a use case nor a run step ({', '.join(schema.run_steps())})")
+    ws = Workspace()
+    gs = GateCache(ws)
+    run = ws.active_run()
+    missing: List[str] = []
+    if not run:
+        missing.append("no active run in workflow/state.json")
+    inputs: List[str] = []
+    for d in sdef.get("requires_input") or []:
+        files = _listing(d)
+        if not files:
+            missing.append(f"ba-ai/{d} is empty — the BA must add stakeholder material first")
+        inputs += files
+    outputs = []
+    for o in run_step_outputs(ws, sid):
+        for b in o.get("built_from", []):
+            rel, optional = schema.optional_input(b)
+            files = _listing(rel)
+            if not files and not optional and rel not in (sdef.get("requires_input") or []) \
+                    and not any(rel == x["path"] for x in run_step_outputs(ws, sid)):
+                missing.append(f"input ba-ai/{rel} of ba-ai/{o['path']} is missing")
+            inputs += [f for f in files if f not in inputs]
+        doc = ws.docs.get(o["path"])
+        outputs.append({"path": paths.show(o["path"]), "exists": doc is not None,
+                        "status": doc.fm.get("status") if doc else None,
+                        "stale": ws.stale_reasons(doc) if doc else [],
+                        **({"application": o["app"]} if o.get("app") else {})})
+    catalogs = {c: {"path": paths.show(schema.catalogs()[c]["path"]), "items": len(ws.items_in(c)),
+                    "required_fields": schema.catalogs()[c].get("required", [])}
+                for c in sdef.get("catalogs") or []}
+
+    # The gate after this step: its latest reviewer comments travel with the package.
+    gate_info = {}
+    route = schema.workflow()["modes"][run["workflow_type"]]["route"] if run else []
+    ids_ = [r["id"] for r in route]
+    if sid in ids_:
+        for item in route[ids_.index(sid) + 1:]:
+            if item["kind"] == "use_case_engine":
+                break
+            if item["kind"] == "gate":
+                st = gs(item["id"], run["run_id"])
+                gate_info = {"gate": item["id"], "status": st["status"], "comments": st["comments"]}
+                break
+
+    overview = {
+        "actors": _items(ws, "actors", ("name", "type")),
+        "applications": _items(ws, "applications", ("name", "type", "information_architecture", "actors")),
+        "business_processes": _items(ws, "business-processes", ("name",)),
+        "business_rules": _items(ws, "business-rules", ("name",)),
+        "entities": _items(ws, "entities", ("name",)),
+        "integrations": _items(ws, "integrations", ("name", "direction")),
+        "use_cases": _items(ws, "use-cases", ("name", "actor", "application", "business_process",
+                                               "complexity", "risk_level", "risk_flags")),
+    }
+    pkg = {
+        "task": f"{sdef['name']} (master spec Phase {sdef.get('phase')}) for {run['run_id'] if run else '?'}",
+        "generated_at": store.now(),
+        "step": sid,
+        "agent": sdef["agent"],
+        "skills": sdef.get("skills", []),
+        "workflow_type": run.get("workflow_type") if run else None,
+        "project": ws.state.get("project"),
+        "inputs": inputs,
+        "outputs": outputs,
+        "catalogs": catalogs,
+        "existing_items": overview,
+        "open_questions": [{k: q.get(k) for k in ("id", "question", "target_stakeholder", "priority", "status",
+                                                  "blocking", "answer", "related")}
+                           for q in ws.items_in("open-questions") if q.get("status") != "CLOSED"],
+        "blocking_questions": [q["id"] for q in blocking_questions(ws)],
+        "assumptions": [{k: a.get(k) for k in ("id", "statement", "status", "related")}
+                        for a in ws.items_in("assumptions") if a.get("status") != "REJECTED"],
+        "gate": gate_info,
+        "missing": missing,
+    }
+    if sid == "PLANNING":
+        pkg["planning"] = {
+            "unplanned_use_cases": unplanned_use_cases(ws),
+            "backlog": [{"epic_id": e.get("epic_id"), "name": e.get("name"), "priority": e.get("priority"),
+                         "use_cases": [{k: u.get(k) for k in ("use_case_id", "priority", "status", "dependencies")}
+                                       for u in as_list(e.get("use_cases")) if isinstance(u, dict)]}
+                        for e in ws.epics.values()],
+            "plan_command": "tools/ba backlog plan --file <plan.yaml>",
+        }
+    if sid == "INFORMATION_ARCHITECTURE":
+        pkg["information_architecture"] = [
+            {"application": a["id"], "name": a.get("name"), "actors": as_list(a.get("actors")),
+             "use_cases": [u["id"] for u in ws.items_in("use-cases") if u.get("application") == a["id"]],
+             "screens": [{k: s_.get(k) for k in ("id", "name", "route", "use_cases")}
+                         for s_ in ws.items_in("screens") if s_.get("application") == a["id"]]}
+            for a in ws.ia_applications()]
+    out = paths.CONTEXT_DIR / f"{sid}.yaml"
     store.save_yaml(out, pkg)
     return paths.show(paths.rel(out)), missing
