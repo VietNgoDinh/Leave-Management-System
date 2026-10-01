@@ -1,6 +1,6 @@
 ---
 name: compile-use-case-spec
-description: BA Spec Engine step 5.8 — compile the UI, sequence, API, validation and acceptance artifacts into one code-ready use-case specification (ba-ai/specifications/use-cases/<UC>.md). Used by spec-agent; not for direct use.
+description: BA Spec Engine step 5.8 — assemble the code-ready use-case specification with `tools/ba compile` and write its narrative sections (ba-ai/specifications/use-cases/<UC>.md). Used by spec-agent; not for direct use.
 user-invocable: false
 ---
 
@@ -10,78 +10,31 @@ user-invocable: false
 |---|---|
 | Input | All six upstream artifacts for the use case + context package |
 | Output | `ba-ai/specifications/use-cases/<UC>.md` |
-| Consumers | BA approval (GATE-05) → SA review (GATE-06) → coding agent, QA |
+| Consumers | BA approval (GATE-05) → SA review (GATE-06) → acceptance tests (8.1), coding agent, QA |
 
-## Rules
+## How it is built (D-43)
 
-- **Compile, don't create.** Every statement comes from an upstream artifact or the context package. New behaviour is never introduced here.
-- **Conflicts are surfaced, not resolved.** If two upstream artifacts disagree (a message text, an error code, a field rule), don't pick one. Add an open question, list it in section 19, and tell the orchestrator in your summary which artifact needs fixing.
-- The spec must be readable on its own by a developer: condense, but keep every field, rule, validation, API, status code and acceptance criterion.
-- Use the exact 20 section headings below (numbered as shown).
-- `relations` and `open_questions` are the union of the upstream artifacts'.
-- Section 14 contains the main-flow Mermaid diagram. Section 15 summarises each API and links to `technical/api/<UC>.md` for full request/response schemas.
-- Section 20 is a traceability table. Every AC appears in it.
+`tools/ba compile <UC>` assembles the 20-section document.
+- **13 sections are generated** from their sources, verbatim or as a table: 2 Actor, 7 UI Specification, 9 Alternate Flows, 10 Error Flows, 11 Business Rules, 12 Validation Rules, 13 Data Entities, 14 Sequence Diagram, 15 API Specification, 16 Acceptance Criteria, 18 Assumptions, 19 Open Questions, 20 Traceability.
+- Copying is done by the tool rather than by you, so the spec can never drift from what was reviewed upstream.
+- `tools/ba validate` rejects any hand edit to these sections.
+- **You write the 7 narrative sections**: 1 Objective, 3 Preconditions, 4 Trigger, 5 Business Context, 6 User Flow, 8 Main Flow, 17 Dependencies. Each starts with a `<!-- TODO(spec-agent): … -->` hint. Replace the whole hint with the text.
 
-## Template
+## Procedure
 
-````markdown
----
-id: <UC>
-artifact_type: use-case-specification
-title: <use case name>
-status: DRAFT
-version: 1
-baseline: TO_BE
-origin: AI
-relations:
-  business_process: [<BP>]
-  requirements: [<REQ>, ...]
-  business_rules: [<BR>, ...]
-  entities_read: [<ENT>, ...]
-  entities_written: [<ENT>, ...]
-  screens: [<SCR>, ...]
-  apis: [<API>, ...]
-open_questions: []
-assumptions: []
-updated_at: ""
----
-# <UC> — <use case name>
+1. `tools/ba stamp ba-ai/specifications/analysis/<UC>-acceptance.md` (if not done), then `tools/ba compile <UC>`.
+2. Write each narrative section from the upstream artifacts and the context package:
+   - **Compile, don't create.** Every statement comes from an upstream artifact or the context package. New behaviour is never introduced here.
+   - 8 Main Flow: numbered steps "actor action → system response", consistent with the sequence (section 14) and the UI (section 7).
+   - Keep them short. The generated sections carry the detail, and a developer reads both.
+   - A section that doesn't apply to this use case says "Not applicable." with a few words of why.
+3. **Conflicts are surfaced, not resolved.** If two upstream artifacts disagree (a message text, an error code, a field rule), don't pick one. Add an open question and tell the orchestrator in your summary which artifact needs fixing. The generated sections show both versions, because they copy them.
+4. `tools/ba stamp ba-ai/specifications/use-cases/<UC>.md` → `tools/ba validate`.
 
-## 1. Objective
-## 2. Actor
-## 3. Preconditions
-## 4. Trigger
-## 5. Business Context
-Process step (BP-…-S…), requirements, why this matters.
-## 6. User Flow
-Short numbered user journey across screens.
-## 7. UI Specification
-Per screen: fields, actions, states, messages (condensed from the UI markdown; link the prototype).
-## 8. Main Flow
-Numbered system-level steps (actor action → system response).
-## 9. Alternate Flows
-<UC>-AF-… from the activity analysis.
-## 10. Error Flows
-<UC>-EF-….
-## 11. Business Rules
-Each BR with its full text and how it applies here.
-## 12. Validation Rules
-<UC>-VR-… table: check, rule, where, message/code.
-## 13. Data Entities
-Entities read/written, attributes touched, state transitions.
-## 14. Sequence Diagram
-```mermaid
-sequenceDiagram
-```
-## 15. API Specification
-| API | Method | Endpoint | Purpose | Key errors |
-## 16. Acceptance Criteria
-All <UC>-AC-… (Given/When/Then kept).
-## 17. Dependencies
-Other use cases, integrations, open technical decisions.
-## 18. Assumptions
-## 19. Open Questions
-## 20. Traceability
-| Requirement | Process step | Rules | Screens | APIs | Entities | Acceptance criteria |
-|---|---|---|---|---|---|---|
-````
+**REGENERATE** (an upstream artifact changed): run `tools/ba compile <UC>` again. It refreshes the generated sections and keeps your narrative. Then update only the narrative sentences the change affects, and stamp.
+
+## Checklist
+
+- [ ] No TODO hint is left; no generated section was edited by hand.
+- [ ] Every narrative statement traces to an upstream artifact or the context package.
+- [ ] Conflicts between upstream artifacts are open questions and are reported, not silently resolved.

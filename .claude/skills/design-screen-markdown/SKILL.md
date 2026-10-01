@@ -8,14 +8,14 @@ user-invocable: false
 
 | | |
 |---|---|
-| Input | Context package `ba-ai/workflow/context/<UC>.yaml`, `ba-ai/ui/design-system.md`, `ba-ai/overview/product-overview.md` |
+| Input | Context package `ba-ai/workflow/context/<UC>.yaml`, `ba-ai/ui/design-system.md`, `ba-ai/overview/product-overview.md`, and the application's information architecture when the package lists one (`design_constraints.information_architecture`) |
 | Output | `ba-ai/ui/markdown/<UC>.md`, screen entries in `ba-ai/ui/screen-catalog.yaml` |
 | Consumers | BA review (GATE-03) → prototype (5.3), sequence (5.4), validation analysis (5.6) |
 
 ## Procedure
 
 1. Read the context package. Walk the use case from trigger to outcome and list every screen or dialog the actor needs, plus where each alternate or error path shows up.
-2. **Reuse before creating** (Rule 4). Check `existing_screens`, `other_screens_in_application` and `tools/ba find <keywords>`. Extend an existing screen rather than creating a near-duplicate.
+2. **Reuse before creating** (Rule 4). Screens planned by the information architecture (Phase 4A) are already in the catalog with their route and use cases: use them and follow its navigation and role visibility. Check `existing_screens`, `other_screens_in_application` and `tools/ba find <keywords>`. Extend an existing screen rather than creating a near-duplicate.
    - Reused screen: `tools/ba catalog update SCR-00x --data '{"use_cases": ["UC-00a", "<UC>"]}'` — lists are replaced, so repeat the existing values.
    - New screen: `tools/ba catalog add screens --data '{"name": "<screen name>", "application": "APP-001", "route": "/<route>", "purpose": "...", "actors": ["ACT-001"], "use_cases": ["<UC>"]}'` prints the new SCR ID. Leave `apis` out; step 5.5 fills it.
    - A dialog that belongs to a screen is a section of that screen, not a separate screen.

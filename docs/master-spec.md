@@ -2,6 +2,8 @@
 ## Master Implementation Specification for an AI Coding Agent
 
 > Amended by [implementation-decisions.md](implementation-decisions.md). Where the two disagree, the addendum wins.
+>
+> This specification was drafted by another AI model. Its references to what "the workshop" said are unverified; check them against the workshop's own notes (addendum D-44).
 
 ## 1. Objective
 

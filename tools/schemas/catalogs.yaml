@@ -32,6 +32,8 @@ catalogs:
     required: [id, name, type, description]
     enums:
       type: [WEB, MOBILE, DESKTOP, BACKOFFICE]
+      # Phase 4A runs for an application marked REQUIRED (master §12: new application or major navigation)
+      information_architecture: [REQUIRED, NOT_REQUIRED]
     refs:
       actors: {targets: [ACT], edge: USES_APPLICATION, reverse: true}
       services: {targets: [SVC], edge: USES}
@@ -154,6 +156,8 @@ catalogs:
       target_stakeholder: [BUSINESS, OPERATIONS, SECURITY, DATA, INTEGRATION, COMPLIANCE, TECHNICAL, UX]
       priority: [HIGH, MEDIUM, LOW]
       status: [OPEN, ANSWERED, CLOSED]
+    # blocking: true — must be answered by stakeholders before the overview can be written (master §8, 2.5)
+    booleans: [blocking]
     refs:
       related: {targets: ANY, edge: ABOUT}
 

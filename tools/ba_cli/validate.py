@@ -4,9 +4,11 @@ from __future__ import annotations
 import re
 from typing import Callable, Dict, List, Optional, Set
 
-from . import schema
-from .ids import as_list, find_refs, id_format_ok, prefix_of
-from .workspace import Doc, Workspace, iter_headings, norm_heading
+from . import paths, schema, store
+from .ids import CODE_REF_RE, as_list, find_refs, id_format_ok, prefix_of
+from .workspace import Doc, Workspace, iter_headings, norm_heading, sections
+
+TRANSITION_RE = re.compile(r"^\s*(\(new\)|[A-Za-z0-9_ ]+?)\s*->\s*([A-Za-z0-9_ ]+?)\s*:\s*(\S.*)$")
 
 
 class Issue:
@@ -32,6 +34,9 @@ def validate_item(ws: Workspace, cname: str, item: dict, known: Set[str]) -> Lis
         v = item.get(f)
         if v is not None and v not in allowed:
             msgs.append(f"{iid}: {f}={v!r} must be one of {allowed}")
+    for f in cdef.get("booleans") or []:
+        if item.get(f) is not None and not isinstance(item.get(f), bool):
+            msgs.append(f"{iid}: {f} must be true or false")
     for f, allowed in (cdef.get("list_enums") or {}).items():
         for v in as_list(item.get(f)):
             if v not in allowed:
@@ -71,6 +76,34 @@ def validate_item(ws: Workspace, cname: str, item: dict, known: Set[str]) -> Lis
                 msgs.append(f"{iid}: relationship target {to!r} must be a known ENT")
             elif not r.get("cardinality"):
                 msgs.append(f"{iid}: relationship to {to} needs a cardinality")
+        msgs += _lifecycle_msgs(iid, item.get("lifecycle"))
+    return msgs
+
+
+def _lifecycle_msgs(iid: str, lc) -> List[str]:
+    """State model (master §9 3.4) kept on the entity: states, transitions, invalid transitions."""
+    if lc is None:
+        return []
+    if not isinstance(lc, dict) or not as_list(lc.get("states")):
+        return [f"{iid}: lifecycle needs a 'states' list"]
+    states = {str(x) for x in as_list(lc.get("states"))}
+    msgs = []
+    for key in ("transitions", "invalid_transitions"):
+        for t in as_list(lc.get(key)):
+            if isinstance(t, dict):
+                frm, to, ev = t.get("from"), t.get("to"), t.get("event")
+            else:
+                m = TRANSITION_RE.match(str(t))
+                if not m:
+                    msgs.append(f"{iid}: lifecycle {key} entry {t!r:.60} must read 'FROM -> TO: event' "
+                                f"or be a mapping with from / to / event")
+                    continue
+                frm, to, ev = m.group(1), m.group(2), m.group(3)
+            for s_ in (frm, to):
+                if s_ not in states and s_ not in ("(new)", None):
+                    msgs.append(f"{iid}: lifecycle {key} uses state {s_!r}, which is not in states")
+            if not ev:
+                msgs.append(f"{iid}: lifecycle {key} {frm} -> {to} needs a triggering event")
     return msgs
 
 
@@ -158,6 +191,137 @@ def _check_gherkin(ws, doc, E, W):
             W(doc.rel, f"{sid} uses vague wording '{vague.group(0)}' — state an observable result")
 
 
+def _field(text: str, name: str) -> Optional[str]:
+    """Value of a '- **Name:** value' line inside a section."""
+    m = re.search(r"\*\*" + re.escape(name) + r":?\*\*:?\s*(.+)", text, re.I)
+    return m.group(1).strip() if m else None
+
+
+def _check_test_cases(ws, doc, E, W):
+    own = {tc: t for tc, t in ws.test_cases.items() if t["doc"] == doc.rel}
+    if not own:
+        E(doc.rel, "no test cases — each needs a heading like '### TC-001 — Title' (IDs from `tools/ba next-id TC`)")
+    reg = (store.load_json(paths.REGISTRY, {}) or {}).get("counters", {}).get("TC", 0)
+    cats = schema.enum("test_category")
+    verified = set()
+    for tc, t in own.items():
+        if int(tc.split("-")[1]) > reg:
+            E(doc.rel, f"{tc} was never allocated — get test case IDs from `tools/ba next-id TC`")
+        acs = set(re.findall(r"\b" + re.escape(doc.id) + r"-AC-\d{2}\b", _field(t["text"], "Verifies") or ""))
+        if not acs:
+            E(doc.rel, f"{tc} needs a '**Verifies:** {doc.id}-AC-..' line naming the criteria it tests")
+        for ac in acs:
+            if ac not in ws.scoped:
+                E(doc.rel, f"{tc} verifies {ac}, which is not declared in the acceptance criteria")
+        verified |= acs
+        cat = (_field(t["text"], "Category") or "").upper().replace(" ", "_")
+        if cat not in cats:
+            E(doc.rel, f"{tc}: **Category:** must be one of {cats}")
+        for f in ("Steps", "Expected"):
+            if _field(t["text"], f) is None and not re.search(r"\*\*" + f, t["text"], re.I):
+                E(doc.rel, f"{tc} needs a **{f}:** part")
+    for ac in sorted(sid for sid, x in ws.scoped.items() if x["kind"] == "AC" and x["uc"] == doc.id):
+        if ac not in verified:
+            E(doc.rel, f"{ac} is not verified by any test case")
+    automated = [tc for tc, t in own.items()
+                 if not (_field(t["text"], "Automation") or "").lower().startswith("manual")]
+    files = as_list(doc.fm.get("test_files"))
+    if automated and not files:
+        E(doc.rel, "frontmatter 'test_files' must list the automated acceptance tests as CODE:<repo>/<path> "
+                   "(the implementation may not edit them, D-38)")
+    for f in files:
+        if not CODE_REF_RE.match(str(f)):
+            E(doc.rel, f"test file {f!r} must look like CODE:<repo-name>/<path>")
+    if automated and not isinstance(doc.fm.get("tests_commit"), dict):
+        E(doc.rel, "frontmatter 'tests_commit' must map each REPO-… to the commit that added the acceptance tests")
+
+
+def _check_test_results(ws, doc, E, W):
+    fm = doc.fm
+    if fm.get("outcome") not in schema.enum("test_outcome"):
+        E(doc.rel, f"frontmatter 'outcome' must be one of {schema.enum('test_outcome')}")
+    if not fm.get("executed_at"):
+        E(doc.rel, "frontmatter 'executed_at' must say when the tests ran")
+    if fm.get("outcome") == "FAILED" and ws.doc_rel("defects", doc.id) not in ws.docs:
+        E(doc.rel, f"outcome FAILED needs ba-ai/{ws.doc_rel('defects', doc.id)} with every failure classified")
+    if fm.get("outcome") == "BLOCKED" and not fm.get("blocked_reason"):
+        E(doc.rel, "outcome BLOCKED needs a 'blocked_reason'")
+    mentioned = find_refs(doc.body)
+    for tc, t in ws.test_cases.items():
+        if t["uc"] == doc.id and tc not in mentioned:
+            W(doc.rel, f"{tc} has no result row")
+
+
+def _check_defects(ws, doc, E, W):
+    max_attempts = int(schema.engine().get("max_fix_attempts", 3))
+    declared = {sid for sid, x in ws.scoped.items() if x["doc"] == doc.rel and x["kind"] == "DEF"}
+    listed = set()
+    for d in as_list(doc.fm.get("defects")):
+        if not isinstance(d, dict) or not d.get("id"):
+            E(doc.rel, f"every entry of 'defects' needs an id ({d!r:.60})")
+            continue
+        did = d["id"]
+        listed.add(did)
+        if not re.fullmatch(re.escape(doc.id) + r"-DEF-\d{2}", str(did)):
+            E(doc.rel, f"defect id {did} must look like {doc.id}-DEF-01")
+        if did not in declared:
+            E(doc.rel, f"{did} has no '### {did} — …' section with expected vs actual behaviour")
+        if d.get("classification") not in schema.enum("defect_classification"):
+            E(doc.rel, f"{did}: classification must be one of {schema.enum('defect_classification')}")
+        if d.get("status") not in schema.enum("defect_status"):
+            E(doc.rel, f"{did}: status must be one of {schema.enum('defect_status')}")
+        n = d.get("fix_attempts", 0)
+        if not isinstance(n, int) or n < 0 or n > max_attempts:
+            E(doc.rel, f"{did}: fix_attempts must be 0–{max_attempts}")
+        if d.get("test_case") and d["test_case"] not in ws.test_cases:
+            E(doc.rel, f"{did}: test_case {d['test_case']} is not a declared test case")
+    for did in sorted(declared - listed):
+        E(doc.rel, f"{did} has a section but is missing from the frontmatter 'defects' list")
+
+
+def _check_implementation_refs(ws, doc, E, W):
+    fm = doc.fm
+    repos = {r["id"]: r for r in ws.items_in("repositories")}
+    names = {r.get("name"): r["id"] for r in repos.values()}
+    for r in as_list(fm.get("repositories")):
+        if r not in repos:
+            E(doc.rel, f"repositories lists {r}, which is not in workflow/repositories.yaml")
+    if not as_list(fm.get("repositories")):
+        E(doc.rel, "frontmatter 'repositories' must list the REPO IDs changed")
+    if not fm.get("branch"):
+        E(doc.rel, "frontmatter 'branch' must name the working branch (ba/<UC>-<slug>, D-25)")
+    if not as_list(fm.get("code_refs")):
+        E(doc.rel, "frontmatter 'code_refs' must list the changed files as CODE:<repo>/<path>")
+    for ref in as_list(fm.get("code_refs")):
+        m = CODE_REF_RE.match(str(ref))
+        if not m:
+            E(doc.rel, f"code ref {ref!r} must look like CODE:<repo-name>/<path>")
+        elif m.group(1) not in names:
+            E(doc.rel, f"code ref {ref} names repository {m.group(1)!r}, which is not in workflow/repositories.yaml")
+
+
+IMG_RE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
+
+
+def _check_user_guide(ws, doc, E, W):
+    steps = [(t, sec) for _lvl, t, sec in sections(doc.body) if re.match(r"^step\s*\d+", t, re.I)]
+    if not steps:
+        E(doc.rel, "needs at least one '## Step 1 — …' section")
+    for title, sec in steps:
+        imgs = IMG_RE.findall(sec)
+        if not imgs:
+            W(doc.rel, f"'{title}' has no screenshot")
+        for src in imgs:
+            if not re.match(r"^[a-z]+://", src) and not (doc.path.parent / src).exists():
+                E(doc.rel, f"'{title}' shows {src}, which does not exist")
+
+
+def _check_compiled_spec(ws, doc, E, W):
+    from .compile import check
+    for m in check(ws, doc):
+        E(doc.rel, m)
+
+
 CHECKS: Dict[str, Callable] = {
     "mermaid": _check_mermaid,
     "screen_sections": _check_screen_sections,
@@ -165,6 +329,12 @@ CHECKS: Dict[str, Callable] = {
     "api_sections": _check_api_sections,
     "validation_traced": _check_validation_traced,
     "gherkin": _check_gherkin,
+    "test_cases": _check_test_cases,
+    "test_results": _check_test_results,
+    "defects": _check_defects,
+    "implementation_refs": _check_implementation_refs,
+    "user_guide": _check_user_guide,
+    "compiled_spec": _check_compiled_spec,
 }
 
 
@@ -191,6 +361,12 @@ def _validate_doc(ws: Workspace, doc: Doc, known: Set[str], E, W) -> None:
             E(doc.rel, f"not stamped — run `tools/ba stamp ba-ai/{doc.rel}`")
         if not isinstance(fm.get("relations"), dict):
             E(doc.rel, "frontmatter 'relations' must be a mapping")
+    elif tdef.get("per_application"):
+        expected = tdef["path"].format(APP=doc.id)
+        if ws.catalog_of(doc.id) != "applications":
+            E(doc.rel, f"id {doc.id} is not an application in overview/applications.yaml")
+        elif doc.rel != expected:
+            E(doc.rel, f"a {doc.type} for {doc.id} must live at ba-ai/{expected}")
     else:
         if tdef.get("path") and doc.rel != tdef["path"]:
             E(doc.rel, f"a {doc.type} must live at ba-ai/{tdef['path']}")

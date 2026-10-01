@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Tuple
 
 from . import paths, schema, store
-from .ids import SCOPED_HEADING_RE, as_list
+from .ids import SCOPED_HEADING_RE, TC_HEADING_RE, as_list
 
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 FENCE_RE = re.compile(r"^\s*(```|~~~)")
@@ -76,6 +76,7 @@ class Workspace:
         self.backlog_ucs: Dict[str, dict] = {}    # UC -> {"epic", "item"}
         self.docs: Dict[str, Doc] = {}            # rel path -> Doc
         self.scoped: Dict[str, dict] = {}         # UC-001-AC-01 -> {"doc", "kind", "title", "text", "uc"}
+        self.test_cases: Dict[str, dict] = {}     # TC-001 -> {"doc", "title", "text", "uc"}
         self._hashes: Dict[str, Optional[str]] = {}
         self.state = store.load_json(paths.STATE, {"runs": []})
         self.backlog = (store.load_yaml(paths.BACKLOG) if paths.BACKLOG.exists() else None) or {}
@@ -142,6 +143,16 @@ class Workspace:
             tdef = schema.artifact_type(doc.type) or {}
             kinds = tdef.get("scoped") or []
             for _level, text, sec in sections(body):
+                if doc.type == "test-cases":
+                    t = TC_HEADING_RE.match(text)
+                    if t:
+                        tc = t.group(1)
+                        if tc in self.test_cases:
+                            self.load_errors.append((rel, f"{tc} is declared twice (also in {self.test_cases[tc]['doc']})"))
+                        else:
+                            self.test_cases[tc] = {"doc": rel, "title": t.group(2).strip(), "text": sec,
+                                                   "uc": doc.id}
+                        continue
                 m = SCOPED_HEADING_RE.match(text)
                 if not m or m.group(3) not in kinds:
                     continue
@@ -176,10 +187,12 @@ class Workspace:
             return str(self.epics[iid].get("name", ""))
         if iid in self.scoped:
             return self.scoped[iid]["title"]
+        if iid in self.test_cases:
+            return self.test_cases[iid]["title"]
         return ""
 
     def known_ids(self) -> set:
-        ids = set(self.items) | set(self.steps) | set(self.scoped)
+        ids = set(self.items) | set(self.steps) | set(self.scoped) | set(self.test_cases)
         ids |= {e for e in self.epics if e}
         ids |= {r.get("run_id") for r in self.runs() if r.get("run_id")}
         return ids
@@ -214,6 +227,15 @@ class Workspace:
             return (rank.get(epic.get("priority"), 5), rank.get(bl["item"].get("priority"), 5), order.index(uc))
 
         return sorted(ucs, key=key)
+
+    def defects(self, uc: str) -> List[dict]:
+        """Structured defect list from qa/defects/<UC>.md frontmatter (empty when there is none)."""
+        doc = self.docs.get(self.doc_rel("defects", uc))
+        return [d for d in as_list(doc.fm.get("defects")) if isinstance(d, dict)] if doc else []
+
+    def ia_applications(self) -> List[dict]:
+        """Applications that need an information architecture (Phase 4A)."""
+        return [a for a in self.items_in("applications") if a.get("information_architecture") == "REQUIRED"]
 
     def doc_rel(self, artifact_type: str, uc: str) -> str:
         return schema.artifact_type(artifact_type)["path"].format(UC=uc)
@@ -250,10 +272,13 @@ class Workspace:
                 continue
             if "path" in e:
                 cur = self.hash_rel(e["path"])
-                if cur is None:
+                if cur is None and e.get("optional"):
+                    if e.get("hash") is not None:
+                        out.append(f"input {e['path']} was removed")
+                elif cur is None:
                     out.append(f"input {e['path']} is missing")
                 elif cur != e.get("hash"):
-                    out.append(f"input {e['path']} changed")
+                    out.append(f"input {e['path']} changed" if e.get("hash") else f"input {e['path']} was added")
             elif "ref" in e:
                 cur = self.item_hash(e["ref"])
                 if cur is None:
